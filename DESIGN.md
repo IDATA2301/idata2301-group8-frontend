@@ -19,7 +19,7 @@ As our website sells tickets to different events, it should be a little mroe pla
 - we will use clear images, without any blur
 
 ## 5. Icons
-- We haave different icons for different features, like a heart for liked event tickets, or three stripes icon to symbolize a meny.
+- We have different icons for different features, like a heart for liked event tickets, or three stripes icon to symbolize a meny.
 
 ## 6. Typography:
 - The font is sans-serif, with different boldness, where more important text is bigger and bolder. The edges has a slight curve, with about 6 degrees.

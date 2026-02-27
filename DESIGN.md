@@ -10,9 +10,9 @@ As our website sells tickets to different events, it should be a little more pla
 
 ## 3. Hierarchy and layout
 - The ticket listings are the most important products on our website.
-- Our most important feature would be our search bar, hence the size and why it is in the middle. The second most would be the "catagories" button, that displays all the different event categories we offer.
-- There will be 6 main sections on the main page: The header, favorites, last visited, featured, happens soon, the footer.
-- Layout?
+- Our most important feature would be our search bar, hence the size and why it is in the middle. The second most would be the "categories" section.
+- There will be 6 main sections on the main page: The header (with the search bar), categories, featured, favorites, upcoming, the footer.
+- Our website has a vertical layout, with sections stacked on top of each other.
 
 ## 4. Images
 - The text will be display above, or below the image

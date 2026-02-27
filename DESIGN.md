@@ -1,7 +1,7 @@
 # Design Guideline
 
 ## 1. Theme
-As our website sells tickets to different events, it should be a little mroe playful than serious.
+As our website sells tickets to different events, it should be a little more playful than serious.
 
 ## 2. Color Scheme 
 - Our color Scheme is Blue/White

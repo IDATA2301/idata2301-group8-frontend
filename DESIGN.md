@@ -22,7 +22,7 @@ As our website sells tickets to different events, it should be a little more pla
 - We have different icons for different features, like a heart for liked event tickets, or three stripes icon to symbolize a menu.
 
 ## 6. Typography:
-- The font is sans-serif, with different boldness, where more important text is bigger and bolder. The edges has a slight curve, with about 6 degrees.
+- The font is sans-serif, with different boldness, where more important text is bigger and bolder. The edges has a slight curve, with about 24 degrees.
 
 ## 7. Border rounding:
 - Since our website is a little more playful, a slight rounding in the border will make it look a little less serious.

@@ -1,0 +1,33 @@
+.footer {
+  background-color: #001824;
+  color: white;
+  padding: 60px 80px 40px;
+}
+
+.footer-columns {
+  display: flex;
+  gap: 80px;
+}
+
+.footer h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.footer p {
+  font-size: 14px;
+  margin: 4px 0;
+  color: #d6d6d6;
+  cursor: pointer;
+}
+
+.footer p:hover {
+  color: white;
+}
+
+.footer-logo {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 28px;
+  letter-spacing: 3px;
+}

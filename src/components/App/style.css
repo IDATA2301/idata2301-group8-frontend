@@ -1,0 +1,91 @@
+body {
+  background-color: #003049;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 96px;
+  font-family: 'Inter', sans-serif;
+  color: #E3E3E3;
+}
+
+h2 {
+  font-size: 40px;
+  font-family: 'Inter', sans-serif;
+  color: #E3E3E3;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.search-bar {
+  flex: 1; /* 1 1 0 */
+  min-width: 800px;
+  height: 70px;
+  box-sizing: border-box;
+
+  font-size: 32px;
+  padding: 0 18px;
+
+  border-radius: 12px 0 0 12px;
+  border: 2px solid #FFFFFF4D; /* border width, style, color */
+  background: transparent;
+  color: white;
+  outline: none;
+}
+
+.search-bar::placeholder {
+  color: #FFFFFF4D;
+}
+
+.search-button {
+  height: 70px;
+  padding: 0 18px;
+  border-radius: 0 12px 12px 0; /* top left, top right, bottom left, bottom right */
+  border: 1px solid #FFFFFF4D;
+  border-left: none;
+  background: #FFFFFF4D;
+  color: white;
+  cursor: pointer;
+}
+
+
+.categories {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  
+
+  list-style: none;
+  margin: 0;
+
+  overflow-x: auto; /* if it overflows it will automatically make it scrollable*/
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+}
+
+.categories li {
+  flex: 0 0 auto; /* grow 0, shrink 0, basis auto */
+
+}
+
+.categories a {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #f2f2f2;
+  border-radius: 20px;
+  text-decoration: none;
+  color: black;
+  white-space: nowrap; /* makes sure it stays in one line */
+  transition: 0.2s ease;
+}
+
+.categories a:hover {
+  background: #ddd;
+}

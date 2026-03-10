@@ -10,7 +10,7 @@ function EventCard(p: Props) {
   return (
     <a href={p.href}>
       <img src={p.imageSource} />
-      <h2>{p.title}</h2>
+      <h4>{p.title}</h4>
       <p>{p.location}</p>
       <p>From {p.price} NOK</p>
     </a>

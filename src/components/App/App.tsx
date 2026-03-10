@@ -24,15 +24,40 @@ function App() {
       </div>
 
       <section>
-
         <h2>Categories</h2>
+
         <ul className="categories">
-          <li><a href="/category/festivals">Festivals</a></li>
-          <li><a href="/category/concerts">Concerts</a></li>
-          <li><a href="/category/sport">Sport</a></li>
-          <li><a href="/category/museums">Museums</a></li>
-          <li><a href="/category/theaters">Theaters</a></li>
+          <li>
+            <a className="category-card festivals" href="/category/festivals">
+              Festivals
+            </a>
+          </li>
+
+          <li>
+            <a className="category-card concerts" href="/category/concerts">
+              Concerts
+            </a>
+          </li>
+
+          <li>
+            <a className="category-card sport" href="/category/sport">
+              Sport
+            </a>
+          </li>
+
+          <li>
+            <a className="category-card museums" href="/category/museums">
+              Museums
+            </a>
+          </li>
+
+          <li>
+            <a className="category-card theaters" href="/category/theaters">
+              Theaters
+            </a>
+          </li>
         </ul>
+        <hr />
 
       </section>
 

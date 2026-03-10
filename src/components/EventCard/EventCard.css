@@ -1,5 +1,13 @@
 .event-card {
   width: 250px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.event-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
 }
 
 .event-card-image {
@@ -32,7 +40,7 @@
 }
 
 .tag {
-  background: red;
+  background: #780000;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 14px;

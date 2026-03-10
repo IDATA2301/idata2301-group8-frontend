@@ -79,35 +79,47 @@ h2 {
 
 .categories {
   display: flex;
-  gap: 12px;
-  padding: 10px 0;
-  
+  flex-direction: row;     
+  gap: 20px;
 
-  list-style: none;
-  margin: 0;
-
-  overflow-x: auto; /* if it overflows it will automatically make it scrollable*/
+  overflow-x: auto;        
   overflow-y: hidden;
 
-  scroll-behavior: smooth;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  white-space: nowrap;      
 }
 
-.categories li {
-  flex: 0 0 auto; /* grow 0, shrink 0, basis auto */
+.category-card {
+  min-width: 300px;
+  height: 200px;
+  border-radius: 24px;
+  flex-shrink: 0;
 
-}
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-.categories a {
-  display: inline-block;
-  padding: 8px 16px;
-  background: #f2f2f2;
-  border-radius: 20px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
   text-decoration: none;
-  color: black;
-  white-space: nowrap; /* makes sure it stays in one line */
-  transition: 0.2s ease;
+
+  background-size: cover;
+  background-position: center;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.categories a:hover {
-  background: #ddd;
+.category-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
+
+.festivals { background-image: url("src/assets/categoriesdummyimage.jpg"); }
+.concerts { background-image: url("src/assets/categoriesdummyimage.jpg"); }
+.sport { background-image: url("src/assets/categoriesdummyimage.jpg"); }
+.museums { background-image: url("/src/assets/categoriesdummyimage.jpg"); }
+.theaters { background-image: url("src/assets/categoriesdummyimage.jpg"); }

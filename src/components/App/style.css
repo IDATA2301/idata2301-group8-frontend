@@ -5,10 +5,30 @@ body {
   align-items: center;
 }
 
+.hero-image {
+  position: relative;
+  height: 670px;
+  width: 1440px;
+
+  background-image: url("/src/assets/heroimage.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.highlight {
+  color: #669BBC;
+}
+
+
 h1 {
   font-size: 96px;
   font-family: 'Inter', sans-serif;
   color: #E3E3E3;
+  text-align: center;
 }
 
 h2 {
@@ -26,7 +46,9 @@ h2 {
 .search-bar {
   flex: 1; /* 1 1 0 */
   min-width: 800px;
-  height: 70px;
+  max-width: 800px;
+  min-height: 70;
+  max-height: 70px;
   box-sizing: border-box;
 
   font-size: 32px;

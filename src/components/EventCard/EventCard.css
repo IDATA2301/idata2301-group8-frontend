@@ -1,0 +1,48 @@
+.event-card {
+  width: 250px;
+}
+
+.event-card-image {
+  width: 250px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+  display: block;
+}
+
+
+.event-card-box {
+  width: 250px;
+  height: 160px;
+  background: #001824;
+  border-radius: 0 0 12px 12px;
+  padding: 12px;
+  color: white;
+}
+
+.event-card h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.event-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  background: red;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.event-date {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.event-price {
+  font-size: 14px;
+}

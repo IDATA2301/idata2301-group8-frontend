@@ -1,41 +1,152 @@
 # Design Guideline
 
 ## 1. Theme
-As our website sells tickets to different events, it should be a little more playful than serious.
+The design should communicate confidence and playfulness.
 
 ## 2. Color Scheme 
-- Our color Scheme is Deep Space Blue/Steel blue/Molten Lava
-- The main color is Deep Space Blue
-- the accent color is Steel blue/Molten Lava
+
+### Primary Color
+
+Deep Space Blue
+
+`#003049`
+
+Usage:
+- Background color
+
+### Secondary Color
+
+Steel Blue
+
+`#669BBC`
+
+Usage:
+- Call-to-action buttons
+
+### Tertiary Color
+
+Dark shade of "Deep Space Blue"
+
+`#001824`
+
+Usage:
+- Cards
+
+### Neutral Colors
+
+Light Gray
+
+`#E3E3E3`
+
+Usage:
+- Text
+
+### Accent Color
+
+Molten Lava
+
+`#780000`
+
+Usage:
+- Tags
 
 ## 3. Hierarchy and layout
-- The ticket listings are the most important products on our website.
-- Our most important feature would be our search bar, hence the size and why it is in the middle. The second most would be the "categories" section.
-- There will be 6 main sections on the main page: The header (with the search bar), categories, featured, favorites, upcoming, the footer.
-- Our website has a vertical layout, with sections stacked on top of each other.
+
+### Main priority
+
+The most important element on the homepage is **the search bar**. This should appear in the hero section.
+
+### Hierarchy of elements
+1. Navigation bar
+2. Hero Section
+3. Categories section
+4. Featured event section
+5. Favourites section
+6. Upcoming events section
+7. Footer
+
+### Layout
+
+The most outer layout will be vertical containing stacked sections.
+
+Hero section
+- Full width
+- Image background
+- Centered text
+
+Content sections
+- Max width: 1200px
 
 ## 4. Images
-- The text will be display above, or below the image
-- we will use clear images, without any blur but a dark overlay which gives a similar effect.
+
+### Image usage
+
+Hero:
+- Full width image
+- Dark overlay
+- Text displayed above
+- Gradient on tansparent nav bar
+
+Cards:
+- Image is stacked above the text section of the card
+- Usually takes full width of card
 
 ## 5. Icons
-- We have different icons for different features, like a heart for liked event tickets, or three stripes icon to symbolize a menu.
+
+Icons will be used for:
+- Navigation indicator
+- Product features
+- Buttons
+
+### Icon style
+- Icons from [fonts.google.com/icons](https://fonts.google.com/icons)
+- Consistent sizes and stroke width
+
+### Color
+
+Light Gray (same as text)
+
+`#E3E3E3`
 
 ## 6. Typography:
-- The font is sans-serif, with different boldness, where more important text is bigger and bolder. The edges has a slight curve, with about 24 degrees.
+
+**Font used:** Inter, sans-serif
+
+### Font weight
+
+Titles:
+- 700
+
+Body text:
+- 400
+
+### Font chracteristics
+- Sans-serif
+- Slightly rounded shapes
+- Moder look
 
 ## 7. Border rounding:
-- Since our website is a little more playful, a slight rounding in the border will make it look a little less serious.
+Rounded edges should feel playful.
+
+Radius 24px for:
+- Cards
+- Buttons
+- Input fields
+
+Radius 12px for:
+- Small buttons
+- Small input fields
 
 ## 8. Shadows
+
+Shadows should provide a subtle, provide depth and seperate cards from the background.
+
+Example:
+```css
+box-shadow: 4px 4px 8px rgba(0,0,0,0.25);
+```
 
 # 2. Sketching of the layout
 
 # 3. Specific Technical Decisions
-
-
-
-
-
-- 
 

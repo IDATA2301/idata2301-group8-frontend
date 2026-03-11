@@ -1,7 +1,13 @@
 .footer {
   background-color: #001824;
   color: white;
-  padding: 60px 80px 40px;
+  padding: 60px 0px 40px;
+}
+
+.footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 80px;
 }
 
 .footer-columns {

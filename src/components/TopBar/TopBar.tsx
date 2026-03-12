@@ -1,8 +1,8 @@
-import "./Header.css";
+import "./TopBar.css";
 
-export default function Header() {
+export default function TopBar() {
   return (
-    <header className="header">
+    <header className="TopBar">
 
       <div className="menu">☰</div>
 

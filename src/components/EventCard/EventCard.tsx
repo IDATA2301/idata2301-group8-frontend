@@ -1,5 +1,5 @@
 import "./EventCard.css";
-import auroraconcert from "../../assets/auroraconcert.jpg";
+import auroraconcert from "@assets/auroraconcert.jpg";
 
 export default function EventCard() {
   return (

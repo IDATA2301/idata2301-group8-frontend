@@ -1,3 +1,4 @@
+
 body {
   background-color: #003049;
   margin: 0;
@@ -8,7 +9,6 @@ body {
   height: 670px;
   width: 100%;
 
-  background-image: url("/src/assets/heroimage.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -27,7 +27,8 @@ body {
 
 
 h1 {
-  font-size: 96px;
+  font-size: 64px;
+  font-weight: 700;
   font-family: 'Inter', sans-serif;
   color: #E3E3E3;
   text-align: center;

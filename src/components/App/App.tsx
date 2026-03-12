@@ -1,14 +1,16 @@
 import EventCard from '@components/EventCard/EventCard'
-import './style.css'
-import Footer from "../Footer/Footer";
-import Header from "../Header/Header.tsx";
+import './Style.css'
+import Footer from "@components/Footer/Footer";
+import TopBar from "@components/TopBar/TopBar";
+import heroimage from '@assets/heroimage.jpg'
+
 function App() {
 
   return (
     <>
-      <div className="hero-image">
+      <div className="hero-image" style={{ backgroundImage: `url(${heroimage})` }}>
 
-        <Header />
+        <TopBar />
 
         <main>
           <h1>

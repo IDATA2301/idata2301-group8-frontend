@@ -1,4 +1,6 @@
 import EventCard from '@components/EventCard/EventCard'
+import { Link } from 'react-router-dom';
+import ScrollToTop from "@utility/ScrollToTop";
 import './Style.css'
 import Footer from "@components/Footer/Footer";
 import TopBar from "@components/TopBar/TopBar";
@@ -9,6 +11,8 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
+
       <div className="hero-image" style={{ backgroundImage: `url(${heroimage})` }}>
 
         <TopBar />
@@ -32,36 +36,35 @@ function App() {
 
           <ul className="categories">
             <li>
-              <a className="category-card festivals" href="/category/festivals">
+              <Link className="category-card festivals" to="/category/festivals">
                 Festivals
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a className="category-card concerts" href="/category/concerts">
+              <Link className="category-card concerts" to="/category/concerts">
                 Concerts
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a className="category-card sport" href="/category/sport">
+              <Link className="category-card sport" to="/category/sport">
                 Sport
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a className="category-card museums" href="/category/museums">
+              <Link className="category-card museums" to="/category/museums">
                 Museums
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a className="category-card theaters" href="/category/theaters">
+              <Link className="category-card theaters" to="/category/theaters">
                 Theaters
-              </a>
+              </Link>
             </li>
           </ul>
-          <hr />
 
         </section>
 

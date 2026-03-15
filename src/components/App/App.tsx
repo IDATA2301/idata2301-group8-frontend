@@ -3,6 +3,7 @@ import './Style.css'
 import Footer from "@components/Footer/Footer";
 import TopBar from "@components/TopBar/TopBar";
 import heroimage from '@assets/heroimage.jpg'
+import FeaturedEventCard from '@components/FeaturedEventCard/FeaturedEventCard';
 
 function App() {
 
@@ -67,7 +68,7 @@ function App() {
 
         <section>
           <h2>Featured</h2>
-          <EventCard />
+          <FeaturedEventCard />
           <hr />
         </section>
 

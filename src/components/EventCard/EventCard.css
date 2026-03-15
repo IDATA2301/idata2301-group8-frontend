@@ -22,11 +22,14 @@
 
 .event-card-box {
   width: 250px;
+  max-width: 250px;
+  max-height: 160px;
   height: 160px;
   background: #001824;
   border-radius: 0 0 24px 24px;
   padding: 12px;
   color: white;
+  font-family: 'Inter', sans-serif;
 }
 
 .event-card h3 {

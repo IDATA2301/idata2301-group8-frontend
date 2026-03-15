@@ -1,6 +1,8 @@
 .footer {
   background-color: #001824;
   color: white;
+  height: 412px;
+  margin: 0 auto;
   padding: 60px 0px 40px;
 }
 
@@ -8,6 +10,7 @@
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 80px;
+  box-sizing: border-box;
 }
 
 .footer-columns {

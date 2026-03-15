@@ -8,6 +8,7 @@ body {
   position: relative;
   height: 670px;
   width: 100%;
+  margin: 0 auto;
 
   background-size: cover;
   background-position: center;
@@ -19,6 +20,9 @@ body {
 
 .page-container {
   padding: 40px 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .highlight {

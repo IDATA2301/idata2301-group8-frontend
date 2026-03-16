@@ -83,18 +83,21 @@ h2 {
   cursor: pointer;
 }
 
-
 .categories {
   display: flex;
   flex-direction: row;     
   gap: 20px;
   border-radius: 24px;
 
-  overflow-x: auto;        
+  overflow-x: scroll;        
   overflow-y: visible;
-
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+    display: none;
+  }
   list-style: none;
-  padding: 10px 10px;
+  padding: 40px 10px;
   margin: 0;
 
   white-space: nowrap;      
@@ -126,6 +129,7 @@ h2 {
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
   border-radius: 24px;
 }
+
 
 .festivals { background-image: url("src/assets/categoriesdummyimage.jpg"); }
 .concerts { background-image: url("src/assets/categoriesdummyimage.jpg"); }

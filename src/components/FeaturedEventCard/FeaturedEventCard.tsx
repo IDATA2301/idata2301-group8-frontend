@@ -1,5 +1,6 @@
 import "./FeaturedEventCard.css"
 import footballfeatured from "@assets/footballfeatured.jpeg"
+import location from "@assets/location.svg"
 
 export default function FeaturedEventCard() {
   return (
@@ -24,7 +25,8 @@ export default function FeaturedEventCard() {
 
         <div className="featured-event-info">
           <div className="featured-info-row">
-            <span>Trondheim, Norway</span>
+            <span>  <img className="location-svg" src={location} alt="location icon" />
+              Trondheim, Norway</span>
           </div>
 
           <div className="featured-info-row">

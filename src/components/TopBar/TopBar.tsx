@@ -6,7 +6,7 @@ export default function TopBar() {
 
       <div className="menu">☰</div>
 
-      <h1 className="logo">NORDiSEAT</h1>
+      <p className="logo">NORDiSEAT</p>
 
       <div className="register">Sign in / Register</div>
 

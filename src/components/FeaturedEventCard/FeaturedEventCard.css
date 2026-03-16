@@ -54,6 +54,11 @@
   width: fit-content;
 }
 
+.location-svg {
+  max-width: 24px;
+  max-height: 24px;
+}
+
 .featured-event-info {
   display: flex;
   flex-direction: column;

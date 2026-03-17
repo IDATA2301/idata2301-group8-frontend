@@ -6,6 +6,7 @@ import Footer from "@components/Footer/Footer";
 import TopBar from "@components/TopBar/TopBar";
 import heroimage from '@assets/heroimage.jpg'
 import FeaturedEventCard from '@components/FeaturedEventCard/FeaturedEventCard';
+import auroraconcert from "@assets/auroraconcert.jpg";
 
 function App() {
 
@@ -78,7 +79,7 @@ function App() {
 
         <section>
           <h2>Upcoming</h2>
-          <EventCard />
+          <EventCard href='/events/aurora-live-concert' imgSrc={auroraconcert} title="Aurora Live Concert" tags={["Conecert", "Bergen, Norway"]} date='Wed, 4. Mar 2026, 17:00' price={890} />
           <hr />
         </section>
 

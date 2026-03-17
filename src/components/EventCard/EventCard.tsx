@@ -1,35 +1,33 @@
+import { Link } from "react-router-dom";
 import "./EventCard.css";
-import auroraconcert from "@assets/auroraconcert.jpg";
 
-export default function EventCard() {
+type Props = {
+  href: string,
+  imgSrc: string,
+  title: string,
+  tags: string[],
+  date: string,
+  price: number
+}
+
+export default function EventCard(p: Props) {
   return (
-    <div className="event-card">
-
+    <Link to={p.href} className="event-card">
       <img
         className="event-card-image"
-        src={auroraconcert}
+        src={p.imgSrc}
         alt="Aurora Concert"
       />
-
       <div className="event-card-box">
-
-        <h3>Aurora Live in Concert</h3>
-
+        <h3>{p.title}</h3>
         <div className="event-tags">
-          <span className="tag">Concert</span>
-          <span className="tag">Bergen, Norway</span>
+          {p.tags.map(tag => (
+            <span className="tag">{tag}</span>
+          ))}
         </div>
-
-        <p className="event-date">
-          Wed, 4 Mar 2026, 17:00
-        </p>
-
-        <p className="event-price">
-          From 890 NOK
-        </p>
-
+        <p className="event-date">{p.date}</p>
+        <p className="event-price">From {p.price} NOK</p>
       </div>
-
-    </div>
+    </Link>
   );
 }

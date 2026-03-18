@@ -1,4 +1,4 @@
-.hero-image::before {
+.hero-image-event::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -23,7 +23,7 @@
   position: absolute;
 }
 
-.hero-image {
+.hero-image-event {
   position: relative;
   height: 639px;
   background-size: cover;

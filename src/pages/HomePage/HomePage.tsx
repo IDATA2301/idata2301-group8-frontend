@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import EventCard from 'src/pages/EventCard/EventCard'
 import { Link } from 'react-router-dom';
 import ScrollToTop from "@utility/ScrollToTop";
@@ -8,21 +10,34 @@ import auroraconcert from "@assets/auroraconcert.jpg";
 
 function App() {
 
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(`/search?q=${query}`);
+  };
   return (
     <>
       <ScrollToTop />
 
-      <div className="hero-image" style={{ backgroundImage: `url(${heroimage})` }}>
+      <div className="hero-image-home" style={{ backgroundImage: `url(${heroimage})` }}>
 
         <main>
           <h1>
             Your Gateway to <br />
             <span className="highlight">Unforgettable</span> Events
           </h1>
-          <div className="search-container">
-            <input placeholder="Search city, dates, events" type="text" className="search-bar" />
-            <button className="search-button">Search</button>
-          </div>
+
+          <form className="search-container" onSubmit={handleSearch}>
+            <input placeholder="Search city, dates, events" type="text"
+              className="search-bar" value={query}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+            />
+            <button type="submit" className="search-button">
+              Search
+            </button>
+          </form>
         </main>
 
       </div>

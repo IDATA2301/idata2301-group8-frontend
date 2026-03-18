@@ -28,7 +28,7 @@ function EventPage(p: Props) {
     <>
 
       <ScrollToTop />
-      <div className="hero-image" style={{ backgroundImage: `url(${p.imgSrc})` }}>
+      <div className="hero-image-event" style={{ backgroundImage: `url(${p.imgSrc})` }}>
       </div>
       <div className="event-page-banner">
         <h1 className="event-page-title">{p.title}</h1>

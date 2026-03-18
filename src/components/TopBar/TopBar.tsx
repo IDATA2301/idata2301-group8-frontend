@@ -8,11 +8,11 @@ type Props = {
 export default function TopBar({ className }: Props) {
   return (
     <header className={`TopBar ${className ?? ""}`}>
-      <div className="menu">☰</div>
+      <button className="menu">☰</button>
 
       <Link to="/" className="logo">NORDiSEAT</Link>
 
-      <div className="register">Sign in / Register</div>
+      <button className="register">Sign in / Register</button>
     </header>
   );
 }

@@ -23,6 +23,8 @@
 
 .menu {
   justify-self: start;
+  background: transparent;
+  border: transparent;
   font-size: 40px;
   cursor: pointer;
   color: #E3E3E3;
@@ -39,7 +41,9 @@
 }
 
 .register {
+  background: transparent;
   justify-self: end;
   font-size: 16px;
+  border: transparent;
   color: #E3E3E3;
 }

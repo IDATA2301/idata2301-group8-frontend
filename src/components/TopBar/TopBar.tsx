@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./TopBar.css";
 
 export default function TopBar() {
@@ -6,7 +7,7 @@ export default function TopBar() {
 
       <div className="menu">☰</div>
 
-      <p className="logo">NORDiSEAT</p>
+      <Link to="/" className="logo">NORDiSEAT</Link>
 
       <div className="register">Sign in / Register</div>
 

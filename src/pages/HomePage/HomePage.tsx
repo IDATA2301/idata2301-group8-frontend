@@ -1,11 +1,9 @@
-import EventCard from '@components/EventCard/EventCard'
+import EventCard from 'src/pages/EventCard/EventCard'
 import { Link } from 'react-router-dom';
 import ScrollToTop from "@utility/ScrollToTop";
 import './Style.css'
-import Footer from "@components/Footer/Footer";
-import TopBar from "@components/TopBar/TopBar";
 import heroimage from '@assets/heroimage.jpg'
-import FeaturedEventCard from '@components/FeaturedEventCard/FeaturedEventCard';
+import FeaturedEventCard from 'src/pages/FeaturedEventCard/FeaturedEventCard';
 import auroraconcert from "@assets/auroraconcert.jpg";
 
 function App() {
@@ -15,8 +13,6 @@ function App() {
       <ScrollToTop />
 
       <div className="hero-image" style={{ backgroundImage: `url(${heroimage})` }}>
-
-        <TopBar />
 
         <main>
           <h1>
@@ -87,9 +83,9 @@ function App() {
       </div>
 
 
-      <Footer />
     </>
   )
 }
 
 export default App
+

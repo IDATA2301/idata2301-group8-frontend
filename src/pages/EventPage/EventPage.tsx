@@ -1,6 +1,4 @@
-import TopBar from "@components/TopBar/TopBar";
 import "./style.css"
-import Footer from "@components/Footer/Footer";
 import ChooseTickets from "./ChooseTickets";
 import { type Ticket } from "./TicketCard.tsx";
 import ScrollToTop from "@utility/ScrollToTop.tsx";
@@ -31,9 +29,6 @@ function EventPage(p: Props) {
 
       <ScrollToTop />
       <div className="hero-image" style={{ backgroundImage: `url(${p.imgSrc})` }}>
-        <div className="top-bar-transition-overlay">
-          <TopBar />
-        </div>
       </div>
       <div className="event-page-banner">
         <h1 className="event-page-title">{p.title}</h1>
@@ -65,7 +60,6 @@ function EventPage(p: Props) {
 
         </div>
       </div>
-      <Footer />
     </>
   )
 }

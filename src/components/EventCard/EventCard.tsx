@@ -22,7 +22,7 @@ export default function EventCard(p: Props) {
         <h3>{p.title}</h3>
         <div className="event-tags">
           {p.tags.map(tag => (
-            <span className="tag">{tag}</span>
+            <span key={tag} className="tag">{tag}</span>
           ))}
         </div>
         <p className="event-date">{p.date}</p>

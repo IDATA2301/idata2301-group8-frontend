@@ -1,6 +1,6 @@
 import "./FeaturedEventCard.css"
 import footballfeatured from "@assets/footballfeatured.jpeg"
-import location from "@assets/location.svg"
+import location from "@assets/icons/location.svg"
 
 export default function FeaturedEventCard() {
   return (

@@ -5,6 +5,7 @@ import SearchPage from '@pages/SearchPage/SearchPage'
 import { useLocation } from "react-router-dom";
 import HomePage from '@pages/HomePage/HomePage'
 import EventPageLoader from '@pages/EventPage'
+import ScrollToTop from '@utility/ScrollToTop';
 
 function App() {
   const location = useLocation();
@@ -16,7 +17,7 @@ function App() {
   return (
     <>
       <TopBar className={isHeroPage ? "topbar-overlay" : ""} />
-
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/events/:eventslug" element={<EventPageLoader />} />

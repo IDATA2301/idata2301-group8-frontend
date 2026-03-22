@@ -2,12 +2,13 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import "./style.css"
-
+import "@utility/ScrollToTop"
 
 import SearchBar from '@pages/SearchPage/SearchBar';
 import Filters from "@pages/SearchPage/Filters";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
 import EventList from '@pages/SearchPage/EventList';
+import ScrollToTop from '@utility/ScrollToTop';
 
 function SearchPage() {
   const location = useLocation();

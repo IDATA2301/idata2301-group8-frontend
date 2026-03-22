@@ -55,11 +55,10 @@ const Filters = ({ filters, setFilters }: Props) => {
 
   return (
     <div className="filters">
-      <h3>Filter</h3>
+      <h3>Filters</h3>
 
-      {/* CATEGORY */}
       <div className="filter-section">
-        <h3>Category</h3>
+        <h3>Categories</h3>
 
         {categories.map(cat => (
           <label key={cat} className="checkbox-row">
@@ -80,7 +79,7 @@ const Filters = ({ filters, setFilters }: Props) => {
 
       {/* DATE */}
       <div className="filter-section">
-        <h4>Date</h4>
+        <h4>Dates</h4>
 
         <div className="date-row">
           <label>Event start after</label>
@@ -142,7 +141,7 @@ const Filters = ({ filters, setFilters }: Props) => {
       </div>
 
       <div className="filter-section">
-        <h4>Location</h4>
+        <h4>Locations</h4>
 
         {locations.map(loc => (
           <label key={loc} className="checkbox-row">

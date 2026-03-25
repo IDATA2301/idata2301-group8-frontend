@@ -11,6 +11,11 @@ type Event = {
 };
 
 const EventList = ({ events }: { events: Event[] }) => {
+
+  if (events.length === 0) {
+    return <p>No events found.</p>;
+  }
+
   return (
     <section className="events-grid">
       {events.map(event => (

@@ -1,4 +1,5 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import "./style.css"
@@ -8,10 +9,11 @@ import SearchBar from '@pages/SearchPage/SearchBar';
 import Filters from "@pages/SearchPage/Filters";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
 import EventList from '@pages/SearchPage/EventList';
-import ScrollToTop from '@utility/ScrollToTop';
 
 function SearchPage() {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const params = new URLSearchParams(location.search);
   const queryParam = params.get('q') || '';
 
@@ -36,18 +38,22 @@ function SearchPage() {
     price: number;
   };
 
-  const [results, setResults] = useState<Event[]>([]);
+  const { data: results = [], isLoading, error } = useQuery({
+    queryKey: ['events', filters, query],
+    queryFn: async () => {
+      const res = await axios.get<Event[]>("/api/events", {
+        params: { ...filters, q: query }
+      });
+      return res.data;
+    }
+  });
 
   useEffect(() => {
-    fetchResults();
-  }, [filters, query]);
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
 
-  const fetchResults = async () => {
-    const res = await axios.get<Event[]>("/api/events", {
-      params: { ...filters, q: query }
-    });
-    setResults(res.data);
-  };
+    navigate(`?${params.toString()}`, { replace: true });
+  }, [query, navigate]);
 
   return (
     <div className="search-page">
@@ -55,7 +61,10 @@ function SearchPage() {
 
       <div className="search-content">
         <Filters filters={filters} setFilters={setFilters} />
-        <EventList events={results} />
+
+        {isLoading && <p>Loading...</p>}
+        {error && <p>Something went wrong</p>}
+        {!isLoading && !error && <EventList events={results} />}
       </div>
     </div>
   );

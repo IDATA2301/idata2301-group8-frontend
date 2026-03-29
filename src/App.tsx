@@ -7,6 +7,7 @@ import HomePage from '@pages/HomePage/HomePage'
 import EventPageLoader from '@pages/EventPage'
 import ScrollToTop from '@utility/ScrollToTop';
 
+
 function App() {
   const location = useLocation();
 

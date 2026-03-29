@@ -15,27 +15,29 @@ type Props = {
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
 };
 
+const categories = [
+  "Music festival",
+  "Sports",
+  "Comedy Show",
+  "Expo",
+  "Technology",
+  "Arts",
+  "Theater",
+  "Dance",
+  "Cultural Performance",
+  "Film festival",
+  "Art Exhibition",
+  "Historical Performance"
+];
+
+const locations = ["Oslo", "Bergen", "Trondheim"];
+
+const parseNumber = (value: string) => {
+  return value === "" ? 0 : Number(value);
+};
+
+
 const Filters = ({ filters, setFilters }: Props) => {
-  const categories = [
-    "Music festival",
-    "Sports",
-    "Comedy Show",
-    "Expo",
-    "Technology",
-    "Arts",
-    "Theater",
-    "Dance",
-    "Cultural Performance",
-    "Film festival",
-    "Art Exhibition",
-    "Historical Performance"
-  ];
-
-  const locations = ["Oslo", "Bergen", "Trondheim"];
-
-  const parseNumber = (value: string) => {
-    return value === "" ? 0 : Number(value);
-  };
 
   const toggleArrayValue = (
     key: "categories" | "locations",

@@ -1,23 +1,54 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
-import axios from "axios";
-import "./style.css"
-import "@utility/ScrollToTop"
+import { useState } from 'react';
+import "./style.css";
+import "@utility/ScrollToTop";
 
 import SearchBar from '@pages/SearchPage/SearchBar';
 import Filters from "@pages/SearchPage/Filters";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
 import EventList from '@pages/SearchPage/EventList';
 
+type Event = {
+  id: string;
+  title: string;
+  image: string;
+  category: string;
+  location: string;
+  date: string;
+  price: number;
+};
+
+async function typedFetch<T>(url: string, params?: Object, options?: RequestInit): Promise<T> {
+  if (params) {
+    const searchParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      searchParams.append(key, String(value));
+    });
+
+    url = `${url}?${searchParams.toString()}`;
+  }
+
+  const response = await fetch(url, options);
+  return response.json();
+}
+
 function SearchPage() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const params = new URLSearchParams(location.search);
-  const queryParam = params.get('q') || '';
+  const query = searchParams.get("q") || "";
 
-  const [query, setQuery] = useState(queryParam);
+  const setQuery = (value: string) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+
+      if (value) newParams.set("q", value);
+      else newParams.delete("q");
+
+      return newParams;
+    }, { replace: true });
+  };
 
   const [filters, setFilters] = useState<FiltersType>({
     categories: [],
@@ -28,32 +59,11 @@ function SearchPage() {
     locations: []
   });
 
-  type Event = {
-    id: string;
-    title: string;
-    image: string;
-    category: string;
-    location: string;
-    date: string;
-    price: number;
-  };
-
   const { data: results = [], isLoading, error } = useQuery({
     queryKey: ['events', filters, query],
-    queryFn: async () => {
-      const res = await axios.get<Event[]>("/api/events", {
-        params: { ...filters, q: query }
-      });
-      return res.data;
-    }
+    queryFn: () =>
+      typedFetch<Event[]>("/api/events", { ...filters, q: query })
   });
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (query) params.set("q", query);
-
-    navigate(`?${params.toString()}`, { replace: true });
-  }, [query, navigate]);
 
   return (
     <div className="search-page">

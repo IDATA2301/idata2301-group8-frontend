@@ -12,8 +12,8 @@ export default function Footer() {
                         NORDiSEAT
                     </Link>
 
+                    {/* TODO: Change to links, not buttons */}
                     <div className="footer-columns">
-
                         <div className="footer-col">
                             <h4>Categories</h4>
                             <button>Festivals</button>

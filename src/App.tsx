@@ -5,27 +5,31 @@ import SearchPage from '@pages/SearchPage/SearchPage'
 import { useLocation } from "react-router-dom";
 import HomePage from '@pages/HomePage/HomePage'
 import EventPageLoader from '@pages/EventPage'
+import ScrollToTop from '@utility/ScrollToTop';
+import AboutUsPage from '@pages/AboutUsPage/AboutUsPage';
+
 
 function App() {
-  const location = useLocation();
+    const location = useLocation();
 
-  const isHeroPage =
-    location.pathname === "/" ||
-    location.pathname.startsWith("/events/");
+    const isHeroPage =
+        location.pathname === "/" ||
+        location.pathname.startsWith("/events/");
 
-  return (
-    <>
-      <TopBar className={isHeroPage ? "topbar-overlay" : ""} />
+    return (
+        <>
+            <TopBar className={isHeroPage ? "topbar-overlay" : ""} />
+            <ScrollToTop />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/events/:eventslug" element={<EventPageLoader />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/aboutUs" element={<AboutUsPage />} />
+            </Routes>
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/events/:eventslug" element={<EventPageLoader />} />
-        <Route path="/search" element={<SearchPage />} />
-      </Routes>
-
-      <Footer />
-    </>
-  );
+            <Footer />
+        </>
+    );
 }
 
 export default App

@@ -33,8 +33,19 @@ const EventList = ({ query, filters }: Params) => {
 
   const { data: events = [], isLoading, error } = useQuery({
     queryKey: ['events', filters, query],
-    queryFn: () =>
-      typedFetch<Event[]>("/api/events", { ...filters, q: query })
+    queryFn: async () => {
+      const data = await typedFetch<any[]>("http://localhost:8080/events", { ...filters, q: query });
+
+      return data.map((e) => ({
+        id: e.slug,                     // use slug as id
+        title: e.eventName,
+        image: `/images/${e.slug}.jpg`,
+        category: "Event",              // temp
+        location: "Unknown",            // temp
+        date: "TBA",                    // temp
+        price: 0                        // temp
+      }));
+    }
   });
 
   if (isLoading) {

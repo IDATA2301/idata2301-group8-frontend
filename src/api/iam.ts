@@ -23,7 +23,7 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query';
 
-import { customFetch } from './client';
+import { customFetchIamApi } from './client';
 export interface SignUpRequest {
   email?: string;
   password?: string;
@@ -173,17 +173,17 @@ export interface GlobalRoleChangeRequestDto {
   reviewedAt?: string;
 }
 
-export type GetPendingApprovalRequestsParams = {
+export type GetApprovalRequestsParams = {
 /**
  * Optional query parameter to filter approval requests by their status. If not provided, all approval requests will be returned.
  */
-status?: GetPendingApprovalRequestsStatus;
+status?: GetApprovalRequestsStatus;
 };
 
-export type GetPendingApprovalRequestsStatus = typeof GetPendingApprovalRequestsStatus[keyof typeof GetPendingApprovalRequestsStatus];
+export type GetApprovalRequestsStatus = typeof GetApprovalRequestsStatus[keyof typeof GetApprovalRequestsStatus];
 
 
-export const GetPendingApprovalRequestsStatus = {
+export const GetApprovalRequestsStatus = {
   pending: 'pending',
   approved: 'approved',
   rejected: 'rejected',
@@ -226,7 +226,7 @@ export const getSignupUrl = () => {
  */
 export const signup = async (signUpRequest: SignUpRequest, options?: RequestInit): Promise<signupResponse> => {
 
-  return customFetch<signupResponse>(getSignupUrl(),
+  return customFetchIamApi<signupResponse>(getSignupUrl(),
   {
     ...options,
     method: 'POST',
@@ -240,7 +240,7 @@ export const signup = async (signUpRequest: SignUpRequest, options?: RequestInit
 
 
 export const getSignupMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignUpRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignUpRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignUpRequest}, TContext> => {
 
 const mutationKey = ['signup'];
@@ -274,7 +274,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary User signup
  */
 export const useSignup = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignUpRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignUpRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof signup>>,
         TError,
@@ -317,7 +317,7 @@ export const getLoginUrl = () => {
  */
 export const login = async (loginRequest: LoginRequest, options?: RequestInit): Promise<loginResponse> => {
 
-  return customFetch<loginResponse>(getLoginUrl(),
+  return customFetchIamApi<loginResponse>(getLoginUrl(),
   {
     ...options,
     method: 'POST',
@@ -331,7 +331,7 @@ export const login = async (loginRequest: LoginRequest, options?: RequestInit): 
 
 
 export const getLoginMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext> => {
 
 const mutationKey = ['login'];
@@ -365,7 +365,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary User login
  */
 export const useLogin = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof login>>,
         TError,
@@ -408,7 +408,7 @@ export const getCreateGlobalRoleChangeRequestUrl = () => {
  */
 export const createGlobalRoleChangeRequest = async (globalRoleChangeRequest: GlobalRoleChangeRequest, options?: RequestInit): Promise<createGlobalRoleChangeRequestResponse> => {
 
-  return customFetch<createGlobalRoleChangeRequestResponse>(getCreateGlobalRoleChangeRequestUrl(),
+  return customFetchIamApi<createGlobalRoleChangeRequestResponse>(getCreateGlobalRoleChangeRequestUrl(),
   {
     ...options,
     method: 'POST',
@@ -422,7 +422,7 @@ export const createGlobalRoleChangeRequest = async (globalRoleChangeRequest: Glo
 
 
 export const getCreateGlobalRoleChangeRequestMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGlobalRoleChangeRequest>>, TError,{data: GlobalRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGlobalRoleChangeRequest>>, TError,{data: GlobalRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createGlobalRoleChangeRequest>>, TError,{data: GlobalRoleChangeRequest}, TContext> => {
 
 const mutationKey = ['createGlobalRoleChangeRequest'];
@@ -456,7 +456,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Create a global role change approval request
  */
 export const useCreateGlobalRoleChangeRequest = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGlobalRoleChangeRequest>>, TError,{data: GlobalRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGlobalRoleChangeRequest>>, TError,{data: GlobalRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createGlobalRoleChangeRequest>>,
         TError,
@@ -499,7 +499,7 @@ export const getCreateCompanyRoleChangeRequestUrl = () => {
  */
 export const createCompanyRoleChangeRequest = async (companyRoleChangeRequest: CompanyRoleChangeRequest, options?: RequestInit): Promise<createCompanyRoleChangeRequestResponse> => {
 
-  return customFetch<createCompanyRoleChangeRequestResponse>(getCreateCompanyRoleChangeRequestUrl(),
+  return customFetchIamApi<createCompanyRoleChangeRequestResponse>(getCreateCompanyRoleChangeRequestUrl(),
   {
     ...options,
     method: 'POST',
@@ -513,7 +513,7 @@ export const createCompanyRoleChangeRequest = async (companyRoleChangeRequest: C
 
 
 export const getCreateCompanyRoleChangeRequestMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyRoleChangeRequest>>, TError,{data: CompanyRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyRoleChangeRequest>>, TError,{data: CompanyRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCompanyRoleChangeRequest>>, TError,{data: CompanyRoleChangeRequest}, TContext> => {
 
 const mutationKey = ['createCompanyRoleChangeRequest'];
@@ -547,7 +547,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Create a company role change approval request
  */
 export const useCreateCompanyRoleChangeRequest = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyRoleChangeRequest>>, TError,{data: CompanyRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyRoleChangeRequest>>, TError,{data: CompanyRoleChangeRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCompanyRoleChangeRequest>>,
         TError,
@@ -590,7 +590,7 @@ export const getCreateCompanyCreationRequestUrl = () => {
  */
 export const createCompanyCreationRequest = async (companyCreationRequest: CompanyCreationRequest, options?: RequestInit): Promise<createCompanyCreationRequestResponse> => {
 
-  return customFetch<createCompanyCreationRequestResponse>(getCreateCompanyCreationRequestUrl(),
+  return customFetchIamApi<createCompanyCreationRequestResponse>(getCreateCompanyCreationRequestUrl(),
   {
     ...options,
     method: 'POST',
@@ -604,7 +604,7 @@ export const createCompanyCreationRequest = async (companyCreationRequest: Compa
 
 
 export const getCreateCompanyCreationRequestMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyCreationRequest>>, TError,{data: CompanyCreationRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyCreationRequest>>, TError,{data: CompanyCreationRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCompanyCreationRequest>>, TError,{data: CompanyCreationRequest}, TContext> => {
 
 const mutationKey = ['createCompanyCreationRequest'];
@@ -638,7 +638,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Create a company creation approval request
  */
 export const useCreateCompanyCreationRequest = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyCreationRequest>>, TError,{data: CompanyCreationRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyCreationRequest>>, TError,{data: CompanyCreationRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCompanyCreationRequest>>,
         TError,
@@ -686,7 +686,7 @@ export const getDeleteApprovalRequestUrl = (id: number,) => {
  */
 export const deleteApprovalRequest = async (id: number, options?: RequestInit): Promise<deleteApprovalRequestResponse> => {
 
-  return customFetch<deleteApprovalRequestResponse>(getDeleteApprovalRequestUrl(id),
+  return customFetchIamApi<deleteApprovalRequestResponse>(getDeleteApprovalRequestUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -699,7 +699,7 @@ export const deleteApprovalRequest = async (id: number, options?: RequestInit): 
 
 
 export const getDeleteApprovalRequestMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApprovalRequest>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApprovalRequest>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteApprovalRequest>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['deleteApprovalRequest'];
@@ -733,7 +733,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Delete an approval request
  */
 export const useDeleteApprovalRequest = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApprovalRequest>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApprovalRequest>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApprovalRequest>>,
         TError,
@@ -787,7 +787,7 @@ export const getReviewApprovalRequestUrl = (id: number,) => {
 export const reviewApprovalRequest = async (id: number,
     approvalRequestReviewRequest: ApprovalRequestReviewRequest, options?: RequestInit): Promise<reviewApprovalRequestResponse> => {
 
-  return customFetch<reviewApprovalRequestResponse>(getReviewApprovalRequestUrl(id),
+  return customFetchIamApi<reviewApprovalRequestResponse>(getReviewApprovalRequestUrl(id),
   {
     ...options,
     method: 'PATCH',
@@ -801,7 +801,7 @@ export const reviewApprovalRequest = async (id: number,
 
 
 export const getReviewApprovalRequestMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviewApprovalRequest>>, TError,{id: number;data: ApprovalRequestReviewRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviewApprovalRequest>>, TError,{id: number;data: ApprovalRequestReviewRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof reviewApprovalRequest>>, TError,{id: number;data: ApprovalRequestReviewRequest}, TContext> => {
 
 const mutationKey = ['reviewApprovalRequest'];
@@ -835,7 +835,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Review an approval request
  */
 export const useReviewApprovalRequest = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviewApprovalRequest>>, TError,{id: number;data: ApprovalRequestReviewRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reviewApprovalRequest>>, TError,{id: number;data: ApprovalRequestReviewRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof reviewApprovalRequest>>,
         TError,
@@ -871,7 +871,7 @@ export const getGetUsersUrl = () => {
  */
 export const getUsers = async ( options?: RequestInit): Promise<getUsersResponse> => {
 
-  return customFetch<getUsersResponse>(getGetUsersUrl(),
+  return customFetchIamApi<getUsersResponse>(getGetUsersUrl(),
   {
     ...options,
     method: 'GET'
@@ -891,7 +891,7 @@ export const getGetUsersQueryKey = () => {
     }
 
 
-export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -920,7 +920,7 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
           TError,
           Awaited<ReturnType<typeof getUsers>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError = unknown>(
@@ -930,11 +930,11 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
           TError,
           Awaited<ReturnType<typeof getUsers>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -942,7 +942,7 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
  */
 
 export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -985,7 +985,7 @@ export const getGetGlobalRolesUrl = () => {
  */
 export const getGlobalRoles = async ( options?: RequestInit): Promise<getGlobalRolesResponse> => {
 
-  return customFetch<getGlobalRolesResponse>(getGetGlobalRolesUrl(),
+  return customFetchIamApi<getGlobalRolesResponse>(getGetGlobalRolesUrl(),
   {
     ...options,
     method: 'GET'
@@ -1005,7 +1005,7 @@ export const getGetGlobalRolesQueryKey = () => {
     }
 
 
-export const getGetGlobalRolesQueryOptions = <TData = Awaited<ReturnType<typeof getGlobalRoles>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGlobalRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetGlobalRolesQueryOptions = <TData = Awaited<ReturnType<typeof getGlobalRoles>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGlobalRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1034,7 +1034,7 @@ export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRol
           TError,
           Awaited<ReturnType<typeof getGlobalRoles>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRoles>>, TError = unknown>(
@@ -1044,11 +1044,11 @@ export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRol
           TError,
           Awaited<ReturnType<typeof getGlobalRoles>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRoles>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGlobalRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGlobalRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1056,7 +1056,7 @@ export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRol
  */
 
 export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRoles>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGlobalRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGlobalRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1073,19 +1073,19 @@ export function useGetGlobalRoles<TData = Awaited<ReturnType<typeof getGlobalRol
 
 
 
-export type getRolesResponse200 = {
+export type getCompanyRolesResponse200 = {
   data: RoleDto[]
   status: 200
 }
 
-export type getRolesResponseSuccess = (getRolesResponse200) & {
+export type getCompanyRolesResponseSuccess = (getCompanyRolesResponse200) & {
   headers: Headers;
 };
 ;
 
-export type getRolesResponse = (getRolesResponseSuccess)
+export type getCompanyRolesResponse = (getCompanyRolesResponseSuccess)
 
-export const getGetRolesUrl = () => {
+export const getGetCompanyRolesUrl = () => {
 
 
 
@@ -1097,9 +1097,9 @@ export const getGetRolesUrl = () => {
  * Retrieve a list of all company roles
  * @summary Get company roles
  */
-export const getRoles = async ( options?: RequestInit): Promise<getRolesResponse> => {
+export const getCompanyRoles = async ( options?: RequestInit): Promise<getCompanyRolesResponse> => {
 
-  return customFetch<getRolesResponse>(getGetRolesUrl(),
+  return customFetchIamApi<getCompanyRolesResponse>(getGetCompanyRolesUrl(),
   {
     ...options,
     method: 'GET'
@@ -1112,69 +1112,69 @@ export const getRoles = async ( options?: RequestInit): Promise<getRolesResponse
 
 
 
-export const getGetRolesQueryKey = () => {
+export const getGetCompanyRolesQueryKey = () => {
     return [
     `/company-roles`
     ] as const;
     }
 
 
-export const getGetRolesQueryOptions = <TData = Awaited<ReturnType<typeof getRoles>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCompanyRolesQueryOptions = <TData = Awaited<ReturnType<typeof getCompanyRoles>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanyRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetRolesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetCompanyRolesQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoles>>> = ({ signal }) => getRoles({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCompanyRoles>>> = ({ signal }) => getCompanyRoles({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRoles>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCompanyRoles>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetRolesQueryResult = NonNullable<Awaited<ReturnType<typeof getRoles>>>
-export type GetRolesQueryError = unknown
+export type GetCompanyRolesQueryResult = NonNullable<Awaited<ReturnType<typeof getCompanyRoles>>>
+export type GetCompanyRolesQueryError = unknown
 
 
-export function useGetRoles<TData = Awaited<ReturnType<typeof getRoles>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoles>>, TError, TData>> & Pick<
+export function useGetCompanyRoles<TData = Awaited<ReturnType<typeof getCompanyRoles>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanyRoles>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getRoles>>,
+          Awaited<ReturnType<typeof getCompanyRoles>>,
           TError,
-          Awaited<ReturnType<typeof getRoles>>
+          Awaited<ReturnType<typeof getCompanyRoles>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRoles<TData = Awaited<ReturnType<typeof getRoles>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoles>>, TError, TData>> & Pick<
+export function useGetCompanyRoles<TData = Awaited<ReturnType<typeof getCompanyRoles>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanyRoles>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getRoles>>,
+          Awaited<ReturnType<typeof getCompanyRoles>>,
           TError,
-          Awaited<ReturnType<typeof getRoles>>
+          Awaited<ReturnType<typeof getCompanyRoles>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRoles<TData = Awaited<ReturnType<typeof getRoles>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetCompanyRoles<TData = Awaited<ReturnType<typeof getCompanyRoles>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanyRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get company roles
  */
 
-export function useGetRoles<TData = Awaited<ReturnType<typeof getRoles>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetCompanyRoles<TData = Awaited<ReturnType<typeof getCompanyRoles>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanyRoles>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetRolesQueryOptions(options)
+  const queryOptions = getGetCompanyRolesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1213,7 +1213,7 @@ export const getGetCompaniesUrl = () => {
  */
 export const getCompanies = async ( options?: RequestInit): Promise<getCompaniesResponse> => {
 
-  return customFetch<getCompaniesResponse>(getGetCompaniesUrl(),
+  return customFetchIamApi<getCompaniesResponse>(getGetCompaniesUrl(),
   {
     ...options,
     method: 'GET'
@@ -1233,7 +1233,7 @@ export const getGetCompaniesQueryKey = () => {
     }
 
 
-export const getGetCompaniesQueryOptions = <TData = Awaited<ReturnType<typeof getCompanies>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanies>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCompaniesQueryOptions = <TData = Awaited<ReturnType<typeof getCompanies>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanies>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1262,7 +1262,7 @@ export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>
           TError,
           Awaited<ReturnType<typeof getCompanies>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>, TError = unknown>(
@@ -1272,11 +1272,11 @@ export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>
           TError,
           Awaited<ReturnType<typeof getCompanies>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanies>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanies>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1284,7 +1284,7 @@ export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>
  */
 
 export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanies>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCompanies>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1301,26 +1301,26 @@ export function useGetCompanies<TData = Awaited<ReturnType<typeof getCompanies>>
 
 
 
-export type getPendingApprovalRequestsResponse200 = {
+export type getApprovalRequestsResponse200 = {
   data: string[]
   status: 200
 }
 
-export type getPendingApprovalRequestsResponse403 = {
+export type getApprovalRequestsResponse403 = {
   data: void
   status: 403
 }
 
-export type getPendingApprovalRequestsResponseSuccess = (getPendingApprovalRequestsResponse200) & {
+export type getApprovalRequestsResponseSuccess = (getApprovalRequestsResponse200) & {
   headers: Headers;
 };
-export type getPendingApprovalRequestsResponseError = (getPendingApprovalRequestsResponse403) & {
+export type getApprovalRequestsResponseError = (getApprovalRequestsResponse403) & {
   headers: Headers;
 };
 
-export type getPendingApprovalRequestsResponse = (getPendingApprovalRequestsResponseSuccess | getPendingApprovalRequestsResponseError)
+export type getApprovalRequestsResponse = (getApprovalRequestsResponseSuccess | getApprovalRequestsResponseError)
 
-export const getGetPendingApprovalRequestsUrl = (params?: GetPendingApprovalRequestsParams,) => {
+export const getGetApprovalRequestsUrl = (params?: GetApprovalRequestsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -1339,9 +1339,9 @@ export const getGetPendingApprovalRequestsUrl = (params?: GetPendingApprovalRequ
  * Get all approval requests, or filter by status
  * @summary Get approval requests
  */
-export const getPendingApprovalRequests = async (params?: GetPendingApprovalRequestsParams, options?: RequestInit): Promise<getPendingApprovalRequestsResponse> => {
+export const getApprovalRequests = async (params?: GetApprovalRequestsParams, options?: RequestInit): Promise<getApprovalRequestsResponse> => {
 
-  return customFetch<getPendingApprovalRequestsResponse>(getGetPendingApprovalRequestsUrl(params),
+  return customFetchIamApi<getApprovalRequestsResponse>(getGetApprovalRequestsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1354,69 +1354,69 @@ export const getPendingApprovalRequests = async (params?: GetPendingApprovalRequ
 
 
 
-export const getGetPendingApprovalRequestsQueryKey = (params?: GetPendingApprovalRequestsParams,) => {
+export const getGetApprovalRequestsQueryKey = (params?: GetApprovalRequestsParams,) => {
     return [
     `/approval-requests`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetPendingApprovalRequestsQueryOptions = <TData = Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError = void>(params?: GetPendingApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApprovalRequestsQueryOptions = <TData = Awaited<ReturnType<typeof getApprovalRequests>>, TError = void>(params?: GetApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovalRequests>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetPendingApprovalRequestsQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetApprovalRequestsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingApprovalRequests>>> = ({ signal }) => getPendingApprovalRequests(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApprovalRequests>>> = ({ signal }) => getApprovalRequests(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApprovalRequests>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetPendingApprovalRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof getPendingApprovalRequests>>>
-export type GetPendingApprovalRequestsQueryError = void
+export type GetApprovalRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof getApprovalRequests>>>
+export type GetApprovalRequestsQueryError = void
 
 
-export function useGetPendingApprovalRequests<TData = Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError = void>(
- params: undefined |  GetPendingApprovalRequestsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError, TData>> & Pick<
+export function useGetApprovalRequests<TData = Awaited<ReturnType<typeof getApprovalRequests>>, TError = void>(
+ params: undefined |  GetApprovalRequestsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovalRequests>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPendingApprovalRequests>>,
+          Awaited<ReturnType<typeof getApprovalRequests>>,
           TError,
-          Awaited<ReturnType<typeof getPendingApprovalRequests>>
+          Awaited<ReturnType<typeof getApprovalRequests>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPendingApprovalRequests<TData = Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError = void>(
- params?: GetPendingApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError, TData>> & Pick<
+export function useGetApprovalRequests<TData = Awaited<ReturnType<typeof getApprovalRequests>>, TError = void>(
+ params?: GetApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovalRequests>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPendingApprovalRequests>>,
+          Awaited<ReturnType<typeof getApprovalRequests>>,
           TError,
-          Awaited<ReturnType<typeof getPendingApprovalRequests>>
+          Awaited<ReturnType<typeof getApprovalRequests>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetPendingApprovalRequests<TData = Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError = void>(
- params?: GetPendingApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetApprovalRequests<TData = Awaited<ReturnType<typeof getApprovalRequests>>, TError = void>(
+ params?: GetApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovalRequests>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get approval requests
  */
 
-export function useGetPendingApprovalRequests<TData = Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError = void>(
- params?: GetPendingApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPendingApprovalRequests>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetApprovalRequests<TData = Awaited<ReturnType<typeof getApprovalRequests>>, TError = void>(
+ params?: GetApprovalRequestsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovalRequests>>, TError, TData>>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetPendingApprovalRequestsQueryOptions(params,options)
+  const queryOptions = getGetApprovalRequestsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1467,7 +1467,7 @@ export const getDeleteUserUrl = (id: string,) => {
  */
 export const deleteUser = async (id: string, options?: RequestInit): Promise<deleteUserResponse> => {
 
-  return customFetch<deleteUserResponse>(getDeleteUserUrl(id),
+  return customFetchIamApi<deleteUserResponse>(getDeleteUserUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -1480,7 +1480,7 @@ export const deleteUser = async (id: string, options?: RequestInit): Promise<del
 
 
 export const getDeleteUserMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext> => {
 
 const mutationKey = ['deleteUser'];
@@ -1514,7 +1514,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Delete user
  */
 export const useDeleteUser = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteUser>>,
         TError,
@@ -1524,19 +1524,19 @@ export const useDeleteUser = <TError = void,
       return useMutation(getDeleteUserMutationOptions(options), queryClient);
     }
 
-export type deleteAccountResponse200 = {
+export type deleteMeResponse200 = {
   data: void
   status: 200
 }
 
-export type deleteAccountResponseSuccess = (deleteAccountResponse200) & {
+export type deleteMeResponseSuccess = (deleteMeResponse200) & {
   headers: Headers;
 };
 ;
 
-export type deleteAccountResponse = (deleteAccountResponseSuccess)
+export type deleteMeResponse = (deleteMeResponseSuccess)
 
-export const getDeleteAccountUrl = () => {
+export const getDeleteMeUrl = () => {
 
 
 
@@ -1548,9 +1548,9 @@ export const getDeleteAccountUrl = () => {
  * Delete the authenticated user's account
  * @summary Delete user account
  */
-export const deleteAccount = async ( options?: RequestInit): Promise<deleteAccountResponse> => {
+export const deleteMe = async ( options?: RequestInit): Promise<deleteMeResponse> => {
 
-  return customFetch<deleteAccountResponse>(getDeleteAccountUrl(),
+  return customFetchIamApi<deleteMeResponse>(getDeleteMeUrl(),
   {
     ...options,
     method: 'DELETE'
@@ -1562,11 +1562,11 @@ export const deleteAccount = async ( options?: RequestInit): Promise<deleteAccou
 
 
 
-export const getDeleteAccountMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAccount>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteAccount>>, TError,void, TContext> => {
+export const getDeleteMeMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext> => {
 
-const mutationKey = ['deleteAccount'];
+const mutationKey = ['deleteMe'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1576,10 +1576,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAccount>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteMe>>, void> = () => {
 
 
-          return  deleteAccount(requestOptions)
+          return  deleteMe(requestOptions)
         }
 
 
@@ -1589,22 +1589,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteAccountMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAccount>>>
+    export type DeleteMeMutationResult = NonNullable<Awaited<ReturnType<typeof deleteMe>>>
 
-    export type DeleteAccountMutationError = unknown
+    export type DeleteMeMutationError = unknown
 
     /**
  * @summary Delete user account
  */
-export const useDeleteAccount = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAccount>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+export const useDeleteMe = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteAccount>>,
+        Awaited<ReturnType<typeof deleteMe>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getDeleteAccountMutationOptions(options), queryClient);
+      return useMutation(getDeleteMeMutationOptions(options), queryClient);
     }
 
 export type deleteCompanyResponse204 = {
@@ -1645,7 +1645,7 @@ export const getDeleteCompanyUrl = (id: number,) => {
  */
 export const deleteCompany = async (id: number, options?: RequestInit): Promise<deleteCompanyResponse> => {
 
-  return customFetch<deleteCompanyResponse>(getDeleteCompanyUrl(id),
+  return customFetchIamApi<deleteCompanyResponse>(getDeleteCompanyUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -1658,7 +1658,7 @@ export const deleteCompany = async (id: number, options?: RequestInit): Promise<
 
 
 export const getDeleteCompanyMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['deleteCompany'];
@@ -1692,7 +1692,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Delete a company
  */
 export const useDeleteCompany = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCompany>>,
         TError,

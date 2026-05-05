@@ -85,6 +85,11 @@ h4 {
   display: grid;
   grid-template-columns: 334px 1fr;
   gap: 30px;
+  margin-top: 30px;
+}
+
+.events-grid {
+  align-items: start;
 }
 
 .filters {

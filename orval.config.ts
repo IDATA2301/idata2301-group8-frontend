@@ -14,20 +14,20 @@ export default {
     }
   },
 
-  events: {
-    input: 'http://localhost:8080/v3/api-docs',
-    output: {
-      tsconfig: './tsconfig.app.json',
-      target: './src/api/events.ts',
-      client: 'react-query',
-      override: {
-        mutator: {
-          path: './src/api/client.ts',
-          name: 'customFetchEventApi'
-        }
-      }
-    }
-  },
+  // events: {
+  //   input: 'http://localhost:8080/v3/api-docs',
+  //   output: {
+  //     tsconfig: './tsconfig.app.json',
+  //     target: './src/api/events.ts',
+  //     client: 'react-query',
+  //     override: {
+  //       mutator: {
+  //         path: './src/api/client.ts',
+  //         name: 'customFetchEventApi'
+  //       }
+  //     }
+  //   }
+  // },
 
   // order: {
   //   input: 'http://localhost:8080/v3/api-docs',

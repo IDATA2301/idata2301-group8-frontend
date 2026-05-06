@@ -7,29 +7,31 @@ import HomePage from '@pages/HomePage/HomePage'
 import EventPageLoader from '@pages/EventPage'
 import ScrollToTop from '@utility/ScrollToTop';
 import AboutUsPage from '@pages/AboutUsPage/AboutUsPage';
+import { Toaster } from '@components/Toast';
 
 
 function App() {
-    const location = useLocation();
+  const location = useLocation();
 
-    const isHeroPage =
-        location.pathname === "/" ||
-        location.pathname.startsWith("/events/");
+  const isHeroPage =
+    location.pathname === "/" ||
+    location.pathname.startsWith("/events/");
 
-    return (
-        <>
-            <TopBar className={isHeroPage ? "topbar-overlay" : ""} />
-            <ScrollToTop />
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/events/:eventslug" element={<EventPageLoader />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/aboutUs" element={<AboutUsPage />} />
-            </Routes>
+  return (
+    <>
+      <Toaster />
+      <TopBar className={isHeroPage ? "topbar-overlay" : ""} />
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/events/:eventslug" element={<EventPageLoader />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/aboutUs" element={<AboutUsPage />} />
+      </Routes>
 
-            <Footer />
-        </>
-    );
+      <Footer />
+    </>
+  );
 }
 
 export default App

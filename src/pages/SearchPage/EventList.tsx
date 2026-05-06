@@ -6,7 +6,7 @@ type Params = { query: string, filters: FiltersType }
 
 const EventList = ({ query, filters }: Params) => {
 
-  const { data: response = [], isLoading, error } = useGetEvents({
+  const { data: response, isLoading } = useGetEvents({
     city: filters.locations[0] || undefined,
     category: filters.categories[0] || undefined,
   });
@@ -14,12 +14,8 @@ const EventList = ({ query, filters }: Params) => {
   if (isLoading) {
     return <p>Loading ...</p>
   }
-  // TODO: temporary
-  if (error) {
-    return <p>{error}</p>
-  }
 
-  if (!('status' in response) || response.status !== 200) {
+  if (!response || response.status !== 200) {
     return <p>Something went wrong</p>;
   }
 

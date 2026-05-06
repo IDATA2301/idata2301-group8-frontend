@@ -1,6 +1,7 @@
 import plus from "@assets/icons/plus.svg"
 import minus from "@assets/icons/minus.svg"
 import { useEffect, useState } from "react"
+import Button from "@components/Button/Button"
 
 export type Ticket = {
   id: number,
@@ -44,9 +45,9 @@ function TicketCard({ onChange, ticket }: Props) {
             <p className="ticket-card-count">{count}</p>
           </>
         )}
-        <button className="ticket-card-button" onClick={increment} disabled={count >= maxCount}>
+        <Button onClick={increment} variant="buttonWithIcon" disabled={count >= maxCount}>
           <img className="ticket-card-icon" src={plus} alt="increment icon" />
-        </button>
+        </Button>
       </div>
     </div>
   )

@@ -68,7 +68,7 @@ export default function Login({ switchToSignup, closeDialog }: Props) {
         <label>
           Email
           <input
-            type="text"
+            type="email"
             placeholder="Enter your email"
             name="email"
             required

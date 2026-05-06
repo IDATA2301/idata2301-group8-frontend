@@ -5,10 +5,10 @@ import { useSignup, type signupResponseError, type signupResponseSuccess } from 
 import toast from "@components/Toast";
 
 type Props = {
-  onSwitchToLogin: () => void;
+  switchToLogin: () => void;
 };
 
-export default function Signup({ onSwitchToLogin }: Props) {
+export default function Signup({ switchToLogin }: Props) {
 
   const { mutateAsync, isPending } = useSignup()
 
@@ -30,7 +30,7 @@ export default function Signup({ onSwitchToLogin }: Props) {
         const response = res as signupResponseSuccess;
         switch (response.status) {
           case 201:
-            onSwitchToLogin();
+            switchToLogin();
             return "Account created successfully! Please log in.";
           default:
             return `Unexpected response: ${response.status}`;
@@ -102,7 +102,7 @@ export default function Signup({ onSwitchToLogin }: Props) {
           <Button type="submit" disabled={isDisabled}>Sign Up</Button>
         </div>
       </form>
-      <p>Already have an account? <button className={styles.linkButton} onClick={onSwitchToLogin}>Log in</button></p>
+      <p>Already have an account? <button className={styles.linkButton} onClick={switchToLogin}>Log in</button></p>
     </>
   );
 }

@@ -3,13 +3,16 @@ import styles from './DialogContent.module.css';
 import Button from "@components/Button/Button";
 import { useLogin, type loginResponseError, type loginResponseSuccess } from "@api/iam";
 import toast from "@components/Toast";
+import { useAuthContext } from "@utility/AuthContext";
 
 type Props = {
-  onSwitchToSignup: () => void;
+  switchToSignup: () => void;
+  closeDialog: () => void;
 };
 
-export default function Login({ onSwitchToSignup }: Props) {
+export default function Login({ switchToSignup, closeDialog }: Props) {
 
+  const { login } = useAuthContext()
   const { mutateAsync, isPending } = useLogin()
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -25,10 +28,11 @@ export default function Login({ onSwitchToSignup }: Props) {
         switch (response.status) {
           case 200:
             if (response.data.jwt) {
-              localStorage.setItem("jwt", response.data.jwt)
+              login(response.data.jwt);
             } else {
               console.log("No JWT received")
             }
+            closeDialog();
             return "Logged in successfully!"
           default:
             return `Unexpected response: ${response.status}`;
@@ -88,7 +92,7 @@ export default function Login({ onSwitchToSignup }: Props) {
           <Button type="submit" disabled={isDisabled}>Login</Button>
         </div>
       </form>
-      <p>Don't have an account? <button className={styles.linkButton} onClick={onSwitchToSignup}>Sign Up</button></p>
+      <p>Don't have an account? <button className={styles.linkButton} onClick={switchToSignup}>Sign Up</button></p>
     </>
   );
 }

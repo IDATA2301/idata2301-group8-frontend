@@ -29,8 +29,21 @@ export const useAuthContext = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const jwt = localStorage.getItem("jwt");
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!jwt);
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    if (jwt) {
+      try {
+        const decoded = jwtDecode(jwt) as User;
+        return decoded.roles.global.includes("admin");
+      } catch (error) {
+        console.error("Failed to decode JWT:", error);
+        return false;
+      }
+    }
+    return false;
+  });
 
   const login = (jwt: string) => {
     localStorage.setItem("jwt", jwt);

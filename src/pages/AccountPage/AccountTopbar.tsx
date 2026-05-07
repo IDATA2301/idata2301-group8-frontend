@@ -15,28 +15,6 @@ export default function AccountTopbar({
   return (
     <div className={styles.accountTopbar}>
 
-      <button
-        className={
-          selectedTab === "account"
-            ? `${styles.tabButton} ${styles.activeTab}`
-            : styles.tabButton
-        }
-        onClick={() => setSelectedTab("account")}
-      >
-        Account
-      </button>
-
-      <button
-        className={
-          selectedTab === "favorites"
-            ? `${styles.tabButton} ${styles.activeTab}`
-            : styles.tabButton
-        }
-        onClick={() => setSelectedTab("favorites")}
-      >
-        Favorites
-      </button>
-
       {role === "EVENT_PROVIDER" && (
         <button
           className={
@@ -49,6 +27,28 @@ export default function AccountTopbar({
           My Events
         </button>
       )}
+
+      <button
+        className={
+          selectedTab === "account"
+            ? `${styles.tabButton} ${styles.activeTab}`
+            : styles.tabButton
+        }
+        onClick={() => setSelectedTab("account")}
+      >
+        User Information
+      </button>
+
+      <button
+        className={
+          selectedTab === "favorites"
+            ? `${styles.tabButton} ${styles.activeTab}`
+            : styles.tabButton
+        }
+        onClick={() => setSelectedTab("favorites")}
+      >
+        Favorites
+      </button>
 
     </div>
   );

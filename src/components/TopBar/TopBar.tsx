@@ -55,10 +55,15 @@ export default function TopBar({
 
         {isLoggedIn
           ? (
-            <img
-              src={AccountSvg}
-              alt="account icon"
-            />
+            <Link to="/account">
+
+              <img
+                src={AccountSvg}
+                alt="account icon"
+                className="accountIcon"
+              />
+
+            </Link>
           )
           : (
             <button

@@ -1,35 +1,45 @@
 import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
+import toast from "@components/Toast";
+
 import styles from "./AccountPage.module.css";
 
 import ConfirmationPopup from "./ConfirmationPopup";
+import ProviderRequestPopup from "./ProviderRequestPopup";
 
 import EditIcon from "@assets/icons/edit.svg";
 import LogoutIcon from "@assets/icons/logout.svg";
 import XIcon from "@assets/icons/x.svg";
 
 interface ProviderCompany {
+
   id: number;
+
   companyName: string;
+
 }
 
 interface Props {
+
   user: {
+
     email: string;
 
     role: string;
 
-    availableRoles: string[];
-
-    providerCompany?: string;
-
     providerCompanies: ProviderCompany[];
+
   };
+
 }
 
 export default function AccountInfo({
   user
 }: Props) {
+
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] =
     useState(false);
@@ -40,34 +50,17 @@ export default function AccountInfo({
   const [showDeletePopup, setShowDeletePopup] =
     useState(false);
 
+  const [
+    showProviderPopup,
+    setShowProviderPopup
+  ] = useState(false);
+
   const [email, setEmail] = useState(
     user.email
   );
 
   const [password, setPassword] =
     useState("");
-
-  const [selectedRole, setSelectedRole] =
-    useState(user.role);
-
-  const [providerCompany, setProviderCompany] =
-    useState(
-      user.providerCompany || ""
-    );
-
-  const isProvider =
-    selectedRole === "EVENT_PROVIDER";
-
-  function formatRole(role: string) {
-
-    return role
-      .replaceAll("_", " ")
-      .toLowerCase()
-      .replace(/\b\w/g, (char) =>
-        char.toUpperCase()
-      );
-
-  }
 
   return (
 
@@ -117,90 +110,6 @@ export default function AccountInfo({
             />
 
           </div>
-
-          <div className={styles.infoRow}>
-
-            <span>Role</span>
-
-            <select
-              className={`${styles.accountSelect} ${!isEditing
-                ? styles.disabledInput
-                : ""
-                }`}
-              value={selectedRole}
-              disabled={!isEditing}
-              onChange={(e) =>
-                setSelectedRole(
-                  e.target.value
-                )
-              }
-            >
-
-              {user.availableRoles.map(
-                (role) => (
-
-                  <option
-                    key={role}
-                    value={role}
-                  >
-
-                    {formatRole(role)}
-
-                  </option>
-
-                )
-              )}
-
-            </select>
-
-          </div>
-
-          {isProvider && (
-
-            <div className={styles.infoRow}>
-
-              <span>Provider Company</span>
-
-              <select
-                className={`${styles.accountSelect} ${!isEditing
-                  ? styles.disabledInput
-                  : ""
-                  }`}
-                value={providerCompany}
-                disabled={!isEditing}
-                onChange={(e) =>
-                  setProviderCompany(
-                    e.target.value
-                  )
-                }
-              >
-
-                <option value="">
-                  Select a provider
-                </option>
-
-                {user.providerCompanies.map(
-                  (company) => (
-
-                    <option
-                      key={company.id}
-                      value={
-                        company.companyName
-                      }
-                    >
-
-                      {company.companyName}
-
-                    </option>
-
-                  )
-                )}
-
-              </select>
-
-            </div>
-
-          )}
 
           <div className={styles.saveButtonContainer}>
 
@@ -265,9 +174,13 @@ export default function AccountInfo({
 
               <button
                 className={styles.saveButton}
-                onClick={() =>
-                  setIsEditing(false)
-                }
+                onClick={() => {
+
+                  // save changes here
+
+                  setIsEditing(false);
+
+                }}
               >
 
                 Save Changes
@@ -280,68 +193,33 @@ export default function AccountInfo({
 
         </div>
 
-        <div className={styles.contentCard}>
+        {user.role === "NORMAL_USER" && (
 
-          <h2>Create a Ticket Provider</h2>
+          <div className={styles.contentCard}>
 
-          <div className={styles.formGroup}>
+            <h2>Become a Ticket Provider</h2>
 
-            <label>Company Name</label>
+            <p className={styles.roleChangeText}>
 
-            <input
-              className={styles.accountInput}
-              placeholder="Enter company name"
-              autoComplete="off"
-              data-lpignore="true"
-            />
+              Want to create and manage events?
+              Send a request to become a ticket provider.
 
-          </div>
+            </p>
 
-          <div className={styles.formGroup}>
+            <button
+              className={styles.primaryButton}
+              onClick={() =>
+                setShowProviderPopup(true)
+              }
+            >
 
-            <label>Website URL</label>
+              Request Access
 
-            <input
-              className={styles.accountInput}
-              placeholder="https://company.com"
-            />
+            </button>
 
           </div>
 
-          <div className={styles.formGroup}>
-
-            <label>Payout Account</label>
-
-            <input
-              className={styles.accountInput}
-              placeholder="Enter payout account"
-            />
-
-          </div>
-
-          <button className={styles.primaryButton}>
-            Request Provider
-          </button>
-
-        </div>
-
-        <div className={`${styles.contentCard} ${styles.roleChangeCard}`}>
-
-          <h2>Request Role Change</h2>
-
-          <p className={styles.roleChangeText}>
-
-            Want to switch roles?
-            You can request access to another role,
-            such as becoming an Event Provider.
-
-          </p>
-
-          <button className={styles.primaryButton}>
-            Request Role Change
-          </button>
-
-        </div>
+        )}
 
       </div>
 
@@ -355,7 +233,37 @@ export default function AccountInfo({
           }
           onConfirm={() => {
 
+            localStorage.removeItem(
+              "token"
+            );
+
+            toast.success(
+              "Logged out",
+              {
+                icon: (
+                  <img
+                    src={LogoutIcon}
+                    alt="Logout"
+                    style={{
+                      width: "18px",
+                      height: "18px"
+                    }}
+                  />
+                ),
+                style: {
+                  background: "#001824",
+                  color: "#FFFFFF"
+                }
+              }
+            );
+
             setShowLogoutPopup(false);
+
+            setTimeout(() => {
+
+              navigate("/");
+
+            }, 150);
 
           }}
         />
@@ -371,9 +279,69 @@ export default function AccountInfo({
           onCancel={() =>
             setShowDeletePopup(false)
           }
+          onConfirm={async () => {
+
+            try {
+
+              // await deleteAccount()
+
+              localStorage.removeItem(
+                "token"
+              );
+
+              toast.error(
+                "Account deleted",
+                {
+                  style: {
+                    background: "#C1121F",
+                    color: "#FFFFFF"
+                  }
+                }
+              );
+
+              setShowDeletePopup(false);
+
+              setTimeout(() => {
+
+                navigate("/");
+
+              }, 150);
+
+            } catch {
+
+              toast.error(
+                "Failed to delete account"
+              );
+
+            }
+
+          }}
+        />
+
+      )}
+
+      {showProviderPopup && (
+
+        <ProviderRequestPopup
+          providerCompanies={
+            user.providerCompanies
+          }
+          onCancel={() =>
+            setShowProviderPopup(false)
+          }
           onConfirm={() => {
 
-            setShowDeletePopup(false);
+            toast.success(
+              "Provider request sent",
+              {
+                style: {
+                  background: "#669BBC",
+                  color: "#FFFFFF"
+                }
+              }
+            );
+
+            setShowProviderPopup(false);
 
           }}
         />

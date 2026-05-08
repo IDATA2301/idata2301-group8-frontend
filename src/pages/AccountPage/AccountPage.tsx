@@ -16,13 +16,12 @@ interface JwtPayload {
 
   role?: string;
 
-  availableRoles?: string[];
-
   providerCompany?: string;
 
   providerCompanies?: {
 
     id: number;
+
     companyName: string;
 
   }[];
@@ -55,10 +54,6 @@ export default function AccountPage() {
     role:
       decoded?.role
       || "NORMAL_USER",
-
-    availableRoles:
-      decoded?.availableRoles
-      || ["NORMAL_USER"],
 
     providerCompany:
       decoded?.providerCompany
@@ -104,6 +99,7 @@ export default function AccountPage() {
     }
 
     return null;
+
   }
 
   return (
@@ -131,14 +127,20 @@ export default function AccountPage() {
         <div className={styles.profileInfo}>
 
           <h1 className={styles.pageTitle}>
+
             {user.username}
+
           </h1>
 
-          <p className={styles.profileRole}>
+          {user.role !== "NORMAL_USER" && (
 
-            {formatRole(user.role)}
+            <p className={styles.profileRole}>
 
-          </p>
+              {formatRole(user.role)}
+
+            </p>
+
+          )}
 
         </div>
 
@@ -158,4 +160,5 @@ export default function AccountPage() {
     </div>
 
   );
+
 }

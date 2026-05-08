@@ -50,6 +50,7 @@
     margin: 6px 0 0 0;
     font-size: 18px;
     color: #FFFFFFB3;
+    font-weight: 600;
 }
 
 .pageTitle {
@@ -143,19 +144,6 @@
 .accountActionsLeft {
     display: flex;
     gap: 12px;
-}
-
-.placeholderBox {
-    background: #FFFFFF0A;
-    padding: 24px;
-    border-radius: 14px;
-    min-height: 160px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    color: #FFFFFFBF;
-    text-align: center;
 }
 
 .eventsContainer {
@@ -270,6 +258,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
+    gap: 20px;
 }
 
 .formGroup label {
@@ -279,7 +268,8 @@
     white-space: nowrap;
 }
 
-.formGroup .accountInput {
+.formGroup .accountInput,
+.formGroup .accountSelect {
     margin-left: auto;
 }
 
@@ -335,7 +325,10 @@
 .saveButton:hover,
 .logoutButton:hover,
 .deleteButton:hover,
-.primaryButton:hover {
+.primaryButton:hover,
+.popupCancel:hover,
+.popupConfirm:hover,
+.popupDelete:hover {
     opacity: 0.9;
     transform: translateY(-1px);
 }
@@ -364,10 +357,8 @@
     color: #FFFFFFC7;
 }
 
-
 .popupOverlay {
     position: fixed;
-
     inset: 0;
 
     width: 100vw;
@@ -385,7 +376,7 @@
 }
 
 .popupBox {
-    width: 420px;
+    width: 520px;
 
     background: #022B3A;
 
@@ -422,10 +413,25 @@
     font-family: "Inter", sans-serif;
 }
 
+.popupForm {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.popupDivider {
+    text-align: center;
+    color: #FFFFFF80;
+    font-size: 14px;
+    font-weight: 600;
+    margin: -4px 0;
+}
+
 .popupActions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+    margin-top: 28px;
 }
 
 .popupCancel,
@@ -463,13 +469,6 @@
     background: #C1121F;
 }
 
-.popupCancel:hover,
-.popupConfirm:hover,
-.popupDelete:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
 @keyframes popupFade {
 
     from {
@@ -482,4 +481,44 @@
         transform: scale(1);
     }
 
+}
+
+.requestTypeSelector {
+    display: flex;
+    gap: 12px;
+}
+
+.requestTypeButton {
+    flex: 1;
+
+    height: 48px;
+
+    border: 1px solid #FFFFFF14;
+    border-radius: 12px;
+
+    background: #FFFFFF08;
+
+    color: #FFFFFFC7;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    font-family: "Inter", sans-serif;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+.requestTypeButton:hover {
+    transform: translateY(-1px);
+}
+
+.activeRequestType {
+    background: #669BBC;
+    border-color: #669BBC;
+    color: #FFFFFF;
 }

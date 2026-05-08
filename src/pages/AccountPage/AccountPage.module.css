@@ -1,14 +1,14 @@
 .accountPage {
     max-width: 1400px;
     margin: auto;
-    padding: 20px 40px 40px 40px;
+    padding: 20px 40px 40px;
     color: #FFFFFF;
     font-family: "Inter", sans-serif;
 }
 
 .loginWarning {
     width: 95%;
-    margin: 0 auto 24px auto;
+    margin: 0 auto 24px;
     padding: 14px 22px;
     background: #FFFFFF0D;
     border: 1px solid #FFFFFF14;
@@ -47,7 +47,7 @@
 }
 
 .profileRole {
-    margin: 6px 0 0 0;
+    margin: 6px 0 0;
     font-size: 18px;
     color: #FFFFFFB3;
     font-weight: 600;
@@ -55,7 +55,6 @@
 
 .pageTitle {
     margin: 0;
-    padding: 0;
     font-size: 40px;
     font-weight: 700;
     color: #E3E3E3;
@@ -68,26 +67,18 @@
     justify-content: space-between;
     align-items: center;
     height: 54px;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 50px 0;
 }
 
 .tabButton {
     position: relative;
-
     background: transparent;
     border: none;
-
     color: #E3E3E3;
-
     font-size: 20px;
     font-weight: 600;
-    font-family: "Inter", sans-serif;
-
     cursor: pointer;
-
-    padding: 0 0 6px 0;
-
+    padding: 0 0 6px;
     transition:
         opacity 0.2s,
         transform 0.2s;
@@ -104,17 +95,12 @@
 
 .activeTab::after {
     content: "";
-
     position: absolute;
-
     left: 0;
     bottom: 0;
-
     width: 100%;
     height: 2px;
-
     background: #E3E3E360;
-
     border-radius: 999px;
 }
 
@@ -124,7 +110,29 @@
     width: 100%;
 }
 
-.accountInput {
+.accountLayout {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    width: 100%;
+}
+
+.providerCompaniesSection {
+    width: 420px;
+    flex-shrink: 0;
+}
+
+.providerCompaniesTitle {
+    margin-bottom: 18px;
+
+    color: #FFFFFF;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.accountInput,
+.accountSelect {
     width: 320px;
     margin-left: auto;
     background: #FFFFFF0F;
@@ -136,8 +144,8 @@
     outline: none;
     transition:
         border-color 0.2s,
-        background 0.2s;
-    font-family: "Inter", sans-serif;
+        background 0.2s,
+        opacity 0.2s;
 }
 
 .accountInput:focus {
@@ -146,17 +154,7 @@
 }
 
 .accountSelect {
-    width: 320px;
-    margin-left: auto;
-    background: #FFFFFF0F;
-    border: 1px solid #FFFFFF14;
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: #FFFFFF;
-    font-size: 16px;
-    outline: none;
     cursor: pointer;
-    font-family: "Inter", sans-serif;
 }
 
 .accountSelect option {
@@ -193,7 +191,6 @@
     color: #FFFFFF;
     font-size: 16px;
     font-weight: 700;
-    font-family: "Inter", sans-serif;
     cursor: pointer;
     transition:
         transform 0.2s,
@@ -208,57 +205,38 @@
 .popupOverlay {
     position: fixed;
     inset: 0;
-
     width: 100vw;
     height: 100vh;
-
     background: #00000099;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     z-index: 9999;
-
     backdrop-filter: blur(4px);
 }
 
 .popupBox {
     width: 520px;
-
     background: #022B3A;
-
     border: 1px solid #FFFFFF14;
     border-radius: 20px;
-
     padding: 32px;
-
     box-shadow: 0 8px 40px #00000080;
-
     animation: popupFade 0.18s ease-out;
 }
 
 .popupBox h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-
+    margin: 0 0 12px;
     color: #FFFFFF;
-
     font-size: 26px;
     font-weight: 700;
-
-    font-family: "Inter", sans-serif;
 }
 
 .popupBox p {
-    margin: 0 0 28px 0;
-
+    margin: 0 0 28px;
     color: #FFFFFFC7;
-
     font-size: 16px;
     line-height: 1.5;
-
-    font-family: "Inter", sans-serif;
 }
 
 .popupForm {
@@ -287,19 +265,12 @@
 .popupDelete {
     width: 120px;
     height: 50px;
-
     border: none;
     border-radius: 14px;
-
     color: #FFFFFF;
-
     font-size: 15px;
     font-weight: 700;
-
-    font-family: "Inter", sans-serif;
-
     cursor: pointer;
-
     transition:
         transform 0.2s,
         opacity 0.2s;
@@ -317,6 +288,52 @@
     background: #C1121F;
 }
 
+.requestTypeSelector {
+    display: flex;
+    gap: 12px;
+}
+
+.requestTypeButton {
+    flex: 1;
+    height: 48px;
+    border: 1px solid #FFFFFF14;
+    border-radius: 12px;
+    background: #FFFFFF08;
+    color: #FFFFFFC7;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        border-color 0.2s,
+        transform 0.2s,
+        opacity 0.2s;
+}
+
+.requestTypeButton:hover {
+    transform: translateY(-1px);
+}
+
+.activeRequestType {
+    background: #669BBC;
+    border-color: #669BBC;
+    color: #FFFFFF;
+}
+
+.requestTypeButton:disabled,
+.popupCancel:disabled,
+.popupConfirm:disabled,
+.accountInput:disabled,
+.accountSelect:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.popupConfirm:disabled,
+.requestTypeButton:disabled {
+    transform: none;
+}
+
 @keyframes popupFade {
 
     from {
@@ -329,44 +346,4 @@
         transform: scale(1);
     }
 
-}
-
-.requestTypeSelector {
-    display: flex;
-    gap: 12px;
-}
-
-.requestTypeButton {
-    flex: 1;
-
-    height: 48px;
-
-    border: 1px solid #FFFFFF14;
-    border-radius: 12px;
-
-    background: #FFFFFF08;
-
-    color: #FFFFFFC7;
-
-    font-size: 15px;
-    font-weight: 600;
-
-    font-family: "Inter", sans-serif;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s,
-        border-color 0.2s,
-        transform 0.2s;
-}
-
-.requestTypeButton:hover {
-    transform: translateY(-1px);
-}
-
-.activeRequestType {
-    background: #669BBC;
-    border-color: #669BBC;
-    color: #FFFFFF;
 }

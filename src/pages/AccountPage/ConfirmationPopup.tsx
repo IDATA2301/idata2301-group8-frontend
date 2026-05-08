@@ -1,16 +1,11 @@
-
 import styles from "./AccountPage.module.css";
+
 interface Props {
   title: string;
-
   message: string;
-
   confirmText?: string;
-
   isDanger?: boolean;
-
   onCancel: () => void;
-
   onConfirm: () => void;
 }
 
@@ -24,7 +19,6 @@ export default function ConfirmationPopup({
 }: Props) {
 
   return (
-
     <div className={styles.popupOverlay}>
 
       <div className={styles.popupBox}>
@@ -58,7 +52,6 @@ export default function ConfirmationPopup({
       </div>
 
     </div>
-
   );
 
 }

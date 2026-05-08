@@ -3,7 +3,7 @@ import { useQueries } from "@tanstack/react-query";
 import styles from "./MyEvents.module.css";
 
 import {
-  getGetEventByIdQueryOptions,
+  getGetEventByIdQueryOptions
 } from "@api/events";
 
 import MyEventsCard from "./MyEventsCard";
@@ -13,20 +13,18 @@ export default function MyEvents() {
   const mockOrders = [
     {
       eventId: 1,
-      eventDate: "2026-08-15",
+      eventDate: "2026-08-15"
     },
     {
       eventId: 2,
-      eventDate: "2024-01-10",
-    },
+      eventDate: "2024-01-10"
+    }
   ];
 
   const eventQueries = useQueries({
-
     queries: mockOrders.map((order) =>
       getGetEventByIdQueryOptions(order.eventId)
-    ),
-
+    )
   });
 
   const isLoading =
@@ -52,7 +50,7 @@ export default function MyEvents() {
 
       return {
         ...event,
-        eventDate: mockOrders[index].eventDate,
+        eventDate: mockOrders[index].eventDate
       };
 
     })
@@ -74,7 +72,6 @@ export default function MyEvents() {
   );
 
   return (
-
     <div className={styles.eventsContainer}>
 
       <div className={styles.eventsSection}>
@@ -84,39 +81,31 @@ export default function MyEvents() {
         <div className={styles.eventsScrollBox}>
 
           {isLoading && (
-
             <div className={styles.placeholderBox}>
               Loading events...
             </div>
-
           )}
 
           {isError && (
-
             <div className={styles.placeholderBox}>
               Failed to load events
             </div>
-
           )}
 
           {!isLoading &&
             !isError &&
             ongoingEvents.length === 0 && (
-
               <div className={styles.placeholderBox}>
                 No ongoing events
               </div>
-
             )}
 
           {ongoingEvents.map((event) => (
-
             <MyEventsCard
               key={event.eventId}
               eventName={event.eventName ?? ""}
               eventDate={event.eventDate}
             />
-
           ))}
 
         </div>
@@ -130,39 +119,31 @@ export default function MyEvents() {
         <div className={styles.eventsScrollBox}>
 
           {isLoading && (
-
             <div className={styles.placeholderBox}>
               Loading events...
             </div>
-
           )}
 
           {isError && (
-
             <div className={styles.placeholderBox}>
               Failed to load events
             </div>
-
           )}
 
           {!isLoading &&
             !isError &&
             expiredEvents.length === 0 && (
-
               <div className={styles.placeholderBox}>
                 No expired events
               </div>
-
             )}
 
           {expiredEvents.map((event) => (
-
             <MyEventsCard
               key={event.eventId}
               eventName={event.eventName ?? ""}
               eventDate={event.eventDate}
             />
-
           ))}
 
         </div>
@@ -170,7 +151,6 @@ export default function MyEvents() {
       </div>
 
     </div>
-
   );
 
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 
 import toast from "@components/Toast";
@@ -9,37 +8,41 @@ import styles from "./AccountInfo.module.css";
 import ConfirmationPopup from "./ConfirmationPopup";
 import ProviderRequestPopup from "./ProviderRequestPopup";
 
+import { useDeleteMe } from "@api/iam";
+
 import EditIcon from "@assets/icons/edit.svg";
 import LogoutIcon from "@assets/icons/logout.svg";
 import XIcon from "@assets/icons/x.svg";
 
 interface ProviderCompany {
-
   id: number;
-
   companyName: string;
+}
 
+interface UserCompany {
+  companyId: number;
+  pending?: boolean;
 }
 
 interface Props {
-
   user: {
-
     email: string;
-
     role: string;
-
     providerCompanies: ProviderCompany[];
-
+    userCompanies: UserCompany[];
   };
 
+  hasCompanies: boolean;
 }
 
 export default function AccountInfo({
-  user
+  user,
+  hasCompanies
 }: Props) {
 
   const navigate = useNavigate();
+
+  const deleteMeMutation = useDeleteMe();
 
   const [isEditing, setIsEditing] =
     useState(false);
@@ -50,23 +53,24 @@ export default function AccountInfo({
   const [showDeletePopup, setShowDeletePopup] =
     useState(false);
 
-  const [
-    showProviderPopup,
-    setShowProviderPopup
-  ] = useState(false);
+  const [showProviderPopup, setShowProviderPopup] =
+    useState(false);
 
-  const [email, setEmail] = useState(
-    user.email
-  );
+  const [email, setEmail] =
+    useState(user.email);
 
   const [password, setPassword] =
     useState("");
 
   return (
-
     <>
 
-      <div className={styles.accountSections}>
+      <div
+        className={`${styles.accountSections} ${hasCompanies
+          ? styles.withCompanies
+          : styles.fullWidth
+          }`}
+      >
 
         <div className={styles.contentCard}>
 
@@ -152,7 +156,6 @@ export default function AccountInfo({
             </div>
 
             {!isEditing ? (
-
               <button
                 className={styles.saveButton}
                 onClick={() =>
@@ -171,7 +174,6 @@ export default function AccountInfo({
               </button>
 
             ) : (
-
               <button
                 className={styles.saveButton}
                 onClick={() => {
@@ -182,11 +184,8 @@ export default function AccountInfo({
 
                 }}
               >
-
                 Save Changes
-
               </button>
-
             )}
 
           </div>
@@ -194,16 +193,13 @@ export default function AccountInfo({
         </div>
 
         {user.role === "NORMAL_USER" && (
-
           <div className={styles.contentCard}>
 
             <h2>Become a Ticket Provider</h2>
 
             <p className={styles.roleChangeText}>
-
               Want to create and manage events?
               Send a request to become a ticket provider.
-
             </p>
 
             <button
@@ -212,19 +208,15 @@ export default function AccountInfo({
                 setShowProviderPopup(true)
               }
             >
-
               Request Access
-
             </button>
 
           </div>
-
         )}
 
       </div>
 
       {showLogoutPopup && (
-
         <ConfirmationPopup
           title="Log Out"
           message="Are you sure you want to log out?"
@@ -233,45 +225,37 @@ export default function AccountInfo({
           }
           onConfirm={() => {
 
-            localStorage.removeItem(
-              "token"
-            );
+            localStorage.removeItem("token");
 
-            toast.success(
-              "Logged out",
-              {
-                icon: (
-                  <img
-                    src={LogoutIcon}
-                    alt="Logout"
-                    style={{
-                      width: "18px",
-                      height: "18px"
-                    }}
-                  />
-                ),
-                style: {
-                  background: "#001824",
-                  color: "#FFFFFF"
-                }
+            toast.success("Logged out", {
+              icon: (
+                <img
+                  src={LogoutIcon}
+                  alt="Logout"
+                  style={{
+                    width: "18px",
+                    height: "18px"
+                  }}
+                />
+              ),
+
+              style: {
+                background: "#001824",
+                color: "#FFFFFF"
               }
-            );
+            });
 
             setShowLogoutPopup(false);
 
             setTimeout(() => {
-
               navigate("/");
-
             }, 150);
 
           }}
         />
-
       )}
 
       {showDeletePopup && (
-
         <ConfirmationPopup
           title="Delete Account"
           message="Are you sure you want to delete the account?"
@@ -283,28 +267,21 @@ export default function AccountInfo({
 
             try {
 
-              // await deleteAccount()
+              await deleteMeMutation.mutateAsync();
 
-              localStorage.removeItem(
-                "token"
-              );
+              localStorage.removeItem("token");
 
-              toast.error(
-                "Account deleted",
-                {
-                  style: {
-                    background: "#C1121F",
-                    color: "#FFFFFF"
-                  }
+              toast.error("Account deleted", {
+                style: {
+                  background: "#C1121F",
+                  color: "#FFFFFF"
                 }
-              );
+              });
 
               setShowDeletePopup(false);
 
               setTimeout(() => {
-
                 navigate("/");
-
               }, 150);
 
             } catch {
@@ -317,39 +294,22 @@ export default function AccountInfo({
 
           }}
         />
-
       )}
 
       {showProviderPopup && (
-
         <ProviderRequestPopup
-          providerCompanies={
-            user.providerCompanies
-          }
+          providerCompanies={user.providerCompanies}
+          userCompanies={user.userCompanies}
           onCancel={() =>
             setShowProviderPopup(false)
           }
           onConfirm={() => {
-
-            toast.success(
-              "Provider request sent",
-              {
-                style: {
-                  background: "#669BBC",
-                  color: "#FFFFFF"
-                }
-              }
-            );
-
             setShowProviderPopup(false);
-
           }}
         />
-
       )}
 
     </>
-
   );
 
 }

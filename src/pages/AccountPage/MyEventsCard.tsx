@@ -5,15 +5,10 @@ import ShareIcon from "@assets/icons/share.svg";
 import DownloadIcon from "@assets/icons/download.svg";
 
 interface Props {
-
   eventName: string;
-
   eventDate: string;
-
   startTime?: string;
-
   ticketCount?: number;
-
 }
 
 export default function MyEventCard({
@@ -30,22 +25,19 @@ export default function MyEventCard({
       {
         day: "2-digit",
         month: "2-digit",
-        year: "numeric",
+        year: "numeric"
       }
     );
 
   }
 
   return (
-
     <div className={styles.eventRow}>
 
       <div className={styles.eventContent}>
 
         <h3 className={styles.eventTitle}>
-
           {eventName}
-
         </h3>
 
         <p className={styles.eventMeta}>
@@ -68,36 +60,29 @@ export default function MyEventCard({
       <div className={styles.eventActions}>
 
         <button className={styles.iconButton}>
-
           <img
             src={FavoriteIcon}
             alt="Favorite"
           />
-
         </button>
 
         <button className={styles.iconButton}>
-
           <img
             src={ShareIcon}
             alt="Share"
           />
-
         </button>
 
         <button className={styles.iconButton}>
-
           <img
             src={DownloadIcon}
             alt="Download"
           />
-
         </button>
 
       </div>
 
     </div>
-
   );
 
 }

@@ -1,18 +1,27 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 
 import styles from "./Favorites.module.css";
 
 import {
   useGetFavorites,
   getGetEventByIdQueryOptions,
+  useRemoveFavorite,
+  getGetFavoritesQueryKey
 } from "@api/events";
 
+import toast from "@components/Toast";
+
 import EventCard from "@pages/EventCard/EventCard";
+
 import type { EventResponse } from "@api/events";
 
 export default function Favorites() {
 
+  const queryClient = useQueryClient();
+
   const favoritesQuery = useGetFavorites();
+
+  const removeFavoriteMutation = useRemoveFavorite();
 
   const favorites = Array.isArray(favoritesQuery.data?.data)
     ? favoritesQuery.data.data
@@ -23,11 +32,9 @@ export default function Favorites() {
     .filter(Boolean);
 
   const eventQueries = useQueries({
-
     queries: favoriteIds.map((id) =>
       getGetEventByIdQueryOptions(id!)
-    ),
-
+    )
   });
 
   const isLoading =
@@ -41,14 +48,37 @@ export default function Favorites() {
   const favoriteEvents: EventResponse[] = eventQueries
     .map((query) => query.data?.data)
     .filter(
-      (event): event is EventResponse =>
+      (
+        event
+      ): event is EventResponse =>
         typeof event === "object" &&
         event !== null &&
         "eventId" in event
     );
 
-  return (
+  async function handleRemoveFavorite(eventId: number) {
 
+    try {
+
+      await removeFavoriteMutation.mutateAsync({
+        eventId
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: getGetFavoritesQueryKey()
+      });
+
+      toast.success("Removed from favorites");
+
+    } catch {
+
+      toast.error("Failed to remove favorite");
+
+    }
+
+  }
+
+  return (
     <div className={styles.eventsContainer}>
 
       <div className={styles.eventsSection}>
@@ -58,38 +88,34 @@ export default function Favorites() {
         <div className={styles.eventsScrollBox}>
 
           {isLoading && (
-
             <div className={styles.placeholderBox}>
               Loading favorites...
             </div>
-
           )}
 
           {isError && (
-
             <div className={styles.placeholderBox}>
               Failed to load favorites
             </div>
-
           )}
 
           {!isLoading &&
             !isError &&
             favoriteEvents.length === 0 && (
-
               <div className={styles.placeholderBox}>
                 No favorite events found
               </div>
-
             )}
 
           {favoriteEvents.map((event) => (
-
             <EventCard
               key={event.eventId}
               {...event}
+              isFavorite
+              onToggleFavorite={() =>
+                handleRemoveFavorite(event.eventId!)
+              }
             />
-
           ))}
 
         </div>
@@ -97,6 +123,6 @@ export default function Favorites() {
       </div>
 
     </div>
-
   );
+
 }

@@ -1,5 +1,5 @@
-import styles from "./AccountPage.module.css";
 
+import styles from "./AccountPage.module.css";
 interface Props {
   title: string;
 

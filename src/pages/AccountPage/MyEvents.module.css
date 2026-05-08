@@ -1,0 +1,79 @@
+.eventsContainer {
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.eventsSection {
+    background: #022B3A;
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid #FFFFFF0D;
+
+    height: 420px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.eventsSection h2 {
+    margin: 0;
+
+    color: #E3E3E3;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    font-family: "Inter", sans-serif;
+}
+
+.eventsScrollBox {
+    flex: 1;
+
+    overflow-y: auto;
+
+    margin-top: 18px;
+    padding-right: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.eventsScrollBox::-webkit-scrollbar {
+    width: 8px;
+}
+
+.eventsScrollBox::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.eventsScrollBox::-webkit-scrollbar-thumb {
+    background: #FFFFFF26;
+    border-radius: 999px;
+}
+
+.eventsScrollBox::-webkit-scrollbar-thumb:hover {
+    background: #FFFFFF40;
+}
+
+.placeholderBox {
+    width: 100%;
+
+    padding: 18px;
+
+    border-radius: 16px;
+
+    background: #FFFFFF08;
+    border: 1px solid #FFFFFF0D;
+
+    color: #FFFFFF99;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    font-family: "Inter", sans-serif;
+
+    text-align: center;
+}

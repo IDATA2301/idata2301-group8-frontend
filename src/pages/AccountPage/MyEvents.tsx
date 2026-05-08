@@ -1,27 +1,14 @@
 import { useQueries } from "@tanstack/react-query";
 
-import styles from "./AccountPage.module.css";
+import styles from "./MyEvents.module.css";
 
 import {
   getGetEventByIdQueryOptions,
 } from "@api/events";
 
-import EventCard from "@pages/EventCard/EventCard";
-
-/*
-  TODO:
-  Replace this with:
-  import { useGetMyOrders } from "@api/orders";
-*/
+import MyEventsCard from "./MyEventsCard";
 
 export default function MyEvents() {
-
-  /*
-    TEMP MOCK DATA
-
-    Replace with:
-    const ordersQuery = useGetMyOrders();
-  */
 
   const mockOrders = [
     {
@@ -50,7 +37,7 @@ export default function MyEvents() {
 
   const today = new Date();
 
-  const ongoingEvents = eventQueries
+  const parsedEvents = eventQueries
     .map((query, index) => {
 
       const event = query.data?.data;
@@ -69,34 +56,22 @@ export default function MyEvents() {
       };
 
     })
-    .filter(Boolean)
-    .filter((event) =>
-      new Date(event!.eventDate) >= today
+    .filter(
+      (
+        event
+      ): event is NonNullable<typeof event> =>
+        event !== null
     );
 
-  const expiredEvents = eventQueries
-    .map((query, index) => {
+  const ongoingEvents = parsedEvents.filter(
+    (event) =>
+      new Date(event.eventDate) >= today
+  );
 
-      const event = query.data?.data;
-
-      if (
-        typeof event !== "object" ||
-        event === null ||
-        !("eventId" in event)
-      ) {
-        return null;
-      }
-
-      return {
-        ...event,
-        eventDate: mockOrders[index].eventDate,
-      };
-
-    })
-    .filter(Boolean)
-    .filter((event) =>
-      new Date(event!.eventDate) < today
-    );
+  const expiredEvents = parsedEvents.filter(
+    (event) =>
+      new Date(event.eventDate) < today
+  );
 
   return (
 
@@ -136,9 +111,10 @@ export default function MyEvents() {
 
           {ongoingEvents.map((event) => (
 
-            <EventCard
+            <MyEventsCard
               key={event.eventId}
-              {...event}
+              eventName={event.eventName ?? ""}
+              eventDate={event.eventDate}
             />
 
           ))}
@@ -181,9 +157,10 @@ export default function MyEvents() {
 
           {expiredEvents.map((event) => (
 
-            <EventCard
+            <MyEventsCard
               key={event.eventId}
-              {...event}
+              eventName={event.eventName ?? ""}
+              eventDate={event.eventDate}
             />
 
           ))}
@@ -193,5 +170,7 @@ export default function MyEvents() {
       </div>
 
     </div>
+
   );
+
 }

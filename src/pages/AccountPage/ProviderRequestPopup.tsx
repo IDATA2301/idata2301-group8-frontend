@@ -107,8 +107,8 @@ export default function ProviderRequestPopup({
             <button
               type="button"
               className={`${styles.requestTypeButton} ${requestType === "EXISTING"
-                  ? styles.activeRequestType
-                  : ""
+                ? styles.activeRequestType
+                : ""
                 }`}
               onClick={() =>
                 setRequestType("EXISTING")
@@ -122,8 +122,8 @@ export default function ProviderRequestPopup({
             <button
               type="button"
               className={`${styles.requestTypeButton} ${requestType === "NEW"
-                  ? styles.activeRequestType
-                  : ""
+                ? styles.activeRequestType
+                : ""
                 }`}
               onClick={() =>
                 setRequestType("NEW")

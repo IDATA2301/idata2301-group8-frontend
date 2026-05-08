@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import toast from "@components/Toast";
 
-import styles from "./AccountPage.module.css";
+import styles from "./AccountInfo.module.css";
 
 import ConfirmationPopup from "./ConfirmationPopup";
 import ProviderRequestPopup from "./ProviderRequestPopup";

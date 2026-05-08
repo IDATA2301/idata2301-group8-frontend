@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 
-import styles from "./AccountPage.module.css";
+import styles from "./Favorites.module.css";
 
 import {
   useGetFavorites,

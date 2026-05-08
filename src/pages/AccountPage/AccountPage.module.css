@@ -73,17 +73,24 @@
 }
 
 .tabButton {
+    position: relative;
+
     background: transparent;
     border: none;
+
     color: #E3E3E3;
+
     font-size: 20px;
     font-weight: 600;
+    font-family: "Inter", sans-serif;
+
     cursor: pointer;
+
+    padding: 0 0 6px 0;
+
     transition:
         opacity 0.2s,
         transform 0.2s;
-    padding: 0;
-    font-family: "Inter", sans-serif;
 }
 
 .tabButton:hover {
@@ -92,100 +99,29 @@
 }
 
 .activeTab {
-    color: #5FA8FF;
-}
-
-.contentCard {
-    width: 70%;
-    background: #022B3A;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 4px 20px #00000059;
-    border: 1px solid #FFFFFF0D;
-}
-
-.contentCard h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: 700;
     color: #E3E3E3;
 }
 
-.infoRow {
-    display: flex;
-    align-items: center;
+.activeTab::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
     width: 100%;
-    margin-bottom: 18px;
-    font-size: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #FFFFFF14;
-    color: #FFFFFFE6;
-}
+    height: 2px;
 
-.infoRow span:first-child {
-    min-width: 180px;
-}
+    background: #E3E3E360;
 
-.infoRow .accountInput,
-.infoRow .accountSelect,
-.infoRow .roleText {
-    width: 320px;
-    margin-left: auto;
-}
-
-.saveButtonContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.accountActionsLeft {
-    display: flex;
-    gap: 12px;
-}
-
-.eventsContainer {
-    width: 95%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.eventsSection {
-    background: #022B3A;
-    border-radius: 20px;
-    padding: 28px;
-    border: 1px solid #FFFFFF0D;
-    height: 320px;
-    display: flex;
-    flex-direction: column;
-}
-
-.eventsScrollBox {
-    flex: 1;
-    overflow-y: auto;
-    margin-top: 16px;
-    padding-right: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    border-radius: 999px;
 }
 
 .accountContent {
     display: flex;
     justify-content: center;
     width: 100%;
-}
-
-.accountSections {
-    width: 100%;
-    max-width: 1000px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
 }
 
 .accountInput {
@@ -228,31 +164,6 @@
     color: #FFFFFF;
 }
 
-.disabledInput {
-    opacity: 0.55;
-    filter: brightness(0.7);
-    cursor: not-allowed;
-}
-
-.disabledInput:disabled {
-    color: #FFFFFFB3;
-    -webkit-text-fill-color: #FFFFFFB3;
-}
-
-.accountInput:disabled,
-.accountSelect:disabled {
-    background: #FFFFFF08;
-    border: 1px solid #FFFFFF0A;
-    color: #FFFFFFB3;
-    cursor: not-allowed;
-}
-
-.roleText {
-    font-size: 20px;
-    font-weight: 600;
-    color: #E3E3E3;
-}
-
 .formGroup {
     display: flex;
     align-items: center;
@@ -273,66 +184,6 @@
     margin-left: auto;
 }
 
-.buttonIcon {
-    width: 18px;
-    height: 18px;
-
-    filter:
-        brightness(0)
-        saturate(100%)
-        invert(100%);
-}
-
-.saveButton,
-.logoutButton,
-.deleteButton {
-    width: 170px;
-    height: 52px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    border: none;
-    border-radius: 14px;
-
-    color: #FFFFFF;
-
-    font-size: 16px;
-    font-weight: 700;
-    font-family: "Inter", sans-serif;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s,
-        opacity 0.2s;
-}
-
-.saveButton {
-    background: #669BBC;
-}
-
-.logoutButton {
-    background: #001824;
-}
-
-.deleteButton {
-    background: #C1121F;
-}
-
-.saveButton:hover,
-.logoutButton:hover,
-.deleteButton:hover,
-.primaryButton:hover,
-.popupCancel:hover,
-.popupConfirm:hover,
-.popupDelete:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
 .primaryButton {
     width: 100%;
     background: #669BBC;
@@ -349,12 +200,9 @@
         opacity 0.2s;
 }
 
-.roleChangeText {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 17px;
-    line-height: 1.6;
-    color: #FFFFFFC7;
+.primaryButton:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 .popupOverlay {

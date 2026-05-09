@@ -1,18 +1,14 @@
-import "./style.css";
-
-import ChooseTickets from "./ChooseTickets";
-import ScrollToTop from "@utility/ScrollToTop.tsx";
-
 import { Link, useParams } from "react-router-dom";
-
-import openInNew from "@assets/icons/open-in-new.svg";
-import fallbackEventImage from "@assets/fallback-image.png";
-
 import {
   useGetEventBySlug,
   useGetListingsByEvent,
-  type TicketListingResponse,
+  type TicketListingResponse
 } from "@api/events";
+import ChooseTickets from "./ChooseTickets";
+import ScrollToTop from "@utility/ScrollToTop.tsx";
+import openInNew from "@assets/icons/open-in-new.svg";
+import fallbackEventImage from "@assets/fallback-image.png";
+import "./style.css";
 
 function EventPage() {
   const { slug } = useParams();
@@ -20,11 +16,11 @@ function EventPage() {
   const {
     data: eventResponse,
     isLoading: eventLoading,
-    isError: eventError,
+    isError: eventError
   } = useGetEventBySlug(slug ?? "", {
     query: {
-      enabled: !!slug,
-    },
+      enabled: !!slug
+    }
   });
 
   const event =
@@ -37,11 +33,11 @@ function EventPage() {
   const {
     data: listingsResponse,
     isLoading: listingsLoading,
-    isError: listingsError,
+    isError: listingsError
   } = useGetListingsByEvent(eventId, {
     query: {
-      enabled: eventId > 0,
-    },
+      enabled: eventId > 0
+    }
   });
 
   const listings =
@@ -50,24 +46,19 @@ function EventPage() {
       : listingsResponse?.data ?? [];
 
   const tickets = listings
-    .filter((listing: TicketListingResponse) =>
-      listing.ticketListingId != null
-    )
+    .filter((listing: TicketListingResponse) => listing.ticketListingId != null)
     .map((listing: TicketListingResponse) => ({
       id: listing.ticketListingId!,
       name: listing.ticketType ?? "Ticket",
-      price: listing.price ?? 0,
+      price: listing.price ?? 0
     }));
 
   const tags = [
     ...(event?.categoryNames ?? []),
-    ...(event?.extraFeatureNames ?? []),
+    ...(event?.extraFeatureNames ?? [])
   ];
 
-  const locationQuery = [
-    event?.venueName,
-    event?.city,
-  ]
+  const locationQuery = [event?.venueName, event?.city]
     .filter(Boolean)
     .join(" ");
 
@@ -131,8 +122,7 @@ function EventPage() {
       <div
         className="hero-image-event"
         style={{
-          backgroundImage: `url(${event.imageUrl || fallbackEventImage
-            })`,
+          backgroundImage: `url(${event.imageUrl || fallbackEventImage})`
         }}
       />
 
@@ -160,25 +150,16 @@ function EventPage() {
       </div>
 
       <div className="center-box">
-        {listingsLoading && (
-          <p>Loading tickets...</p>
+        {listingsLoading && <p>Loading tickets...</p>}
+        {listingsError && <p>Could not load tickets.</p>}
+
+        {!listingsLoading && !listingsError && tickets.length > 0 && (
+          <ChooseTickets tickets={tickets} />
         )}
 
-        {listingsError && (
-          <p>Could not load tickets.</p>
+        {!listingsLoading && !listingsError && tickets.length === 0 && (
+          <p>No tickets available.</p>
         )}
-
-        {!listingsLoading &&
-          !listingsError &&
-          tickets.length > 0 && (
-            <ChooseTickets tickets={tickets} />
-          )}
-
-        {!listingsLoading &&
-          !listingsError &&
-          tickets.length === 0 && (
-            <p>No tickets available.</p>
-          )}
 
         <hr className="page-divider-line" />
 

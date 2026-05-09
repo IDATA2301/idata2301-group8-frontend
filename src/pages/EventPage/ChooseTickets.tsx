@@ -1,9 +1,5 @@
 import { useMemo, useState } from "react";
-
-import TicketCard, {
-  type Ticket,
-} from "./TicketCard.tsx";
-
+import TicketCard, { type Ticket } from "./TicketCard.tsx";
 import arrowRight from "@assets/icons/arrow-right.svg";
 
 type Props = {
@@ -12,46 +8,38 @@ type Props = {
 
 function ChooseTickets({ tickets }: Props) {
   const ticketPriceMap = useMemo(() => {
-    return new Map(
-      tickets.map((ticket) => [
-        ticket.id,
-        ticket.price,
-      ])
-    );
+    return new Map(tickets.map((ticket) => [ticket.id, ticket.price]));
   }, [tickets]);
 
-  const [ticketCounts, setTicketCounts] =
-    useState<Map<number, number>>(new Map());
+  const [ticketCounts, setTicketCounts] = useState<Map<number, number>>(new Map());
 
-  const totalTicketCount = [
-    ...ticketCounts.values(),
-  ].reduce((sum, count) => sum + count, 0);
+  const totalTicketCount = [...ticketCounts.values()].reduce(
+    (sum, count) => sum + count,
+    0
+  );
 
-  const totalTicketPrice = [
-    ...ticketCounts.entries(),
-  ].reduce((sum, [ticketId, count]) => {
-    const ticketPrice =
-      ticketPriceMap.get(ticketId) ?? 0;
+  const totalTicketPrice = [...ticketCounts.entries()].reduce(
+    (sum, [ticketId, count]) => {
+      const ticketPrice = ticketPriceMap.get(ticketId) ?? 0;
 
-    return sum + ticketPrice * count;
-  }, 0);
+      return sum + ticketPrice * count;
+    },
+    0
+  );
 
-  const createHandler =
-    (ticketId: number) => (count: number) => {
-      setTicketCounts((currentMap) => {
-        const newMap = new Map(currentMap);
+  const createHandler = (ticketId: number) => (count: number) => {
+    setTicketCounts((currentMap) => {
+      const newMap = new Map(currentMap);
 
-        if (count <= 0) {
-          newMap.delete(ticketId);
-
-          return newMap;
-        }
-
-        newMap.set(ticketId, count);
-
+      if (count <= 0) {
+        newMap.delete(ticketId);
         return newMap;
-      });
-    };
+      }
+
+      newMap.set(ticketId, count);
+      return newMap;
+    });
+  };
 
   return (
     <div className="choose-tickets-box">
@@ -76,8 +64,7 @@ function ChooseTickets({ tickets }: Props) {
           </p>
 
           <p className="ticket-card-bottom-summary">
-            {totalTicketCount} tickets ·{" "}
-            {totalTicketPrice.toFixed(2)} NOK
+            {totalTicketCount} tickets · {totalTicketPrice.toFixed(2)} NOK
           </p>
         </div>
 

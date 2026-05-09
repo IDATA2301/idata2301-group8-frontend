@@ -1,0 +1,101 @@
+.confirmDialog {
+  position: fixed;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  max-width: none;
+  max-height: none;
+  box-shadow: none;
+}
+
+.confirmDialog:focus {
+  outline: none;
+}
+
+.confirmDialog::backdrop {
+  background: #00000099;
+  backdrop-filter: blur(4px);
+}
+
+.confirmBox {
+  width: 520px;
+  background: #022B3A;
+  border: 1px solid #FFFFFF14;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 40px #00000080;
+  animation: confirmFade 0.18s ease-out;
+}
+
+.confirmBox h3 {
+  margin: 0 0 12px;
+  color: #FFFFFF;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.confirmBox p {
+  margin: 0 0 28px;
+  color: #FFFFFFC7;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelButton,
+.confirmButton,
+.dangerButton {
+  width: 120px;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+.cancelButton {
+  background: #001824;
+}
+
+.confirmButton {
+  background: #669BBC;
+}
+
+.dangerButton {
+  background: #C1121F;
+}
+
+.cancelButton:hover,
+.confirmButton:hover,
+.dangerButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+@keyframes confirmFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

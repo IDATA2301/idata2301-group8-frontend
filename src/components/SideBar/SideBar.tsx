@@ -22,7 +22,7 @@ export default function SideBar({
         />
       )}
 
-      <div
+      <aside
         className={
           isOpen
             ? `${styles.sideMenu} ${styles.open}`
@@ -49,7 +49,7 @@ export default function SideBar({
           My Account
         </Link>
 
-      </div>
+      </aside>
 
     </>
   );

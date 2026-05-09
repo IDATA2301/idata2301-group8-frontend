@@ -85,33 +85,52 @@ export default function AccountPage() {
 
       </div>
 
-      <Tabs tabPanelClassName={styles.accountContent} items={[
-        {
-          id: 'events', label: 'My Events', content: (
-            <div className={styles.accountLayout}>
-              <AccountInfo user={user} hasCompanies={hasCompanies} />
-              {hasCompanies && (
-                <div className={styles.providerCompaniesSection}>
-                  <h2 className={styles.providerCompaniesTitle}>
-                    Companies
-                  </h2>
-                  {user.providerCompanies.map((company) => (
-                    <CompanySection
-                      key={company.id}
-                      companyName={company.companyName}
-                      websiteUrl={company.websiteUrl}
-                      payoutAccount={company.payoutAccount}
-                      pending={company.pending}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        },
-        { id: 'user-info', label: 'User Information', content: <MyEvents /> },
-        { id: 'favorites', label: 'Favorites', content: <Favorites /> }
-      ]} />
+      <Tabs
+        defaultActiveId="user-info"
+        tabPanelClassName={styles.accountContent}
+        items={[
+          {
+            id: "events",
+            label: "My Events",
+            content: <MyEvents />
+          },
+          {
+            id: "user-info",
+            label: "User Information",
+            content: (
+              <div className={styles.accountLayout}>
+                <AccountInfo
+                  user={user}
+                  hasCompanies={hasCompanies}
+                />
+
+                {hasCompanies && (
+                  <div className={styles.providerCompaniesSection}>
+                    <h2 className={styles.providerCompaniesTitle}>
+                      Companies
+                    </h2>
+
+                    {user.providerCompanies.map((company) => (
+                      <CompanySection
+                        key={company.id}
+                        companyName={company.companyName}
+                        websiteUrl={company.websiteUrl}
+                        payoutAccount={company.payoutAccount}
+                        pending={company.pending}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          },
+          {
+            id: "favorites",
+            label: "Favorites",
+            content: <Favorites />
+          }
+        ]}
+      />
     </div>
   );
 }

@@ -1,68 +1,58 @@
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-
 import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
 import EventCards from "@pages/HomePage/EventCards";
-
 import ScrollToTop from "@utility/ScrollToTop";
-
-import "./style.css";
-
+import { useGetEvents, type EventResponse } from "@api/events";
 import heroimage from "@assets/heroimage.jpg";
-
 import festivalsImage from "@assets/categoryimage/festival.jpg";
 import concertsImage from "@assets/categoryimage/concert.jpg";
 import sportImage from "@assets/categoryimage/sport.jpg";
 import museumsImage from "@assets/categoryimage/museum.jpg";
 import theatersImage from "@assets/categoryimage/theater.jpg";
-
-import {
-  useGetEvents,
-  type EventResponse,
-} from "@api/events";
+import "./style.css";
 
 const categories = [
   {
     name: "Festivals",
     path: "/category/festivals",
     className: "festivals",
-    image: festivalsImage,
+    image: festivalsImage
   },
   {
     name: "Concerts",
     path: "/category/concerts",
     className: "concerts",
-    image: concertsImage,
+    image: concertsImage
   },
   {
     name: "Sport",
     path: "/category/sport",
     className: "sport",
-    image: sportImage,
+    image: sportImage
   },
   {
     name: "Museums",
     path: "/category/museums",
     className: "museums",
-    image: museumsImage,
+    image: museumsImage
   },
   {
     name: "Theaters",
     path: "/category/theaters",
     className: "theaters",
-    image: theatersImage,
-  },
+    image: theatersImage
+  }
 ];
 
 function HomePage() {
   const [query, setQuery] = useState("");
-
   const navigate = useNavigate();
 
   const {
     data: eventsResponse,
     isLoading,
-    isError,
+    isError
   } = useGetEvents();
 
   const events: EventResponse[] = Array.isArray(eventsResponse?.data)
@@ -74,7 +64,6 @@ function HomePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-
     navigate(`/search?q=${query}`);
   };
 
@@ -93,7 +82,6 @@ function HomePage() {
             <span className="highlight">
               Unforgettable
             </span>{" "}
-
             Events
           </h1>
 
@@ -133,9 +121,7 @@ function HomePage() {
                 <Link
                   className={`category-card ${category.className}`}
                   to={category.path}
-                  style={{
-                    backgroundImage: `url(${category.image})`,
-                  }}
+                  style={{ backgroundImage: `url(${category.image})` }}
                 >
                   {category.name}
                 </Link>
@@ -149,13 +135,8 @@ function HomePage() {
             Featured
           </h2>
 
-          {isLoading && (
-            <p>Loading featured event...</p>
-          )}
-
-          {isError && (
-            <p>Could not load featured event.</p>
-          )}
+          {isLoading && <p>Loading featured event...</p>}
+          {isError && <p>Could not load featured event.</p>}
 
           {!isLoading && !isError && featuredEvent && (
             <FeaturedEventCard event={featuredEvent} />
@@ -173,13 +154,8 @@ function HomePage() {
             Upcoming
           </h2>
 
-          {isLoading && (
-            <p>Loading events...</p>
-          )}
-
-          {isError && (
-            <p>Could not load events.</p>
-          )}
+          {isLoading && <p>Loading events...</p>}
+          {isError && <p>Could not load events.</p>}
 
           {!isLoading && !isError && (
             <EventCards events={upcomingEvents} />

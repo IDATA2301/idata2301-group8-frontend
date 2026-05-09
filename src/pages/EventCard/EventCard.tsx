@@ -1,14 +1,8 @@
 import { Link } from "react-router-dom";
+import type { EventResponse } from "@api/events";
+import FavoriteIcon from "@assets/icons/favorite.svg";
+import FavoriteClickedIcon from "@assets/icons/favoriteclicked.svg";
 import "./EventCard.css";
-
-import type { EventResponse }
-  from "@api/events";
-
-import FavoriteIcon
-  from "@assets/icons/favorite.svg";
-
-import FavoriteClickedIcon
-  from "@assets/icons/favoriteclicked.svg";
 
 interface Props extends EventResponse {
   isFavorite?: boolean;
@@ -20,13 +14,8 @@ export default function EventCard({
   onToggleFavorite,
   ...p
 }: Props) {
-
   return (
-    <Link
-      to={p.slug || ""}
-      className="event-card"
-    >
-
+    <Link to={p.slug || ""} className="event-card">
       <button
         className="favorite-button"
         onClick={(e) => {
@@ -35,71 +24,38 @@ export default function EventCard({
           onToggleFavorite?.();
         }}
       >
-
         <img
-          src={
-            isFavorite
-              ? FavoriteClickedIcon
-              : FavoriteIcon
-          }
+          src={isFavorite ? FavoriteClickedIcon : FavoriteIcon}
           alt="Favorite"
           className="favorite-icon"
         />
-
       </button>
 
       <img
         className="event-card-image"
-        src={
-          p.imageUrl ||
-          "/images/default.jpg"
-        }
+        src={p.imageUrl || "/images/default.jpg"}
         alt={p.eventName}
       />
 
       <div className="event-card-box">
-
         <h3>{p.eventName}</h3>
 
         <div className="event-tags">
-
-          {[
-            ...(p.categoryNames ?? []),
-            p.city,
-          ].map((category) => (
-
-            <span
-              key={category}
-              className="tag"
-            >
-
+          {[...(p.categoryNames ?? []), p.city].map((category) => (
+            <span key={category} className="tag">
               {category}
-
             </span>
-
           ))}
-
         </div>
 
         <p className="event-date">
-
-          {p.startDate
-            ? new Date(p.startDate)
-              .toLocaleString()
-            : "No date yet"}
-
+          {p.startDate ? new Date(p.startDate).toLocaleString() : "No date yet"}
         </p>
 
         <p className="event-price">
-
-          {p.lowestPrice != null
-            ? `From ${p.lowestPrice} NOK`
-            : "No price yet"}
-
+          {p.lowestPrice != null ? `From ${p.lowestPrice} NOK` : "No price yet"}
         </p>
-
       </div>
-
     </Link>
   );
 }

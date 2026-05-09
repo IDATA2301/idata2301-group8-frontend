@@ -1,8 +1,6 @@
+import { useEffect, useState } from "react";
 import plus from "@assets/icons/plus.svg";
 import minus from "@assets/icons/minus.svg";
-
-import { useEffect, useState } from "react";
-
 import Button from "@components/Button/Button";
 
 export type Ticket = {
@@ -18,7 +16,6 @@ type Props = {
 
 function TicketCard({ onChange, ticket }: Props) {
   const maxCount = 99;
-
   const [count, setCount] = useState(0);
 
   useEffect(() => {

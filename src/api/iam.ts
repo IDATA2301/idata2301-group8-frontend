@@ -79,6 +79,22 @@ export interface CompanyCreationResponse {
 }
 
 /**
+ * The new information for the user
+ */
+export interface UserUpdateRequest {
+  email?: string;
+  password?: string;
+}
+
+/**
+ * The new information for the company
+ */
+export interface CompanyUpdateRequest {
+  name?: string;
+  payoutAccount?: string;
+}
+
+/**
  * The new status of the approval request
  */
 export type ApprovalRequestReviewRequestStatus = typeof ApprovalRequestReviewRequestStatus[keyof typeof ApprovalRequestReviewRequestStatus];
@@ -646,6 +662,400 @@ export const useCreateCompanyCreationRequest = <TError = void,
         TContext
       > => {
       return useMutation(getCreateCompanyCreationRequestMutationOptions(options), queryClient);
+    }
+
+export type deleteUserResponse204 = {
+  data: void
+  status: 204
+}
+
+export type deleteUserResponse403 = {
+  data: void
+  status: 403
+}
+
+export type deleteUserResponse404 = {
+  data: void
+  status: 404
+}
+
+export type deleteUserResponseSuccess = (deleteUserResponse204) & {
+  headers: Headers;
+};
+export type deleteUserResponseError = (deleteUserResponse403 | deleteUserResponse404) & {
+  headers: Headers;
+};
+
+export type deleteUserResponse = (deleteUserResponseSuccess | deleteUserResponseError)
+
+export const getDeleteUserUrl = (id: string,) => {
+
+
+
+
+  return `/users/${id}`
+}
+
+/**
+ * Delete a user by their ID
+ * @summary Delete user
+ */
+export const deleteUser = async (id: string, options?: RequestInit): Promise<deleteUserResponse> => {
+
+  return customFetchIamApi<deleteUserResponse>(getDeleteUserUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteUserMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteUser'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteUser(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>
+
+    export type DeleteUserMutationError = void
+
+    /**
+ * @summary Delete user
+ */
+export const useDeleteUser = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteUser>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getDeleteUserMutationOptions(options), queryClient);
+    }
+
+export type updateUserResponse204 = {
+  data: string
+  status: 204
+}
+
+export type updateUserResponse400 = {
+  data: string
+  status: 400
+}
+
+export type updateUserResponse403 = {
+  data: string
+  status: 403
+}
+
+export type updateUserResponse404 = {
+  data: string
+  status: 404
+}
+
+export type updateUserResponseSuccess = (updateUserResponse204) & {
+  headers: Headers;
+};
+export type updateUserResponseError = (updateUserResponse400 | updateUserResponse403 | updateUserResponse404) & {
+  headers: Headers;
+};
+
+export type updateUserResponse = (updateUserResponseSuccess | updateUserResponseError)
+
+export const getUpdateUserUrl = (id: string,) => {
+
+
+
+
+  return `/users/${id}`
+}
+
+/**
+ * Update a user's information by their ID
+ * @summary Update user
+ */
+export const updateUser = async (id: string,
+    userUpdateRequest: UserUpdateRequest, options?: RequestInit): Promise<updateUserResponse> => {
+
+  return customFetchIamApi<updateUserResponse>(getUpdateUserUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      userUpdateRequest,)
+  }
+);}
+
+
+
+
+export const getUpdateUserMutationOptions = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{id: string;data: UserUpdateRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{id: string;data: UserUpdateRequest}, TContext> => {
+
+const mutationKey = ['updateUser'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUser>>, {id: string;data: UserUpdateRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateUser(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateUserMutationResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>
+    export type UpdateUserMutationBody = UserUpdateRequest
+    export type UpdateUserMutationError = string
+
+    /**
+ * @summary Update user
+ */
+export const useUpdateUser = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{id: string;data: UserUpdateRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateUser>>,
+        TError,
+        {id: string;data: UserUpdateRequest},
+        TContext
+      > => {
+      return useMutation(getUpdateUserMutationOptions(options), queryClient);
+    }
+
+export type deleteCompanyResponse204 = {
+  data: void
+  status: 204
+}
+
+export type deleteCompanyResponse403 = {
+  data: void
+  status: 403
+}
+
+export type deleteCompanyResponse404 = {
+  data: void
+  status: 404
+}
+
+export type deleteCompanyResponseSuccess = (deleteCompanyResponse204) & {
+  headers: Headers;
+};
+export type deleteCompanyResponseError = (deleteCompanyResponse403 | deleteCompanyResponse404) & {
+  headers: Headers;
+};
+
+export type deleteCompanyResponse = (deleteCompanyResponseSuccess | deleteCompanyResponseError)
+
+export const getDeleteCompanyUrl = (id: number,) => {
+
+
+
+
+  return `/companies/${id}`
+}
+
+/**
+ * Delete a company by its ID. Only users with ADMIN authority or ADMIN authority for the specific company can perform this action.
+ * @summary Delete a company
+ */
+export const deleteCompany = async (id: number, options?: RequestInit): Promise<deleteCompanyResponse> => {
+
+  return customFetchIamApi<deleteCompanyResponse>(getDeleteCompanyUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteCompanyMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteCompany'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCompany>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteCompany(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCompany>>>
+
+    export type DeleteCompanyMutationError = void
+
+    /**
+ * @summary Delete a company
+ */
+export const useDeleteCompany = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteCompany>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteCompanyMutationOptions(options), queryClient);
+    }
+
+export type updateCompanyResponse204 = {
+  data: string
+  status: 204
+}
+
+export type updateCompanyResponse400 = {
+  data: string
+  status: 400
+}
+
+export type updateCompanyResponse403 = {
+  data: string
+  status: 403
+}
+
+export type updateCompanyResponse404 = {
+  data: string
+  status: 404
+}
+
+export type updateCompanyResponseSuccess = (updateCompanyResponse204) & {
+  headers: Headers;
+};
+export type updateCompanyResponseError = (updateCompanyResponse400 | updateCompanyResponse403 | updateCompanyResponse404) & {
+  headers: Headers;
+};
+
+export type updateCompanyResponse = (updateCompanyResponseSuccess | updateCompanyResponseError)
+
+export const getUpdateCompanyUrl = (id: number,) => {
+
+
+
+
+  return `/companies/${id}`
+}
+
+/**
+ * Update a company's information by its ID
+ * @summary Update a company
+ */
+export const updateCompany = async (id: number,
+    companyUpdateRequest: CompanyUpdateRequest, options?: RequestInit): Promise<updateCompanyResponse> => {
+
+  return customFetchIamApi<updateCompanyResponse>(getUpdateCompanyUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      companyUpdateRequest,)
+  }
+);}
+
+
+
+
+export const getUpdateCompanyMutationOptions = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCompany>>, TError,{id: number;data: CompanyUpdateRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateCompany>>, TError,{id: number;data: CompanyUpdateRequest}, TContext> => {
+
+const mutationKey = ['updateCompany'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCompany>>, {id: number;data: CompanyUpdateRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateCompany(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof updateCompany>>>
+    export type UpdateCompanyMutationBody = CompanyUpdateRequest
+    export type UpdateCompanyMutationError = string
+
+    /**
+ * @summary Update a company
+ */
+export const useUpdateCompany = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCompany>>, TError,{id: number;data: CompanyUpdateRequest}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateCompany>>,
+        TError,
+        {id: number;data: CompanyUpdateRequest},
+        TContext
+      > => {
+      return useMutation(getUpdateCompanyMutationOptions(options), queryClient);
     }
 
 export type deleteApprovalRequestResponse204 = {
@@ -1422,282 +1832,3 @@ export function useGetApprovalRequests<TData = Awaited<ReturnType<typeof getAppr
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-
-
-
-
-export type deleteUserResponse204 = {
-  data: void
-  status: 204
-}
-
-export type deleteUserResponse403 = {
-  data: void
-  status: 403
-}
-
-export type deleteUserResponse404 = {
-  data: void
-  status: 404
-}
-
-export type deleteUserResponseSuccess = (deleteUserResponse204) & {
-  headers: Headers;
-};
-export type deleteUserResponseError = (deleteUserResponse403 | deleteUserResponse404) & {
-  headers: Headers;
-};
-
-export type deleteUserResponse = (deleteUserResponseSuccess | deleteUserResponseError)
-
-export const getDeleteUserUrl = (id: string,) => {
-
-
-
-
-  return `/users/${id}`
-}
-
-/**
- * Delete a user by their ID
- * @summary Delete user
- */
-export const deleteUser = async (id: string, options?: RequestInit): Promise<deleteUserResponse> => {
-
-  return customFetchIamApi<deleteUserResponse>(getDeleteUserUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getDeleteUserMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['deleteUser'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteUser(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>
-
-    export type DeleteUserMutationError = void
-
-    /**
- * @summary Delete user
- */
-export const useDeleteUser = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteUser>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getDeleteUserMutationOptions(options), queryClient);
-    }
-
-export type deleteMeResponse200 = {
-  data: void
-  status: 200
-}
-
-export type deleteMeResponseSuccess = (deleteMeResponse200) & {
-  headers: Headers;
-};
-;
-
-export type deleteMeResponse = (deleteMeResponseSuccess)
-
-export const getDeleteMeUrl = () => {
-
-
-
-
-  return `/me`
-}
-
-/**
- * Delete the authenticated user's account
- * @summary Delete user account
- */
-export const deleteMe = async ( options?: RequestInit): Promise<deleteMeResponse> => {
-
-  return customFetchIamApi<deleteMeResponse>(getDeleteMeUrl(),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getDeleteMeMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext> => {
-
-const mutationKey = ['deleteMe'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteMe>>, void> = () => {
-
-
-          return  deleteMe(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteMeMutationResult = NonNullable<Awaited<ReturnType<typeof deleteMe>>>
-
-    export type DeleteMeMutationError = unknown
-
-    /**
- * @summary Delete user account
- */
-export const useDeleteMe = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteMe>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getDeleteMeMutationOptions(options), queryClient);
-    }
-
-export type deleteCompanyResponse204 = {
-  data: void
-  status: 204
-}
-
-export type deleteCompanyResponse403 = {
-  data: void
-  status: 403
-}
-
-export type deleteCompanyResponse404 = {
-  data: void
-  status: 404
-}
-
-export type deleteCompanyResponseSuccess = (deleteCompanyResponse204) & {
-  headers: Headers;
-};
-export type deleteCompanyResponseError = (deleteCompanyResponse403 | deleteCompanyResponse404) & {
-  headers: Headers;
-};
-
-export type deleteCompanyResponse = (deleteCompanyResponseSuccess | deleteCompanyResponseError)
-
-export const getDeleteCompanyUrl = (id: number,) => {
-
-
-
-
-  return `/companies/${id}`
-}
-
-/**
- * Delete a company by its ID. Only users with ADMIN authority or ADMIN authority for the specific company can perform this action.
- * @summary Delete a company
- */
-export const deleteCompany = async (id: number, options?: RequestInit): Promise<deleteCompanyResponse> => {
-
-  return customFetchIamApi<deleteCompanyResponse>(getDeleteCompanyUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getDeleteCompanyMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext> => {
-
-const mutationKey = ['deleteCompany'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCompany>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteCompany(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteCompanyMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCompany>>>
-
-    export type DeleteCompanyMutationError = void
-
-    /**
- * @summary Delete a company
- */
-export const useDeleteCompany = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCompany>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchIamApi>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteCompany>>,
-        TError,
-        {id: number},
-        TContext
-      > => {
-      return useMutation(getDeleteCompanyMutationOptions(options), queryClient);
-    }

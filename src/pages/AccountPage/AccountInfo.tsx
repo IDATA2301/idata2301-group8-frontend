@@ -8,11 +8,12 @@ import styles from "./AccountInfo.module.css";
 import ConfirmationPopup from "./ConfirmationPopup";
 import ProviderRequestPopup from "./ProviderRequestPopup";
 
-import { useDeleteMe } from "@api/iam";
+import { useDeleteUser } from "@api/iam";
 
 import EditIcon from "@assets/icons/edit.svg";
 import LogoutIcon from "@assets/icons/logout.svg";
 import XIcon from "@assets/icons/x.svg";
+import { useConfirm } from "@utility/ConfirmContext";
 
 interface ProviderCompany {
   id: number;
@@ -42,12 +43,9 @@ export default function AccountInfo({
 
   const navigate = useNavigate();
 
-  const deleteMeMutation = useDeleteMe();
+  const deleteUserMutation = useDeleteUser();
 
   const [isEditing, setIsEditing] =
-    useState(false);
-
-  const [showLogoutPopup, setShowLogoutPopup] =
     useState(false);
 
   const [showDeletePopup, setShowDeletePopup] =
@@ -55,6 +53,8 @@ export default function AccountInfo({
 
   const [showProviderPopup, setShowProviderPopup] =
     useState(false);
+
+  const { confirm } = useConfirm();
 
   const [email, setEmail] =
     useState(user.email);
@@ -121,9 +121,38 @@ export default function AccountInfo({
 
               <button
                 className={styles.logoutButton}
-                onClick={() =>
-                  setShowLogoutPopup(true)
-                }
+                onClick={async () => {
+                  const confirmed = await confirm({
+                    title: "Log Out",
+                    message: "Are you sure you want to log out?"
+                  });
+
+                  if (confirmed) {
+                    localStorage.removeItem("token");
+
+                    toast.success("Logged out", {
+                      icon: (
+                        <img
+                          src={LogoutIcon}
+                          alt="Logout"
+                          style={{
+                            width: "18px",
+                            height: "18px"
+                          }}
+                        />
+                      ),
+
+                      style: {
+                        background: "#001824",
+                        color: "#FFFFFF"
+                      }
+                    });
+
+                    setTimeout(() => {
+                      navigate("/");
+                    }, 150);
+                  }
+                }}
               >
 
                 <img
@@ -216,45 +245,6 @@ export default function AccountInfo({
 
       </div>
 
-      {showLogoutPopup && (
-        <ConfirmationPopup
-          title="Log Out"
-          message="Are you sure you want to log out?"
-          onCancel={() =>
-            setShowLogoutPopup(false)
-          }
-          onConfirm={() => {
-
-            localStorage.removeItem("token");
-
-            toast.success("Logged out", {
-              icon: (
-                <img
-                  src={LogoutIcon}
-                  alt="Logout"
-                  style={{
-                    width: "18px",
-                    height: "18px"
-                  }}
-                />
-              ),
-
-              style: {
-                background: "#001824",
-                color: "#FFFFFF"
-              }
-            });
-
-            setShowLogoutPopup(false);
-
-            setTimeout(() => {
-              navigate("/");
-            }, 150);
-
-          }}
-        />
-      )}
-
       {showDeletePopup && (
         <ConfirmationPopup
           title="Delete Account"
@@ -267,7 +257,7 @@ export default function AccountInfo({
 
             try {
 
-              await deleteMeMutation.mutateAsync();
+              await deleteUserMutation.mutateAsync({ id: "" });
 
               localStorage.removeItem("token");
 

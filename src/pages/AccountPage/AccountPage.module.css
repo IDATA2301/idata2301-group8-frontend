@@ -1,323 +1,280 @@
 .accountPage {
-    max-width: 1400px;
-    margin: auto;
-    padding: 20px 40px 40px;
-    color: #FFFFFF;
-    font-family: "Inter", sans-serif;
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px 40px 40px;
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
 }
 
 .loginWarning {
-    width: 95%;
-    margin: 0 auto 24px;
-    padding: 14px 22px;
-    background: #FFFFFF0D;
-    border: 1px solid #FFFFFF14;
-    border-radius: 14px;
-    color: #FFFFFFD1;
-    font-size: 16px;
-    font-weight: 500;
-    text-align: center;
+  width: 95%;
+  margin: 0 auto 24px;
+  padding: 14px 22px;
+  background: #FFFFFF0D;
+  border: 1px solid #FFFFFF14;
+  border-radius: 14px;
+  color: #FFFFFFD1;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
 }
 
 .profileHeader {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
 .profileAvatar {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #5FA8FF, #2563EB);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    font-size: 36px;
-    font-weight: 700;
-    color: #FFFFFF;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5FA8FF, #2563EB);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: #FFFFFF;
 }
 
 .profileInfo {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .profileRole {
-    margin: 6px 0 0;
-    font-size: 18px;
-    color: #FFFFFFB3;
-    font-weight: 600;
+  margin: 6px 0 0;
+  font-size: 18px;
+  color: #FFFFFFB3;
+  font-weight: 600;
 }
 
 .pageTitle {
-    margin: 0;
-    font-size: 40px;
-    font-weight: 700;
-    color: #E3E3E3;
-    text-align: center;
-}
-
-.accountTopbar {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 54px;
-    padding: 50px 0;
-}
-
-.tabButton {
-    position: relative;
-    background: transparent;
-    border: none;
-    color: #E3E3E3;
-    font-size: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0 0 6px;
-    transition:
-        opacity 0.2s,
-        transform 0.2s;
-}
-
-.tabButton:hover {
-    opacity: 0.75;
-    transform: translateY(-1px);
-}
-
-.activeTab {
-    color: #E3E3E3;
-}
-
-.activeTab::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 2px;
-    background: #E3E3E360;
-    border-radius: 999px;
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  color: #E3E3E3;
+  text-align: center;
 }
 
 .accountContent {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .accountLayout {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
 }
 
 .providerCompaniesSection {
-    width: 420px;
-    flex-shrink: 0;
+  width: 420px;
+  flex-shrink: 0;
 }
 
 .providerCompaniesTitle {
-    margin-bottom: 18px;
+  margin-bottom: 18px;
 
-    color: #FFFFFF;
+  color: #FFFFFF;
 
-    font-size: 24px;
-    font-weight: 700;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .accountInput,
 .accountSelect {
-    width: 320px;
-    margin-left: auto;
-    background: #FFFFFF0F;
-    border: 1px solid #FFFFFF14;
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: #FFFFFF;
-    font-size: 16px;
-    outline: none;
-    transition:
-        border-color 0.2s,
-        background 0.2s,
-        opacity 0.2s;
+  width: 320px;
+  margin-left: auto;
+  background: #FFFFFF0F;
+  border: 1px solid #FFFFFF14;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #FFFFFF;
+  font-size: 16px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    opacity 0.2s;
 }
 
 .accountInput:focus {
-    border-color: #5FA8FF;
-    background: #FFFFFF17;
+  border-color: #5FA8FF;
+  background: #FFFFFF17;
 }
 
 .accountSelect {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .accountSelect option {
-    background: #022B3A;
-    color: #FFFFFF;
+  background: #022B3A;
+  color: #FFFFFF;
 }
 
 .formGroup {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 20px;
 }
 
 .formGroup label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #FFFFFFD9;
-    white-space: nowrap;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFFD9;
+  white-space: nowrap;
 }
 
 .formGroup .accountInput,
 .formGroup .accountSelect {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .primaryButton {
-    width: 100%;
-    background: #669BBC;
-    border: none;
-    border-radius: 14px;
-    padding: 16px;
-    color: #FFFFFF;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition:
-        transform 0.2s,
-        opacity 0.2s;
+  width: 100%;
+  background: #669BBC;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 
 .primaryButton:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .popupOverlay {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #00000099;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #00000099;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
 }
 
 .popupBox {
-    width: 520px;
-    background: #022B3A;
-    border: 1px solid #FFFFFF14;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 8px 40px #00000080;
-    animation: popupFade 0.18s ease-out;
+  width: 520px;
+  background: #022B3A;
+  border: 1px solid #FFFFFF14;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 40px #00000080;
+  animation: popupFade 0.18s ease-out;
 }
 
 .popupBox h3 {
-    margin: 0 0 12px;
-    color: #FFFFFF;
-    font-size: 26px;
-    font-weight: 700;
+  margin: 0 0 12px;
+  color: #FFFFFF;
+  font-size: 26px;
+  font-weight: 700;
 }
 
 .popupBox p {
-    margin: 0 0 28px;
-    color: #FFFFFFC7;
-    font-size: 16px;
-    line-height: 1.5;
+  margin: 0 0 28px;
+  color: #FFFFFFC7;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .popupForm {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .popupDivider {
-    text-align: center;
-    color: #FFFFFF80;
-    font-size: 14px;
-    font-weight: 600;
-    margin: -4px 0;
+  text-align: center;
+  color: #FFFFFF80;
+  font-size: 14px;
+  font-weight: 600;
+  margin: -4px 0;
 }
 
 .popupActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 28px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
 }
 
 .popupCancel,
 .popupConfirm,
 .popupDelete {
-    width: 120px;
-    height: 50px;
-    border: none;
-    border-radius: 14px;
-    color: #FFFFFF;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition:
-        transform 0.2s,
-        opacity 0.2s;
+  width: 120px;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 
 .popupCancel {
-    background: #001824;
+  background: #001824;
 }
 
 .popupConfirm {
-    background: #669BBC;
+  background: #669BBC;
 }
 
 .popupDelete {
-    background: #C1121F;
+  background: #C1121F;
 }
 
 .requestTypeSelector {
-    display: flex;
-    gap: 12px;
+  display: flex;
+  gap: 12px;
 }
 
 .requestTypeButton {
-    flex: 1;
-    height: 48px;
-    border: 1px solid #FFFFFF14;
-    border-radius: 12px;
-    background: #FFFFFF08;
-    color: #FFFFFFC7;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition:
-        background 0.2s,
-        border-color 0.2s,
-        transform 0.2s,
-        opacity 0.2s;
+  flex: 1;
+  height: 48px;
+  border: 1px solid #FFFFFF14;
+  border-radius: 12px;
+  background: #FFFFFF08;
+  color: #FFFFFFC7;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.2s,
+    opacity 0.2s;
 }
 
 .requestTypeButton:hover {
-    transform: translateY(-1px);
+  transform: translateY(-1px);
 }
 
 .activeRequestType {
-    background: #669BBC;
-    border-color: #669BBC;
-    color: #FFFFFF;
+  background: #669BBC;
+  border-color: #669BBC;
+  color: #FFFFFF;
 }
 
 .requestTypeButton:disabled,
@@ -325,25 +282,25 @@
 .popupConfirm:disabled,
 .accountInput:disabled,
 .accountSelect:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .popupConfirm:disabled,
 .requestTypeButton:disabled {
-    transform: none;
+  transform: none;
 }
 
 @keyframes popupFade {
 
-    from {
-        opacity: 0;
-        transform: scale(0.96);
-    }
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
 
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 
 }

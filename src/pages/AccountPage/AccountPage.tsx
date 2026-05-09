@@ -1,13 +1,12 @@
-import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 import styles from "./AccountPage.module.css";
 
-import AccountTopbar from "./AccountTopbar";
 import AccountInfo from "./AccountInfo";
 import Favorites from "./Favorites";
 import MyEvents from "./MyEvents";
 import CompanySection from "./CompanySection";
+import { Tabs } from "@components/Tabs/Tabs";
 
 interface JwtPayload {
   email?: string;
@@ -29,8 +28,6 @@ interface JwtPayload {
 }
 
 export default function AccountPage() {
-  const [selectedTab, setSelectedTab] = useState("account");
-
   const token = localStorage.getItem("token");
 
   const decoded = token
@@ -53,47 +50,9 @@ export default function AccountPage() {
       .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  function renderContent() {
 
-    if (selectedTab === "favorites") {
-      return <Favorites />;
-    }
+  const hasCompanies = user.providerCompanies.length > 0;
 
-    if (selectedTab === "events") {
-      return <MyEvents />;
-    }
-
-    const hasCompanies =
-      user.providerCompanies.length > 0;
-
-    return (
-      <div className={styles.accountLayout}>
-
-        <AccountInfo user={user} hasCompanies={hasCompanies} />
-
-        {hasCompanies && (
-          <div className={styles.providerCompaniesSection}>
-
-            <h2 className={styles.providerCompaniesTitle}>
-              Companies
-            </h2>
-
-            {user.providerCompanies.map((company) => (
-              <CompanySection
-                key={company.id}
-                companyName={company.companyName}
-                websiteUrl={company.websiteUrl}
-                payoutAccount={company.payoutAccount}
-                pending={company.pending}
-              />
-            ))}
-
-          </div>
-        )}
-
-      </div>
-    );
-  }
 
   return (
     <div className={styles.accountPage}>
@@ -126,15 +85,33 @@ export default function AccountPage() {
 
       </div>
 
-      <AccountTopbar
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-      />
-
-      <div className={styles.accountContent}>
-        {renderContent()}
-      </div>
-
+      <Tabs tabPanelClassName={styles.accountContent} items={[
+        {
+          id: 'events', label: 'My Events', content: (
+            <div className={styles.accountLayout}>
+              <AccountInfo user={user} hasCompanies={hasCompanies} />
+              {hasCompanies && (
+                <div className={styles.providerCompaniesSection}>
+                  <h2 className={styles.providerCompaniesTitle}>
+                    Companies
+                  </h2>
+                  {user.providerCompanies.map((company) => (
+                    <CompanySection
+                      key={company.id}
+                      companyName={company.companyName}
+                      websiteUrl={company.websiteUrl}
+                      payoutAccount={company.payoutAccount}
+                      pending={company.pending}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        },
+        { id: 'user-info', label: 'User Information', content: <MyEvents /> },
+        { id: 'favorites', label: 'Favorites', content: <Favorites /> }
+      ]} />
     </div>
   );
 }

@@ -23,11 +23,12 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query';
 
-import { customFetch } from './client';
+import { customFetchEventApi } from './client';
 export interface CreateEventRequest {
   slug?: string;
   eventName?: string;
   description?: string;
+  imageUrl?: string;
   status?: string;
   createdBy?: string;
   venueId?: number;
@@ -40,28 +41,30 @@ export interface EventResponse {
   slug?: string;
   eventName?: string;
   description?: string;
+  imageUrl?: string;
   status?: string;
   createdBy?: string;
   venueId?: number;
   createdAt?: string;
-  categoryIds?: number[];
-  extraFeatureIds?: number[];
+  startDate?: string;
+  lowestPrice?: number;
+  categoryNames?: string[];
+  extraFeatureNames?: string[];
   venueName?: string;
   city?: string;
-  categoryNames?: string[];
 }
 
 export interface CreateVenueRequest {
-  name?: string;
-  city?: string;
-  country?: string;
+  venueName?: string;
+  venueCity?: string;
+  venueCountry?: string;
 }
 
 export interface VenueResponse {
-  id?: number;
-  name?: string;
-  city?: string;
-  country?: string;
+  venueId?: number;
+  venueName?: string;
+  venueCity?: string;
+  venueCountry?: string;
 }
 
 export interface CreateTicketListingRequest {
@@ -88,26 +91,16 @@ export interface TicketListingResponse {
 }
 
 export interface CreateExtraFeatureRequest {
-  name?: string;
+  extraFeatureName?: string;
 }
 
 export interface ExtraFeatureResponse {
-  id?: number;
-  name?: string;
+  extraFeatureName?: string;
+  extraFeatureId?: number;
 }
 
 export interface CreateFavoriteRequest {
-  userId?: string;
   eventId?: number;
-}
-
-export interface CreateCategoryRequest {
-  name?: string;
-}
-
-export interface CategoryResponse {
-  id?: number;
-  name?: string;
 }
 
 export interface FavoriteResponse {
@@ -115,9 +108,22 @@ export interface FavoriteResponse {
   eventId?: number;
 }
 
+export interface CreateCategoryRequest {
+  categoryName?: string;
+}
+
+export interface CategoryResponse {
+  categoryName?: string;
+  categoryId?: number;
+}
+
 export type GetEventsParams = {
 city?: string;
 category?: string;
+startDate?: string;
+endDate?: string;
+minPrice?: number;
+maxPrice?: number;
 };
 
 export type SearchByCityParams = {
@@ -138,6 +144,21 @@ export type getEventByIdResponse400 = {
   status: 400
 }
 
+export type getEventByIdResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getEventByIdResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getEventByIdResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getEventByIdResponse409 = {
   data: string
   status: 409
@@ -151,7 +172,7 @@ export type getEventByIdResponse500 = {
 export type getEventByIdResponseSuccess = (getEventByIdResponse200) & {
   headers: Headers;
 };
-export type getEventByIdResponseError = (getEventByIdResponse400 | getEventByIdResponse409 | getEventByIdResponse500) & {
+export type getEventByIdResponseError = (getEventByIdResponse400 | getEventByIdResponse401 | getEventByIdResponse403 | getEventByIdResponse404 | getEventByIdResponse409 | getEventByIdResponse500) & {
   headers: Headers;
 };
 
@@ -165,9 +186,12 @@ export const getGetEventByIdUrl = (id: number,) => {
   return `/events/${id}`
 }
 
+/**
+ * @summary Get event by id
+ */
 export const getEventById = async (id: number, options?: RequestInit): Promise<getEventByIdResponse> => {
 
-  return customFetch<getEventByIdResponse>(getGetEventByIdUrl(id),
+  return customFetchEventApi<getEventByIdResponse>(getGetEventByIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -187,7 +211,7 @@ export const getGetEventByIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetEventByIdQueryOptions = <TData = Awaited<ReturnType<typeof getEventById>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetEventByIdQueryOptions = <TData = Awaited<ReturnType<typeof getEventById>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -216,7 +240,7 @@ export function useGetEventById<TData = Awaited<ReturnType<typeof getEventById>>
           TError,
           Awaited<ReturnType<typeof getEventById>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEventById<TData = Awaited<ReturnType<typeof getEventById>>, TError = string>(
@@ -226,16 +250,19 @@ export function useGetEventById<TData = Awaited<ReturnType<typeof getEventById>>
           TError,
           Awaited<ReturnType<typeof getEventById>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEventById<TData = Awaited<ReturnType<typeof getEventById>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get event by id
+ */
 
 export function useGetEventById<TData = Awaited<ReturnType<typeof getEventById>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -262,6 +289,21 @@ export type updateEventResponse400 = {
   status: 400
 }
 
+export type updateEventResponse401 = {
+  data: string
+  status: 401
+}
+
+export type updateEventResponse403 = {
+  data: string
+  status: 403
+}
+
+export type updateEventResponse404 = {
+  data: string
+  status: 404
+}
+
 export type updateEventResponse409 = {
   data: string
   status: 409
@@ -275,7 +317,7 @@ export type updateEventResponse500 = {
 export type updateEventResponseSuccess = (updateEventResponse200) & {
   headers: Headers;
 };
-export type updateEventResponseError = (updateEventResponse400 | updateEventResponse409 | updateEventResponse500) & {
+export type updateEventResponseError = (updateEventResponse400 | updateEventResponse401 | updateEventResponse403 | updateEventResponse404 | updateEventResponse409 | updateEventResponse500) & {
   headers: Headers;
 };
 
@@ -289,10 +331,13 @@ export const getUpdateEventUrl = (id: number,) => {
   return `/events/${id}`
 }
 
+/**
+ * @summary Update event
+ */
 export const updateEvent = async (id: number,
     createEventRequest: CreateEventRequest, options?: RequestInit): Promise<updateEventResponse> => {
 
-  return customFetch<updateEventResponse>(getUpdateEventUrl(id),
+  return customFetchEventApi<updateEventResponse>(getUpdateEventUrl(id),
   {
     ...options,
     method: 'PUT',
@@ -306,7 +351,7 @@ export const updateEvent = async (id: number,
 
 
 export const getUpdateEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext> => {
 
 const mutationKey = ['updateEvent'];
@@ -336,8 +381,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type UpdateEventMutationBody = CreateEventRequest
     export type UpdateEventMutationError = string
 
-    export const useUpdateEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    /**
+ * @summary Update event
+ */
+export const useUpdateEvent = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateEvent>>,
         TError,
@@ -357,6 +405,21 @@ export type deleteEventResponse400 = {
   status: 400
 }
 
+export type deleteEventResponse401 = {
+  data: string
+  status: 401
+}
+
+export type deleteEventResponse403 = {
+  data: string
+  status: 403
+}
+
+export type deleteEventResponse404 = {
+  data: string
+  status: 404
+}
+
 export type deleteEventResponse409 = {
   data: string
   status: 409
@@ -370,7 +433,7 @@ export type deleteEventResponse500 = {
 export type deleteEventResponseSuccess = (deleteEventResponse204) & {
   headers: Headers;
 };
-export type deleteEventResponseError = (deleteEventResponse400 | deleteEventResponse409 | deleteEventResponse500) & {
+export type deleteEventResponseError = (deleteEventResponse400 | deleteEventResponse401 | deleteEventResponse403 | deleteEventResponse404 | deleteEventResponse409 | deleteEventResponse500) & {
   headers: Headers;
 };
 
@@ -384,9 +447,12 @@ export const getDeleteEventUrl = (id: number,) => {
   return `/events/${id}`
 }
 
+/**
+ * @summary Delete event
+ */
 export const deleteEvent = async (id: number, options?: RequestInit): Promise<deleteEventResponse> => {
 
-  return customFetch<deleteEventResponse>(getDeleteEventUrl(id),
+  return customFetchEventApi<deleteEventResponse>(getDeleteEventUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -399,7 +465,7 @@ export const deleteEvent = async (id: number, options?: RequestInit): Promise<de
 
 
 export const getDeleteEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEvent>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEvent>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteEvent>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['deleteEvent'];
@@ -429,8 +495,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteEventMutationError = string
 
-    export const useDeleteEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEvent>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    /**
+ * @summary Delete event
+ */
+export const useDeleteEvent = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEvent>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteEvent>>,
         TError,
@@ -440,36 +509,51 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getDeleteEventMutationOptions(options), queryClient);
     }
 
-export type getAllResponse200 = {
+export type getAllVenuesResponse200 = {
   data: VenueResponse[]
   status: 200
 }
 
-export type getAllResponse400 = {
+export type getAllVenuesResponse400 = {
   data: string
   status: 400
 }
 
-export type getAllResponse409 = {
+export type getAllVenuesResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getAllVenuesResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getAllVenuesResponse404 = {
+  data: string
+  status: 404
+}
+
+export type getAllVenuesResponse409 = {
   data: string
   status: 409
 }
 
-export type getAllResponse500 = {
+export type getAllVenuesResponse500 = {
   data: string
   status: 500
 }
 
-export type getAllResponseSuccess = (getAllResponse200) & {
+export type getAllVenuesResponseSuccess = (getAllVenuesResponse200) & {
   headers: Headers;
 };
-export type getAllResponseError = (getAllResponse400 | getAllResponse409 | getAllResponse500) & {
+export type getAllVenuesResponseError = (getAllVenuesResponse400 | getAllVenuesResponse401 | getAllVenuesResponse403 | getAllVenuesResponse404 | getAllVenuesResponse409 | getAllVenuesResponse500) & {
   headers: Headers;
 };
 
-export type getAllResponse = (getAllResponseSuccess | getAllResponseError)
+export type getAllVenuesResponse = (getAllVenuesResponseSuccess | getAllVenuesResponseError)
 
-export const getGetAllUrl = () => {
+export const getGetAllVenuesUrl = () => {
 
 
 
@@ -477,9 +561,9 @@ export const getGetAllUrl = () => {
   return `/venues`
 }
 
-export const getAll = async ( options?: RequestInit): Promise<getAllResponse> => {
+export const getAllVenues = async ( options?: RequestInit): Promise<getAllVenuesResponse> => {
 
-  return customFetch<getAllResponse>(getGetAllUrl(),
+  return customFetchEventApi<getAllVenuesResponse>(getGetAllVenuesUrl(),
   {
     ...options,
     method: 'GET'
@@ -492,66 +576,66 @@ export const getAll = async ( options?: RequestInit): Promise<getAllResponse> =>
 
 
 
-export const getGetAllQueryKey = () => {
+export const getGetAllVenuesQueryKey = () => {
     return [
     `/venues`
     ] as const;
     }
 
 
-export const getGetAllQueryOptions = <TData = Awaited<ReturnType<typeof getAll>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetAllVenuesQueryOptions = <TData = Awaited<ReturnType<typeof getAllVenues>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllVenues>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAllQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetAllVenuesQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAll>>> = ({ signal }) => getAll({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllVenues>>> = ({ signal }) => getAllVenues({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAllVenues>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetAllQueryResult = NonNullable<Awaited<ReturnType<typeof getAll>>>
-export type GetAllQueryError = string
+export type GetAllVenuesQueryResult = NonNullable<Awaited<ReturnType<typeof getAllVenues>>>
+export type GetAllVenuesQueryError = string
 
 
-export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>> & Pick<
+export function useGetAllVenues<TData = Awaited<ReturnType<typeof getAllVenues>>, TError = string>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllVenues>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAll>>,
+          Awaited<ReturnType<typeof getAllVenues>>,
           TError,
-          Awaited<ReturnType<typeof getAll>>
+          Awaited<ReturnType<typeof getAllVenues>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>> & Pick<
+export function useGetAllVenues<TData = Awaited<ReturnType<typeof getAllVenues>>, TError = string>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllVenues>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAll>>,
+          Awaited<ReturnType<typeof getAllVenues>>,
           TError,
-          Awaited<ReturnType<typeof getAll>>
+          Awaited<ReturnType<typeof getAllVenues>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetAllVenues<TData = Awaited<ReturnType<typeof getAllVenues>>, TError = string>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllVenues>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetAllVenues<TData = Awaited<ReturnType<typeof getAllVenues>>, TError = string>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllVenues>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetAllQueryOptions(options)
+  const queryOptions = getGetAllVenuesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -564,14 +648,29 @@ export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = s
 
 
 
-export type createResponse201 = {
+export type createResponse200 = {
   data: VenueResponse
-  status: 201
+  status: 200
 }
 
 export type createResponse400 = {
   data: string
   status: 400
+}
+
+export type createResponse401 = {
+  data: string
+  status: 401
+}
+
+export type createResponse403 = {
+  data: string
+  status: 403
+}
+
+export type createResponse404 = {
+  data: string
+  status: 404
 }
 
 export type createResponse409 = {
@@ -584,10 +683,10 @@ export type createResponse500 = {
   status: 500
 }
 
-export type createResponseSuccess = (createResponse201) & {
+export type createResponseSuccess = (createResponse200) & {
   headers: Headers;
 };
-export type createResponseError = (createResponse400 | createResponse409 | createResponse500) & {
+export type createResponseError = (createResponse400 | createResponse401 | createResponse403 | createResponse404 | createResponse409 | createResponse500) & {
   headers: Headers;
 };
 
@@ -603,7 +702,7 @@ export const getCreateUrl = () => {
 
 export const create = async (createVenueRequest: CreateVenueRequest, options?: RequestInit): Promise<createResponse> => {
 
-  return customFetch<createResponse>(getCreateUrl(),
+  return customFetchEventApi<createResponse>(getCreateUrl(),
   {
     ...options,
     method: 'POST',
@@ -617,7 +716,7 @@ export const create = async (createVenueRequest: CreateVenueRequest, options?: R
 
 
 export const getCreateMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: CreateVenueRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: CreateVenueRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: CreateVenueRequest}, TContext> => {
 
 const mutationKey = ['create'];
@@ -648,7 +747,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateMutationError = string
 
     export const useCreate = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: CreateVenueRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: CreateVenueRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof create>>,
         TError,
@@ -658,14 +757,29 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getCreateMutationOptions(options), queryClient);
     }
 
-export type createTicketListingResponse201 = {
+export type createTicketListingResponse200 = {
   data: TicketListingResponse
-  status: 201
+  status: 200
 }
 
 export type createTicketListingResponse400 = {
   data: string
   status: 400
+}
+
+export type createTicketListingResponse401 = {
+  data: string
+  status: 401
+}
+
+export type createTicketListingResponse403 = {
+  data: string
+  status: 403
+}
+
+export type createTicketListingResponse404 = {
+  data: string
+  status: 404
 }
 
 export type createTicketListingResponse409 = {
@@ -678,10 +792,10 @@ export type createTicketListingResponse500 = {
   status: 500
 }
 
-export type createTicketListingResponseSuccess = (createTicketListingResponse201) & {
+export type createTicketListingResponseSuccess = (createTicketListingResponse200) & {
   headers: Headers;
 };
-export type createTicketListingResponseError = (createTicketListingResponse400 | createTicketListingResponse409 | createTicketListingResponse500) & {
+export type createTicketListingResponseError = (createTicketListingResponse400 | createTicketListingResponse401 | createTicketListingResponse403 | createTicketListingResponse404 | createTicketListingResponse409 | createTicketListingResponse500) & {
   headers: Headers;
 };
 
@@ -697,7 +811,7 @@ export const getCreateTicketListingUrl = () => {
 
 export const createTicketListing = async (createTicketListingRequest: CreateTicketListingRequest, options?: RequestInit): Promise<createTicketListingResponse> => {
 
-  return customFetch<createTicketListingResponse>(getCreateTicketListingUrl(),
+  return customFetchEventApi<createTicketListingResponse>(getCreateTicketListingUrl(),
   {
     ...options,
     method: 'POST',
@@ -711,7 +825,7 @@ export const createTicketListing = async (createTicketListingRequest: CreateTick
 
 
 export const getCreateTicketListingMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTicketListing>>, TError,{data: CreateTicketListingRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTicketListing>>, TError,{data: CreateTicketListingRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createTicketListing>>, TError,{data: CreateTicketListingRequest}, TContext> => {
 
 const mutationKey = ['createTicketListing'];
@@ -742,7 +856,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateTicketListingMutationError = string
 
     export const useCreateTicketListing = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTicketListing>>, TError,{data: CreateTicketListingRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTicketListing>>, TError,{data: CreateTicketListingRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createTicketListing>>,
         TError,
@@ -752,36 +866,51 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getCreateTicketListingMutationOptions(options), queryClient);
     }
 
-export type getAll1Response200 = {
+export type getAllResponse200 = {
   data: ExtraFeatureResponse[]
   status: 200
 }
 
-export type getAll1Response400 = {
+export type getAllResponse400 = {
   data: string
   status: 400
 }
 
-export type getAll1Response409 = {
+export type getAllResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getAllResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getAllResponse404 = {
+  data: string
+  status: 404
+}
+
+export type getAllResponse409 = {
   data: string
   status: 409
 }
 
-export type getAll1Response500 = {
+export type getAllResponse500 = {
   data: string
   status: 500
 }
 
-export type getAll1ResponseSuccess = (getAll1Response200) & {
+export type getAllResponseSuccess = (getAllResponse200) & {
   headers: Headers;
 };
-export type getAll1ResponseError = (getAll1Response400 | getAll1Response409 | getAll1Response500) & {
+export type getAllResponseError = (getAllResponse400 | getAllResponse401 | getAllResponse403 | getAllResponse404 | getAllResponse409 | getAllResponse500) & {
   headers: Headers;
 };
 
-export type getAll1Response = (getAll1ResponseSuccess | getAll1ResponseError)
+export type getAllResponse = (getAllResponseSuccess | getAllResponseError)
 
-export const getGetAll1Url = () => {
+export const getGetAllUrl = () => {
 
 
 
@@ -789,9 +918,9 @@ export const getGetAll1Url = () => {
   return `/features`
 }
 
-export const getAll1 = async ( options?: RequestInit): Promise<getAll1Response> => {
+export const getAll = async ( options?: RequestInit): Promise<getAllResponse> => {
 
-  return customFetch<getAll1Response>(getGetAll1Url(),
+  return customFetchEventApi<getAllResponse>(getGetAllUrl(),
   {
     ...options,
     method: 'GET'
@@ -804,66 +933,66 @@ export const getAll1 = async ( options?: RequestInit): Promise<getAll1Response> 
 
 
 
-export const getGetAll1QueryKey = () => {
+export const getGetAllQueryKey = () => {
     return [
     `/features`
     ] as const;
     }
 
 
-export const getGetAll1QueryOptions = <TData = Awaited<ReturnType<typeof getAll1>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll1>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetAllQueryOptions = <TData = Awaited<ReturnType<typeof getAll>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAll1QueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetAllQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAll1>>> = ({ signal }) => getAll1({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAll>>> = ({ signal }) => getAll({ signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAll1>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetAll1QueryResult = NonNullable<Awaited<ReturnType<typeof getAll1>>>
-export type GetAll1QueryError = string
+export type GetAllQueryResult = NonNullable<Awaited<ReturnType<typeof getAll>>>
+export type GetAllQueryError = string
 
 
-export function useGetAll1<TData = Awaited<ReturnType<typeof getAll1>>, TError = string>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll1>>, TError, TData>> & Pick<
+export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAll1>>,
+          Awaited<ReturnType<typeof getAll>>,
           TError,
-          Awaited<ReturnType<typeof getAll1>>
+          Awaited<ReturnType<typeof getAll>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAll1<TData = Awaited<ReturnType<typeof getAll1>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll1>>, TError, TData>> & Pick<
+export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAll1>>,
+          Awaited<ReturnType<typeof getAll>>,
           TError,
-          Awaited<ReturnType<typeof getAll1>>
+          Awaited<ReturnType<typeof getAll>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAll1<TData = Awaited<ReturnType<typeof getAll1>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll1>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetAll1<TData = Awaited<ReturnType<typeof getAll1>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll1>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetAll<TData = Awaited<ReturnType<typeof getAll>>, TError = string>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAll>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetAll1QueryOptions(options)
+  const queryOptions = getGetAllQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -876,14 +1005,29 @@ export function useGetAll1<TData = Awaited<ReturnType<typeof getAll1>>, TError =
 
 
 
-export type create1Response201 = {
+export type create1Response200 = {
   data: ExtraFeatureResponse
-  status: 201
+  status: 200
 }
 
 export type create1Response400 = {
   data: string
   status: 400
+}
+
+export type create1Response401 = {
+  data: string
+  status: 401
+}
+
+export type create1Response403 = {
+  data: string
+  status: 403
+}
+
+export type create1Response404 = {
+  data: string
+  status: 404
 }
 
 export type create1Response409 = {
@@ -896,10 +1040,10 @@ export type create1Response500 = {
   status: 500
 }
 
-export type create1ResponseSuccess = (create1Response201) & {
+export type create1ResponseSuccess = (create1Response200) & {
   headers: Headers;
 };
-export type create1ResponseError = (create1Response400 | create1Response409 | create1Response500) & {
+export type create1ResponseError = (create1Response400 | create1Response401 | create1Response403 | create1Response404 | create1Response409 | create1Response500) & {
   headers: Headers;
 };
 
@@ -915,7 +1059,7 @@ export const getCreate1Url = () => {
 
 export const create1 = async (createExtraFeatureRequest: CreateExtraFeatureRequest, options?: RequestInit): Promise<create1Response> => {
 
-  return customFetch<create1Response>(getCreate1Url(),
+  return customFetchEventApi<create1Response>(getCreate1Url(),
   {
     ...options,
     method: 'POST',
@@ -929,7 +1073,7 @@ export const create1 = async (createExtraFeatureRequest: CreateExtraFeatureReque
 
 
 export const getCreate1MutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create1>>, TError,{data: CreateExtraFeatureRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create1>>, TError,{data: CreateExtraFeatureRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof create1>>, TError,{data: CreateExtraFeatureRequest}, TContext> => {
 
 const mutationKey = ['create1'];
@@ -960,7 +1104,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type Create1MutationError = string
 
     export const useCreate1 = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create1>>, TError,{data: CreateExtraFeatureRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create1>>, TError,{data: CreateExtraFeatureRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof create1>>,
         TError,
@@ -971,13 +1115,28 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     }
 
 export type addToEventResponse200 = {
-  data: string
+  data: void
   status: 200
 }
 
 export type addToEventResponse400 = {
   data: string
   status: 400
+}
+
+export type addToEventResponse401 = {
+  data: string
+  status: 401
+}
+
+export type addToEventResponse403 = {
+  data: string
+  status: 403
+}
+
+export type addToEventResponse404 = {
+  data: string
+  status: 404
 }
 
 export type addToEventResponse409 = {
@@ -993,7 +1152,7 @@ export type addToEventResponse500 = {
 export type addToEventResponseSuccess = (addToEventResponse200) & {
   headers: Headers;
 };
-export type addToEventResponseError = (addToEventResponse400 | addToEventResponse409 | addToEventResponse500) & {
+export type addToEventResponseError = (addToEventResponse400 | addToEventResponse401 | addToEventResponse403 | addToEventResponse404 | addToEventResponse409 | addToEventResponse500) & {
   headers: Headers;
 };
 
@@ -1011,7 +1170,7 @@ export const getAddToEventUrl = (featureId: number,
 export const addToEvent = async (featureId: number,
     eventId: number, options?: RequestInit): Promise<addToEventResponse> => {
 
-  return customFetch<addToEventResponse>(getAddToEventUrl(featureId,eventId),
+  return customFetchEventApi<addToEventResponse>(getAddToEventUrl(featureId,eventId),
   {
     ...options,
     method: 'POST'
@@ -1024,7 +1183,7 @@ export const addToEvent = async (featureId: number,
 
 
 export const getAddToEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addToEvent>>, TError,{featureId: number;eventId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addToEvent>>, TError,{featureId: number;eventId: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addToEvent>>, TError,{featureId: number;eventId: number}, TContext> => {
 
 const mutationKey = ['addToEvent'];
@@ -1055,7 +1214,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AddToEventMutationError = string
 
     export const useAddToEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addToEvent>>, TError,{featureId: number;eventId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addToEvent>>, TError,{featureId: number;eventId: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addToEvent>>,
         TError,
@@ -1075,6 +1234,21 @@ export type getFavoritesResponse400 = {
   status: 400
 }
 
+export type getFavoritesResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getFavoritesResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getFavoritesResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getFavoritesResponse409 = {
   data: string
   status: 409
@@ -1088,7 +1262,7 @@ export type getFavoritesResponse500 = {
 export type getFavoritesResponseSuccess = (getFavoritesResponse200) & {
   headers: Headers;
 };
-export type getFavoritesResponseError = (getFavoritesResponse400 | getFavoritesResponse409 | getFavoritesResponse500) & {
+export type getFavoritesResponseError = (getFavoritesResponse400 | getFavoritesResponse401 | getFavoritesResponse403 | getFavoritesResponse404 | getFavoritesResponse409 | getFavoritesResponse500) & {
   headers: Headers;
 };
 
@@ -1104,7 +1278,7 @@ export const getGetFavoritesUrl = () => {
 
 export const getFavorites = async ( options?: RequestInit): Promise<getFavoritesResponse> => {
 
-  return customFetch<getFavoritesResponse>(getGetFavoritesUrl(),
+  return customFetchEventApi<getFavoritesResponse>(getGetFavoritesUrl(),
   {
     ...options,
     method: 'GET'
@@ -1124,7 +1298,7 @@ export const getGetFavoritesQueryKey = () => {
     }
 
 
-export const getGetFavoritesQueryOptions = <TData = Awaited<ReturnType<typeof getFavorites>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFavorites>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetFavoritesQueryOptions = <TData = Awaited<ReturnType<typeof getFavorites>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFavorites>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1153,7 +1327,7 @@ export function useGetFavorites<TData = Awaited<ReturnType<typeof getFavorites>>
           TError,
           Awaited<ReturnType<typeof getFavorites>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFavorites<TData = Awaited<ReturnType<typeof getFavorites>>, TError = string>(
@@ -1163,16 +1337,16 @@ export function useGetFavorites<TData = Awaited<ReturnType<typeof getFavorites>>
           TError,
           Awaited<ReturnType<typeof getFavorites>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetFavorites<TData = Awaited<ReturnType<typeof getFavorites>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFavorites>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFavorites>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetFavorites<TData = Awaited<ReturnType<typeof getFavorites>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFavorites>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFavorites>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1189,14 +1363,29 @@ export function useGetFavorites<TData = Awaited<ReturnType<typeof getFavorites>>
 
 
 
-export type addFavoriteResponse201 = {
-  data: void
-  status: 201
+export type addFavoriteResponse200 = {
+  data: FavoriteResponse
+  status: 200
 }
 
 export type addFavoriteResponse400 = {
   data: string
   status: 400
+}
+
+export type addFavoriteResponse401 = {
+  data: string
+  status: 401
+}
+
+export type addFavoriteResponse403 = {
+  data: string
+  status: 403
+}
+
+export type addFavoriteResponse404 = {
+  data: string
+  status: 404
 }
 
 export type addFavoriteResponse409 = {
@@ -1209,10 +1398,10 @@ export type addFavoriteResponse500 = {
   status: 500
 }
 
-export type addFavoriteResponseSuccess = (addFavoriteResponse201) & {
+export type addFavoriteResponseSuccess = (addFavoriteResponse200) & {
   headers: Headers;
 };
-export type addFavoriteResponseError = (addFavoriteResponse400 | addFavoriteResponse409 | addFavoriteResponse500) & {
+export type addFavoriteResponseError = (addFavoriteResponse400 | addFavoriteResponse401 | addFavoriteResponse403 | addFavoriteResponse404 | addFavoriteResponse409 | addFavoriteResponse500) & {
   headers: Headers;
 };
 
@@ -1228,7 +1417,7 @@ export const getAddFavoriteUrl = () => {
 
 export const addFavorite = async (createFavoriteRequest: CreateFavoriteRequest, options?: RequestInit): Promise<addFavoriteResponse> => {
 
-  return customFetch<addFavoriteResponse>(getAddFavoriteUrl(),
+  return customFetchEventApi<addFavoriteResponse>(getAddFavoriteUrl(),
   {
     ...options,
     method: 'POST',
@@ -1242,7 +1431,7 @@ export const addFavorite = async (createFavoriteRequest: CreateFavoriteRequest, 
 
 
 export const getAddFavoriteMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addFavorite>>, TError,{data: CreateFavoriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addFavorite>>, TError,{data: CreateFavoriteRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof addFavorite>>, TError,{data: CreateFavoriteRequest}, TContext> => {
 
 const mutationKey = ['addFavorite'];
@@ -1273,7 +1462,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AddFavoriteMutationError = string
 
     export const useAddFavorite = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addFavorite>>, TError,{data: CreateFavoriteRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addFavorite>>, TError,{data: CreateFavoriteRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addFavorite>>,
         TError,
@@ -1293,6 +1482,21 @@ export type getEventsResponse400 = {
   status: 400
 }
 
+export type getEventsResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getEventsResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getEventsResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getEventsResponse409 = {
   data: string
   status: 409
@@ -1306,7 +1510,7 @@ export type getEventsResponse500 = {
 export type getEventsResponseSuccess = (getEventsResponse200) & {
   headers: Headers;
 };
-export type getEventsResponseError = (getEventsResponse400 | getEventsResponse409 | getEventsResponse500) & {
+export type getEventsResponseError = (getEventsResponse400 | getEventsResponse401 | getEventsResponse403 | getEventsResponse404 | getEventsResponse409 | getEventsResponse500) & {
   headers: Headers;
 };
 
@@ -1332,7 +1536,7 @@ export const getGetEventsUrl = (params?: GetEventsParams,) => {
  */
 export const getEvents = async (params?: GetEventsParams, options?: RequestInit): Promise<getEventsResponse> => {
 
-  return customFetch<getEventsResponse>(getGetEventsUrl(params),
+  return customFetchEventApi<getEventsResponse>(getGetEventsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -1352,7 +1556,7 @@ export const getGetEventsQueryKey = (params?: GetEventsParams,) => {
     }
 
 
-export const getGetEventsQueryOptions = <TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetEventsQueryOptions = <TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1381,7 +1585,7 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
           TError,
           Awaited<ReturnType<typeof getEvents>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
@@ -1391,11 +1595,11 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
           TError,
           Awaited<ReturnType<typeof getEvents>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
- params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1403,7 +1607,7 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
  */
 
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
- params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1420,14 +1624,29 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
 
 
 
-export type createEventResponse201 = {
+export type createEventResponse200 = {
   data: EventResponse
-  status: 201
+  status: 200
 }
 
 export type createEventResponse400 = {
   data: string
   status: 400
+}
+
+export type createEventResponse401 = {
+  data: string
+  status: 401
+}
+
+export type createEventResponse403 = {
+  data: string
+  status: 403
+}
+
+export type createEventResponse404 = {
+  data: string
+  status: 404
 }
 
 export type createEventResponse409 = {
@@ -1440,10 +1659,10 @@ export type createEventResponse500 = {
   status: 500
 }
 
-export type createEventResponseSuccess = (createEventResponse201) & {
+export type createEventResponseSuccess = (createEventResponse200) & {
   headers: Headers;
 };
-export type createEventResponseError = (createEventResponse400 | createEventResponse409 | createEventResponse500) & {
+export type createEventResponseError = (createEventResponse400 | createEventResponse401 | createEventResponse403 | createEventResponse404 | createEventResponse409 | createEventResponse500) & {
   headers: Headers;
 };
 
@@ -1457,9 +1676,12 @@ export const getCreateEventUrl = () => {
   return `/events`
 }
 
+/**
+ * @summary Create event
+ */
 export const createEvent = async (createEventRequest: CreateEventRequest, options?: RequestInit): Promise<createEventResponse> => {
 
-  return customFetch<createEventResponse>(getCreateEventUrl(),
+  return customFetchEventApi<createEventResponse>(getCreateEventUrl(),
   {
     ...options,
     method: 'POST',
@@ -1473,7 +1695,7 @@ export const createEvent = async (createEventRequest: CreateEventRequest, option
 
 
 export const getCreateEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext> => {
 
 const mutationKey = ['createEvent'];
@@ -1503,8 +1725,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateEventMutationBody = CreateEventRequest
     export type CreateEventMutationError = string
 
-    export const useCreateEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    /**
+ * @summary Create event
+ */
+export const useCreateEvent = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createEvent>>,
         TError,
@@ -1524,6 +1749,21 @@ export type getAllCategoriesResponse400 = {
   status: 400
 }
 
+export type getAllCategoriesResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getAllCategoriesResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getAllCategoriesResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getAllCategoriesResponse409 = {
   data: string
   status: 409
@@ -1537,7 +1777,7 @@ export type getAllCategoriesResponse500 = {
 export type getAllCategoriesResponseSuccess = (getAllCategoriesResponse200) & {
   headers: Headers;
 };
-export type getAllCategoriesResponseError = (getAllCategoriesResponse400 | getAllCategoriesResponse409 | getAllCategoriesResponse500) & {
+export type getAllCategoriesResponseError = (getAllCategoriesResponse400 | getAllCategoriesResponse401 | getAllCategoriesResponse403 | getAllCategoriesResponse404 | getAllCategoriesResponse409 | getAllCategoriesResponse500) & {
   headers: Headers;
 };
 
@@ -1553,7 +1793,7 @@ export const getGetAllCategoriesUrl = () => {
 
 export const getAllCategories = async ( options?: RequestInit): Promise<getAllCategoriesResponse> => {
 
-  return customFetch<getAllCategoriesResponse>(getGetAllCategoriesUrl(),
+  return customFetchEventApi<getAllCategoriesResponse>(getGetAllCategoriesUrl(),
   {
     ...options,
     method: 'GET'
@@ -1573,7 +1813,7 @@ export const getGetAllCategoriesQueryKey = () => {
     }
 
 
-export const getGetAllCategoriesQueryOptions = <TData = Awaited<ReturnType<typeof getAllCategories>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllCategories>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetAllCategoriesQueryOptions = <TData = Awaited<ReturnType<typeof getAllCategories>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllCategories>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1602,7 +1842,7 @@ export function useGetAllCategories<TData = Awaited<ReturnType<typeof getAllCate
           TError,
           Awaited<ReturnType<typeof getAllCategories>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAllCategories<TData = Awaited<ReturnType<typeof getAllCategories>>, TError = string>(
@@ -1612,16 +1852,16 @@ export function useGetAllCategories<TData = Awaited<ReturnType<typeof getAllCate
           TError,
           Awaited<ReturnType<typeof getAllCategories>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetAllCategories<TData = Awaited<ReturnType<typeof getAllCategories>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllCategories>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllCategories>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetAllCategories<TData = Awaited<ReturnType<typeof getAllCategories>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllCategories>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllCategories>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1638,14 +1878,29 @@ export function useGetAllCategories<TData = Awaited<ReturnType<typeof getAllCate
 
 
 
-export type createCategoryResponse201 = {
+export type createCategoryResponse200 = {
   data: CategoryResponse
-  status: 201
+  status: 200
 }
 
 export type createCategoryResponse400 = {
   data: string
   status: 400
+}
+
+export type createCategoryResponse401 = {
+  data: string
+  status: 401
+}
+
+export type createCategoryResponse403 = {
+  data: string
+  status: 403
+}
+
+export type createCategoryResponse404 = {
+  data: string
+  status: 404
 }
 
 export type createCategoryResponse409 = {
@@ -1658,10 +1913,10 @@ export type createCategoryResponse500 = {
   status: 500
 }
 
-export type createCategoryResponseSuccess = (createCategoryResponse201) & {
+export type createCategoryResponseSuccess = (createCategoryResponse200) & {
   headers: Headers;
 };
-export type createCategoryResponseError = (createCategoryResponse400 | createCategoryResponse409 | createCategoryResponse500) & {
+export type createCategoryResponseError = (createCategoryResponse400 | createCategoryResponse401 | createCategoryResponse403 | createCategoryResponse404 | createCategoryResponse409 | createCategoryResponse500) & {
   headers: Headers;
 };
 
@@ -1677,7 +1932,7 @@ export const getCreateCategoryUrl = () => {
 
 export const createCategory = async (createCategoryRequest: CreateCategoryRequest, options?: RequestInit): Promise<createCategoryResponse> => {
 
-  return customFetch<createCategoryResponse>(getCreateCategoryUrl(),
+  return customFetchEventApi<createCategoryResponse>(getCreateCategoryUrl(),
   {
     ...options,
     method: 'POST',
@@ -1691,7 +1946,7 @@ export const createCategory = async (createCategoryRequest: CreateCategoryReques
 
 
 export const getCreateCategoryMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryRequest}, TContext> => {
 
 const mutationKey = ['createCategory'];
@@ -1722,7 +1977,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateCategoryMutationError = string
 
     export const useCreateCategory = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCategory>>,
         TError,
@@ -1742,6 +1997,21 @@ export type getByIdResponse400 = {
   status: 400
 }
 
+export type getByIdResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getByIdResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getByIdResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getByIdResponse409 = {
   data: string
   status: 409
@@ -1755,7 +2025,7 @@ export type getByIdResponse500 = {
 export type getByIdResponseSuccess = (getByIdResponse200) & {
   headers: Headers;
 };
-export type getByIdResponseError = (getByIdResponse400 | getByIdResponse409 | getByIdResponse500) & {
+export type getByIdResponseError = (getByIdResponse400 | getByIdResponse401 | getByIdResponse403 | getByIdResponse404 | getByIdResponse409 | getByIdResponse500) & {
   headers: Headers;
 };
 
@@ -1771,7 +2041,7 @@ export const getGetByIdUrl = (id: number,) => {
 
 export const getById = async (id: number, options?: RequestInit): Promise<getByIdResponse> => {
 
-  return customFetch<getByIdResponse>(getGetByIdUrl(id),
+  return customFetchEventApi<getByIdResponse>(getGetByIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -1791,7 +2061,7 @@ export const getGetByIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetByIdQueryOptions = <TData = Awaited<ReturnType<typeof getById>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetByIdQueryOptions = <TData = Awaited<ReturnType<typeof getById>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1820,7 +2090,7 @@ export function useGetById<TData = Awaited<ReturnType<typeof getById>>, TError =
           TError,
           Awaited<ReturnType<typeof getById>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetById<TData = Awaited<ReturnType<typeof getById>>, TError = string>(
@@ -1830,16 +2100,16 @@ export function useGetById<TData = Awaited<ReturnType<typeof getById>>, TError =
           TError,
           Awaited<ReturnType<typeof getById>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetById<TData = Awaited<ReturnType<typeof getById>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetById<TData = Awaited<ReturnType<typeof getById>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -1856,14 +2126,29 @@ export function useGetById<TData = Awaited<ReturnType<typeof getById>>, TError =
 
 
 
-export type _deleteResponse204 = {
+export type _deleteResponse200 = {
   data: void
-  status: 204
+  status: 200
 }
 
 export type _deleteResponse400 = {
   data: string
   status: 400
+}
+
+export type _deleteResponse401 = {
+  data: string
+  status: 401
+}
+
+export type _deleteResponse403 = {
+  data: string
+  status: 403
+}
+
+export type _deleteResponse404 = {
+  data: string
+  status: 404
 }
 
 export type _deleteResponse409 = {
@@ -1876,10 +2161,10 @@ export type _deleteResponse500 = {
   status: 500
 }
 
-export type _deleteResponseSuccess = (_deleteResponse204) & {
+export type _deleteResponseSuccess = (_deleteResponse200) & {
   headers: Headers;
 };
-export type _deleteResponseError = (_deleteResponse400 | _deleteResponse409 | _deleteResponse500) & {
+export type _deleteResponseError = (_deleteResponse400 | _deleteResponse401 | _deleteResponse403 | _deleteResponse404 | _deleteResponse409 | _deleteResponse500) & {
   headers: Headers;
 };
 
@@ -1895,7 +2180,7 @@ export const getDeleteUrl = (id: number,) => {
 
 export const _delete = async (id: number, options?: RequestInit): Promise<_deleteResponse> => {
 
-  return customFetch<_deleteResponse>(getDeleteUrl(id),
+  return customFetchEventApi<_deleteResponse>(getDeleteUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -1908,7 +2193,7 @@ export const _delete = async (id: number, options?: RequestInit): Promise<_delet
 
 
 export const getDeleteMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['_delete'];
@@ -1939,7 +2224,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type _DeleteMutationError = string
 
     export const useDelete = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof _delete>>,
         TError,
@@ -1959,6 +2244,21 @@ export type searchByCityResponse400 = {
   status: 400
 }
 
+export type searchByCityResponse401 = {
+  data: string
+  status: 401
+}
+
+export type searchByCityResponse403 = {
+  data: string
+  status: 403
+}
+
+export type searchByCityResponse404 = {
+  data: string
+  status: 404
+}
+
 export type searchByCityResponse409 = {
   data: string
   status: 409
@@ -1972,7 +2272,7 @@ export type searchByCityResponse500 = {
 export type searchByCityResponseSuccess = (searchByCityResponse200) & {
   headers: Headers;
 };
-export type searchByCityResponseError = (searchByCityResponse400 | searchByCityResponse409 | searchByCityResponse500) & {
+export type searchByCityResponseError = (searchByCityResponse400 | searchByCityResponse401 | searchByCityResponse403 | searchByCityResponse404 | searchByCityResponse409 | searchByCityResponse500) & {
   headers: Headers;
 };
 
@@ -1995,7 +2295,7 @@ export const getSearchByCityUrl = (params: SearchByCityParams,) => {
 
 export const searchByCity = async (params: SearchByCityParams, options?: RequestInit): Promise<searchByCityResponse> => {
 
-  return customFetch<searchByCityResponse>(getSearchByCityUrl(params),
+  return customFetchEventApi<searchByCityResponse>(getSearchByCityUrl(params),
   {
     ...options,
     method: 'GET'
@@ -2015,7 +2315,7 @@ export const getSearchByCityQueryKey = (params?: SearchByCityParams,) => {
     }
 
 
-export const getSearchByCityQueryOptions = <TData = Awaited<ReturnType<typeof searchByCity>>, TError = string>(params: SearchByCityParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchByCity>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getSearchByCityQueryOptions = <TData = Awaited<ReturnType<typeof searchByCity>>, TError = string>(params: SearchByCityParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchByCity>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2044,7 +2344,7 @@ export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>
           TError,
           Awaited<ReturnType<typeof searchByCity>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>, TError = string>(
@@ -2054,16 +2354,16 @@ export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>
           TError,
           Awaited<ReturnType<typeof searchByCity>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>, TError = string>(
- params: SearchByCityParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchByCity>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params: SearchByCityParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchByCity>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>, TError = string>(
- params: SearchByCityParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchByCity>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params: SearchByCityParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof searchByCity>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2090,6 +2390,21 @@ export type getListingsByEventResponse400 = {
   status: 400
 }
 
+export type getListingsByEventResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getListingsByEventResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getListingsByEventResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getListingsByEventResponse409 = {
   data: string
   status: 409
@@ -2103,7 +2418,7 @@ export type getListingsByEventResponse500 = {
 export type getListingsByEventResponseSuccess = (getListingsByEventResponse200) & {
   headers: Headers;
 };
-export type getListingsByEventResponseError = (getListingsByEventResponse400 | getListingsByEventResponse409 | getListingsByEventResponse500) & {
+export type getListingsByEventResponseError = (getListingsByEventResponse400 | getListingsByEventResponse401 | getListingsByEventResponse403 | getListingsByEventResponse404 | getListingsByEventResponse409 | getListingsByEventResponse500) & {
   headers: Headers;
 };
 
@@ -2119,7 +2434,7 @@ export const getGetListingsByEventUrl = (eventId: number,) => {
 
 export const getListingsByEvent = async (eventId: number, options?: RequestInit): Promise<getListingsByEventResponse> => {
 
-  return customFetch<getListingsByEventResponse>(getGetListingsByEventUrl(eventId),
+  return customFetchEventApi<getListingsByEventResponse>(getGetListingsByEventUrl(eventId),
   {
     ...options,
     method: 'GET'
@@ -2139,7 +2454,7 @@ export const getGetListingsByEventQueryKey = (eventId: number,) => {
     }
 
 
-export const getGetListingsByEventQueryOptions = <TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetListingsByEventQueryOptions = <TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2168,7 +2483,7 @@ export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListi
           TError,
           Awaited<ReturnType<typeof getListingsByEvent>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
@@ -2178,16 +2493,16 @@ export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListi
           TError,
           Awaited<ReturnType<typeof getListingsByEvent>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
- eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
- eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2214,6 +2529,21 @@ export type homeResponse400 = {
   status: 400
 }
 
+export type homeResponse401 = {
+  data: string
+  status: 401
+}
+
+export type homeResponse403 = {
+  data: string
+  status: 403
+}
+
+export type homeResponse404 = {
+  data: string
+  status: 404
+}
+
 export type homeResponse409 = {
   data: string
   status: 409
@@ -2227,7 +2557,7 @@ export type homeResponse500 = {
 export type homeResponseSuccess = (homeResponse200) & {
   headers: Headers;
 };
-export type homeResponseError = (homeResponse400 | homeResponse409 | homeResponse500) & {
+export type homeResponseError = (homeResponse400 | homeResponse401 | homeResponse403 | homeResponse404 | homeResponse409 | homeResponse500) & {
   headers: Headers;
 };
 
@@ -2243,7 +2573,7 @@ export const getHomeUrl = () => {
 
 export const home = async ( options?: RequestInit): Promise<homeResponse> => {
 
-  return customFetch<homeResponse>(getHomeUrl(),
+  return customFetchEventApi<homeResponse>(getHomeUrl(),
   {
     ...options,
     method: 'GET'
@@ -2263,7 +2593,7 @@ export const getHomeQueryKey = () => {
     }
 
 
-export const getHomeQueryOptions = <TData = Awaited<ReturnType<typeof home>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof home>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getHomeQueryOptions = <TData = Awaited<ReturnType<typeof home>>, TError = string>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof home>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2292,7 +2622,7 @@ export function useHome<TData = Awaited<ReturnType<typeof home>>, TError = strin
           TError,
           Awaited<ReturnType<typeof home>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useHome<TData = Awaited<ReturnType<typeof home>>, TError = string>(
@@ -2302,16 +2632,16 @@ export function useHome<TData = Awaited<ReturnType<typeof home>>, TError = strin
           TError,
           Awaited<ReturnType<typeof home>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useHome<TData = Awaited<ReturnType<typeof home>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof home>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof home>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useHome<TData = Awaited<ReturnType<typeof home>>, TError = string>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof home>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof home>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2338,6 +2668,21 @@ export type getById1Response400 = {
   status: 400
 }
 
+export type getById1Response401 = {
+  data: string
+  status: 401
+}
+
+export type getById1Response403 = {
+  data: string
+  status: 403
+}
+
+export type getById1Response404 = {
+  data: string
+  status: 404
+}
+
 export type getById1Response409 = {
   data: string
   status: 409
@@ -2351,7 +2696,7 @@ export type getById1Response500 = {
 export type getById1ResponseSuccess = (getById1Response200) & {
   headers: Headers;
 };
-export type getById1ResponseError = (getById1Response400 | getById1Response409 | getById1Response500) & {
+export type getById1ResponseError = (getById1Response400 | getById1Response401 | getById1Response403 | getById1Response404 | getById1Response409 | getById1Response500) & {
   headers: Headers;
 };
 
@@ -2367,7 +2712,7 @@ export const getGetById1Url = (id: number,) => {
 
 export const getById1 = async (id: number, options?: RequestInit): Promise<getById1Response> => {
 
-  return customFetch<getById1Response>(getGetById1Url(id),
+  return customFetchEventApi<getById1Response>(getGetById1Url(id),
   {
     ...options,
     method: 'GET'
@@ -2387,7 +2732,7 @@ export const getGetById1QueryKey = (id: number,) => {
     }
 
 
-export const getGetById1QueryOptions = <TData = Awaited<ReturnType<typeof getById1>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById1>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetById1QueryOptions = <TData = Awaited<ReturnType<typeof getById1>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById1>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2416,7 +2761,7 @@ export function useGetById1<TData = Awaited<ReturnType<typeof getById1>>, TError
           TError,
           Awaited<ReturnType<typeof getById1>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetById1<TData = Awaited<ReturnType<typeof getById1>>, TError = string>(
@@ -2426,16 +2771,16 @@ export function useGetById1<TData = Awaited<ReturnType<typeof getById1>>, TError
           TError,
           Awaited<ReturnType<typeof getById1>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetById1<TData = Awaited<ReturnType<typeof getById1>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById1>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById1>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetById1<TData = Awaited<ReturnType<typeof getById1>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById1>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getById1>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2452,14 +2797,29 @@ export function useGetById1<TData = Awaited<ReturnType<typeof getById1>>, TError
 
 
 
-export type delete1Response204 = {
+export type delete1Response200 = {
   data: void
-  status: 204
+  status: 200
 }
 
 export type delete1Response400 = {
   data: string
   status: 400
+}
+
+export type delete1Response401 = {
+  data: string
+  status: 401
+}
+
+export type delete1Response403 = {
+  data: string
+  status: 403
+}
+
+export type delete1Response404 = {
+  data: string
+  status: 404
 }
 
 export type delete1Response409 = {
@@ -2472,10 +2832,10 @@ export type delete1Response500 = {
   status: 500
 }
 
-export type delete1ResponseSuccess = (delete1Response204) & {
+export type delete1ResponseSuccess = (delete1Response200) & {
   headers: Headers;
 };
-export type delete1ResponseError = (delete1Response400 | delete1Response409 | delete1Response500) & {
+export type delete1ResponseError = (delete1Response400 | delete1Response401 | delete1Response403 | delete1Response404 | delete1Response409 | delete1Response500) & {
   headers: Headers;
 };
 
@@ -2491,7 +2851,7 @@ export const getDelete1Url = (id: number,) => {
 
 export const delete1 = async (id: number, options?: RequestInit): Promise<delete1Response> => {
 
-  return customFetch<delete1Response>(getDelete1Url(id),
+  return customFetchEventApi<delete1Response>(getDelete1Url(id),
   {
     ...options,
     method: 'DELETE'
@@ -2504,7 +2864,7 @@ export const delete1 = async (id: number, options?: RequestInit): Promise<delete
 
 
 export const getDelete1MutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete1>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete1>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof delete1>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['delete1'];
@@ -2535,7 +2895,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type Delete1MutationError = string
 
     export const useDelete1 = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete1>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete1>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof delete1>>,
         TError,
@@ -2555,6 +2915,21 @@ export type getEventBySlugResponse400 = {
   status: 400
 }
 
+export type getEventBySlugResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getEventBySlugResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getEventBySlugResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getEventBySlugResponse409 = {
   data: string
   status: 409
@@ -2568,7 +2943,7 @@ export type getEventBySlugResponse500 = {
 export type getEventBySlugResponseSuccess = (getEventBySlugResponse200) & {
   headers: Headers;
 };
-export type getEventBySlugResponseError = (getEventBySlugResponse400 | getEventBySlugResponse409 | getEventBySlugResponse500) & {
+export type getEventBySlugResponseError = (getEventBySlugResponse400 | getEventBySlugResponse401 | getEventBySlugResponse403 | getEventBySlugResponse404 | getEventBySlugResponse409 | getEventBySlugResponse500) & {
   headers: Headers;
 };
 
@@ -2582,9 +2957,12 @@ export const getGetEventBySlugUrl = (slug: string,) => {
   return `/events/slug/${slug}`
 }
 
+/**
+ * @summary Get event by slug
+ */
 export const getEventBySlug = async (slug: string, options?: RequestInit): Promise<getEventBySlugResponse> => {
 
-  return customFetch<getEventBySlugResponse>(getGetEventBySlugUrl(slug),
+  return customFetchEventApi<getEventBySlugResponse>(getGetEventBySlugUrl(slug),
   {
     ...options,
     method: 'GET'
@@ -2604,7 +2982,7 @@ export const getGetEventBySlugQueryKey = (slug: string,) => {
     }
 
 
-export const getGetEventBySlugQueryOptions = <TData = Awaited<ReturnType<typeof getEventBySlug>>, TError = string>(slug: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventBySlug>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetEventBySlugQueryOptions = <TData = Awaited<ReturnType<typeof getEventBySlug>>, TError = string>(slug: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventBySlug>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2633,7 +3011,7 @@ export function useGetEventBySlug<TData = Awaited<ReturnType<typeof getEventBySl
           TError,
           Awaited<ReturnType<typeof getEventBySlug>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEventBySlug<TData = Awaited<ReturnType<typeof getEventBySlug>>, TError = string>(
@@ -2643,16 +3021,19 @@ export function useGetEventBySlug<TData = Awaited<ReturnType<typeof getEventBySl
           TError,
           Awaited<ReturnType<typeof getEventBySlug>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEventBySlug<TData = Awaited<ReturnType<typeof getEventBySlug>>, TError = string>(
- slug: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventBySlug>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ slug: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventBySlug>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get event by slug
+ */
 
 export function useGetEventBySlug<TData = Awaited<ReturnType<typeof getEventBySlug>>, TError = string>(
- slug: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventBySlug>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ slug: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventBySlug>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2679,6 +3060,21 @@ export type getCategoryByIdResponse400 = {
   status: 400
 }
 
+export type getCategoryByIdResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getCategoryByIdResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getCategoryByIdResponse404 = {
+  data: string
+  status: 404
+}
+
 export type getCategoryByIdResponse409 = {
   data: string
   status: 409
@@ -2692,7 +3088,7 @@ export type getCategoryByIdResponse500 = {
 export type getCategoryByIdResponseSuccess = (getCategoryByIdResponse200) & {
   headers: Headers;
 };
-export type getCategoryByIdResponseError = (getCategoryByIdResponse400 | getCategoryByIdResponse409 | getCategoryByIdResponse500) & {
+export type getCategoryByIdResponseError = (getCategoryByIdResponse400 | getCategoryByIdResponse401 | getCategoryByIdResponse403 | getCategoryByIdResponse404 | getCategoryByIdResponse409 | getCategoryByIdResponse500) & {
   headers: Headers;
 };
 
@@ -2708,7 +3104,7 @@ export const getGetCategoryByIdUrl = (id: number,) => {
 
 export const getCategoryById = async (id: number, options?: RequestInit): Promise<getCategoryByIdResponse> => {
 
-  return customFetch<getCategoryByIdResponse>(getGetCategoryByIdUrl(id),
+  return customFetchEventApi<getCategoryByIdResponse>(getGetCategoryByIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -2728,7 +3124,7 @@ export const getGetCategoryByIdQueryKey = (id: number,) => {
     }
 
 
-export const getGetCategoryByIdQueryOptions = <TData = Awaited<ReturnType<typeof getCategoryById>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCategoryById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetCategoryByIdQueryOptions = <TData = Awaited<ReturnType<typeof getCategoryById>>, TError = string>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCategoryById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2757,7 +3153,7 @@ export function useGetCategoryById<TData = Awaited<ReturnType<typeof getCategory
           TError,
           Awaited<ReturnType<typeof getCategoryById>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCategoryById<TData = Awaited<ReturnType<typeof getCategoryById>>, TError = string>(
@@ -2767,16 +3163,16 @@ export function useGetCategoryById<TData = Awaited<ReturnType<typeof getCategory
           TError,
           Awaited<ReturnType<typeof getCategoryById>>
         > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
+      >, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetCategoryById<TData = Awaited<ReturnType<typeof getCategoryById>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCategoryById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCategoryById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetCategoryById<TData = Awaited<ReturnType<typeof getCategoryById>>, TError = string>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCategoryById>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCategoryById>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -2803,6 +3199,21 @@ export type deleteCategoryResponse400 = {
   status: 400
 }
 
+export type deleteCategoryResponse401 = {
+  data: string
+  status: 401
+}
+
+export type deleteCategoryResponse403 = {
+  data: string
+  status: 403
+}
+
+export type deleteCategoryResponse404 = {
+  data: string
+  status: 404
+}
+
 export type deleteCategoryResponse409 = {
   data: string
   status: 409
@@ -2816,7 +3227,7 @@ export type deleteCategoryResponse500 = {
 export type deleteCategoryResponseSuccess = (deleteCategoryResponse204) & {
   headers: Headers;
 };
-export type deleteCategoryResponseError = (deleteCategoryResponse400 | deleteCategoryResponse409 | deleteCategoryResponse500) & {
+export type deleteCategoryResponseError = (deleteCategoryResponse400 | deleteCategoryResponse401 | deleteCategoryResponse403 | deleteCategoryResponse404 | deleteCategoryResponse409 | deleteCategoryResponse500) & {
   headers: Headers;
 };
 
@@ -2832,7 +3243,7 @@ export const getDeleteCategoryUrl = (id: number,) => {
 
 export const deleteCategory = async (id: number, options?: RequestInit): Promise<deleteCategoryResponse> => {
 
-  return customFetch<deleteCategoryResponse>(getDeleteCategoryUrl(id),
+  return customFetchEventApi<deleteCategoryResponse>(getDeleteCategoryUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -2845,7 +3256,7 @@ export const deleteCategory = async (id: number, options?: RequestInit): Promise
 
 
 export const getDeleteCategoryMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['deleteCategory'];
@@ -2876,7 +3287,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteCategoryMutationError = string
 
     export const useDeleteCategory = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCategory>>,
         TError,
@@ -2886,14 +3297,29 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getDeleteCategoryMutationOptions(options), queryClient);
     }
 
-export type deleteTicketListingResponse204 = {
+export type deleteTicketListingResponse200 = {
   data: void
-  status: 204
+  status: 200
 }
 
 export type deleteTicketListingResponse400 = {
   data: string
   status: 400
+}
+
+export type deleteTicketListingResponse401 = {
+  data: string
+  status: 401
+}
+
+export type deleteTicketListingResponse403 = {
+  data: string
+  status: 403
+}
+
+export type deleteTicketListingResponse404 = {
+  data: string
+  status: 404
 }
 
 export type deleteTicketListingResponse409 = {
@@ -2906,10 +3332,10 @@ export type deleteTicketListingResponse500 = {
   status: 500
 }
 
-export type deleteTicketListingResponseSuccess = (deleteTicketListingResponse204) & {
+export type deleteTicketListingResponseSuccess = (deleteTicketListingResponse200) & {
   headers: Headers;
 };
-export type deleteTicketListingResponseError = (deleteTicketListingResponse400 | deleteTicketListingResponse409 | deleteTicketListingResponse500) & {
+export type deleteTicketListingResponseError = (deleteTicketListingResponse400 | deleteTicketListingResponse401 | deleteTicketListingResponse403 | deleteTicketListingResponse404 | deleteTicketListingResponse409 | deleteTicketListingResponse500) & {
   headers: Headers;
 };
 
@@ -2925,7 +3351,7 @@ export const getDeleteTicketListingUrl = (id: number,) => {
 
 export const deleteTicketListing = async (id: number, options?: RequestInit): Promise<deleteTicketListingResponse> => {
 
-  return customFetch<deleteTicketListingResponse>(getDeleteTicketListingUrl(id),
+  return customFetchEventApi<deleteTicketListingResponse>(getDeleteTicketListingUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -2938,7 +3364,7 @@ export const deleteTicketListing = async (id: number, options?: RequestInit): Pr
 
 
 export const getDeleteTicketListingMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['deleteTicketListing'];
@@ -2969,7 +3395,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteTicketListingMutationError = string
 
     export const useDeleteTicketListing = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteTicketListing>>,
         TError,
@@ -2979,14 +3405,29 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getDeleteTicketListingMutationOptions(options), queryClient);
     }
 
-export type removeFavoriteResponse204 = {
+export type removeFavoriteResponse200 = {
   data: void
-  status: 204
+  status: 200
 }
 
 export type removeFavoriteResponse400 = {
   data: string
   status: 400
+}
+
+export type removeFavoriteResponse401 = {
+  data: string
+  status: 401
+}
+
+export type removeFavoriteResponse403 = {
+  data: string
+  status: 403
+}
+
+export type removeFavoriteResponse404 = {
+  data: string
+  status: 404
 }
 
 export type removeFavoriteResponse409 = {
@@ -2999,10 +3440,10 @@ export type removeFavoriteResponse500 = {
   status: 500
 }
 
-export type removeFavoriteResponseSuccess = (removeFavoriteResponse204) & {
+export type removeFavoriteResponseSuccess = (removeFavoriteResponse200) & {
   headers: Headers;
 };
-export type removeFavoriteResponseError = (removeFavoriteResponse400 | removeFavoriteResponse409 | removeFavoriteResponse500) & {
+export type removeFavoriteResponseError = (removeFavoriteResponse400 | removeFavoriteResponse401 | removeFavoriteResponse403 | removeFavoriteResponse404 | removeFavoriteResponse409 | removeFavoriteResponse500) & {
   headers: Headers;
 };
 
@@ -3018,7 +3459,7 @@ export const getRemoveFavoriteUrl = (eventId: number,) => {
 
 export const removeFavorite = async (eventId: number, options?: RequestInit): Promise<removeFavoriteResponse> => {
 
-  return customFetch<removeFavoriteResponse>(getRemoveFavoriteUrl(eventId),
+  return customFetchEventApi<removeFavoriteResponse>(getRemoveFavoriteUrl(eventId),
   {
     ...options,
     method: 'DELETE'
@@ -3031,7 +3472,7 @@ export const removeFavorite = async (eventId: number, options?: RequestInit): Pr
 
 
 export const getRemoveFavoriteMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeFavorite>>, TError,{eventId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeFavorite>>, TError,{eventId: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeFavorite>>, TError,{eventId: number}, TContext> => {
 
 const mutationKey = ['removeFavorite'];
@@ -3062,7 +3503,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RemoveFavoriteMutationError = string
 
     export const useRemoveFavorite = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeFavorite>>, TError,{eventId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeFavorite>>, TError,{eventId: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeFavorite>>,
         TError,

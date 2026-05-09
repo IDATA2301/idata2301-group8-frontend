@@ -1,21 +1,76 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 
-import FeaturedEventCard from 'src/pages/FeaturedEventCard/FeaturedEventCard';
-import EventCards from '@pages/HomePage/EventCards';
+import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
+import EventCards from "@pages/HomePage/EventCards";
 
 import ScrollToTop from "@utility/ScrollToTop";
 
-import './style.css';
+import "./style.css";
 
-import heroimage from '@assets/heroimage.jpg';
+import heroimage from "@assets/heroimage.jpg";
 
-import { useState } from 'react';
+import festivalsImage from "@assets/categoryimage/festival.jpg";
+import concertsImage from "@assets/categoryimage/concert.jpg";
+import sportImage from "@assets/categoryimage/sport.jpg";
+import museumsImage from "@assets/categoryimage/museum.jpg";
+import theatersImage from "@assets/categoryimage/theater.jpg";
 
-function App() {
+import {
+  useGetEvents,
+  type EventResponse,
+} from "@api/events";
 
-  const [query, setQuery] = useState('');
+const categories = [
+  {
+    name: "Festivals",
+    path: "/category/festivals",
+    className: "festivals",
+    image: festivalsImage,
+  },
+  {
+    name: "Concerts",
+    path: "/category/concerts",
+    className: "concerts",
+    image: concertsImage,
+  },
+  {
+    name: "Sport",
+    path: "/category/sport",
+    className: "sport",
+    image: sportImage,
+  },
+  {
+    name: "Museums",
+    path: "/category/museums",
+    className: "museums",
+    image: museumsImage,
+  },
+  {
+    name: "Theaters",
+    path: "/category/theaters",
+    className: "theaters",
+    image: theatersImage,
+  },
+];
+
+function HomePage() {
+  const [query, setQuery] = useState("");
 
   const navigate = useNavigate();
+
+  const {
+    data: eventsResponse,
+    isLoading,
+    isError,
+  } = useGetEvents();
+
+  const events: EventResponse[] = Array.isArray(eventsResponse?.data)
+    ? eventsResponse.data
+    : [];
+
+  const featuredEvent = events[0];
+  const upcomingEvents = events.slice(1);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +86,8 @@ function App() {
         className="hero-image-home"
         style={{ backgroundImage: `url(${heroimage})` }}
       >
-
         <main>
-
           <h1 className="hero-title">
-
             Your Gateway to <br />
 
             <span className="highlight">
@@ -43,14 +95,12 @@ function App() {
             </span>{" "}
 
             Events
-
           </h1>
 
           <form
             className="search-container"
             onSubmit={handleSearch}
           >
-
             <input
               placeholder="Search city, dates, events"
               type="text"
@@ -67,99 +117,79 @@ function App() {
             >
               Search
             </button>
-
           </form>
-
         </main>
-
       </div>
 
       <div className="page-container">
-
         <section>
-
           <h2 className="section-title">
             Categories
           </h2>
 
           <ul className="categories">
-
-            <li>
-              <Link
-                className="category-card festivals"
-                to="/category/festivals"
-              >
-                Festivals
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                className="category-card concerts"
-                to="/category/concerts"
-              >
-                Concerts
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                className="category-card sport"
-                to="/category/sport"
-              >
-                Sport
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                className="category-card museums"
-                to="/category/museums"
-              >
-                Museums
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                className="category-card theaters"
-                to="/category/theaters"
-              >
-                Theaters
-              </Link>
-            </li>
-
+            {categories.map((category) => (
+              <li key={category.name}>
+                <Link
+                  className={`category-card ${category.className}`}
+                  to={category.path}
+                  style={{
+                    backgroundImage: `url(${category.image})`,
+                  }}
+                >
+                  {category.name}
+                </Link>
+              </li>
+            ))}
           </ul>
-
         </section>
 
         <section>
-
           <h2 className="section-title">
             Featured
           </h2>
 
-          <FeaturedEventCard />
+          {isLoading && (
+            <p>Loading featured event...</p>
+          )}
+
+          {isError && (
+            <p>Could not load featured event.</p>
+          )}
+
+          {!isLoading && !isError && featuredEvent && (
+            <FeaturedEventCard event={featuredEvent} />
+          )}
+
+          {!isLoading && !isError && !featuredEvent && (
+            <p>No featured event available.</p>
+          )}
 
           <hr />
-
         </section>
 
         <section>
-
           <h2 className="section-title">
             Upcoming
           </h2>
 
-          <EventCards />
+          {isLoading && (
+            <p>Loading events...</p>
+          )}
+
+          {isError && (
+            <p>Could not load events.</p>
+          )}
+
+          {!isLoading && !isError && (
+            <EventCards events={upcomingEvents} />
+          )}
 
           <hr />
-
         </section>
-
       </div>
     </>
   );
 }
 
-export default App;
+export default HomePage;

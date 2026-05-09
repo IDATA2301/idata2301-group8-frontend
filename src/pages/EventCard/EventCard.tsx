@@ -51,9 +51,8 @@ export default function EventCard({
       <img
         className="event-card-image"
         src={
-          p.slug
-            ? `/images/${p.slug}.jpg`
-            : "/images/default.jpg"
+          p.imageUrl ||
+          "/images/default.jpg"
         }
         alt={p.eventName}
       />
@@ -83,11 +82,20 @@ export default function EventCard({
         </div>
 
         <p className="event-date">
-          no date yet
+
+          {p.startDate
+            ? new Date(p.startDate)
+              .toLocaleString()
+            : "No date yet"}
+
         </p>
 
         <p className="event-price">
-          From no price yet NOK
+
+          {p.lowestPrice != null
+            ? `From ${p.lowestPrice} NOK`
+            : "No price yet"}
+
         </p>
 
       </div>

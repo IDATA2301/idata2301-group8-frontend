@@ -32,6 +32,7 @@ export default function JoinExistingCompanyTab({
   const createCompanyRoleChangeRequest = useCreateCompanyRoleChangeRequest();
   const companyRolesQuery = useGetCompanyRoles();
   const [selectedCompany, setSelectedCompany] = useState<number | "">("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const isSubmitting = createCompanyRoleChangeRequest.isPending;
 
   const availableCompanies = providerCompanies.filter((company) => {
@@ -41,6 +42,10 @@ export default function JoinExistingCompanyTab({
 
     return !alreadyExists;
   });
+
+  const selectedCompanyName =
+    availableCompanies.find((company) => company.id === selectedCompany)
+      ?.companyName || "Choose a company";
 
   async function handleJoinCompany() {
     if (!selectedCompany) {
@@ -80,23 +85,47 @@ export default function JoinExistingCompanyTab({
   return (
     <>
       <div className={styles.formGroup}>
-        <label htmlFor="provider-company-select">Select Company</label>
+        <label>Select Company</label>
 
-        <select
-          id="provider-company-select"
-          disabled={isSubmitting}
-          className={styles.accountSelect}
-          value={selectedCompany}
-          onChange={(e) => setSelectedCompany(Number(e.target.value))}
-        >
-          <option value="">Choose a company</option>
+        <div className={styles.customSelect}>
+          <button
+            type="button"
+            disabled={isSubmitting}
+            className={styles.customSelectButton}
+            onClick={() => setDropdownOpen((open) => !open)}
+          >
+            <span>{selectedCompanyName}</span>
+            <span className={styles.customSelectArrow}>⌄</span>
+          </button>
 
-          {availableCompanies.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.companyName}
-            </option>
-          ))}
-        </select>
+          {dropdownOpen && (
+            <div className={styles.customSelectMenu}>
+              {availableCompanies.length === 0 ? (
+                <button
+                  type="button"
+                  disabled
+                  className={styles.customSelectOption}
+                >
+                  No companies available
+                </button>
+              ) : (
+                availableCompanies.map((company) => (
+                  <button
+                    type="button"
+                    key={company.id}
+                    className={styles.customSelectOption}
+                    onClick={() => {
+                      setSelectedCompany(company.id);
+                      setDropdownOpen(false);
+                    }}
+                  >
+                    {company.companyName}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={styles.popupActions}>

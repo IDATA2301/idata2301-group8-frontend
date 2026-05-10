@@ -16,17 +16,19 @@ type Props = {
 };
 
 const categories = [
-  "Music festival",
+  "Festival",
+  "Concerts",
   "Sports",
   "Comedy Show",
   "Expo",
   "Technology",
   "Arts",
-  "Theater",
+  "Theaters",
   "Dance",
   "Cultural Performance",
-  "Film festival",
+  "Film Festival",
   "Art Exhibition",
+  "Museums",
   "Historical Performance"
 ];
 

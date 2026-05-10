@@ -69,3 +69,31 @@
 
     font-family: "Inter", sans-serif;
 }
+
+@media (max-width: 600px) {
+  .eventsContainer {
+    width: 100%;
+  }
+
+  .eventsSection {
+    height: auto;
+    min-height: 420px;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .eventsScrollBox {
+    align-items: center;
+    padding-right: 0;
+  }
+
+  .eventsScrollBox > * {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .placeholderBox {
+    box-sizing: border-box;
+    max-width: 320px;
+  }
+}

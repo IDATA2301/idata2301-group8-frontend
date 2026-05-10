@@ -1,0 +1,236 @@
+.contentCard {
+    width: 100%;
+
+    background: #022B3A;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 4px 20px #00000059;
+    border: 1px solid #FFFFFF0D;
+}
+
+.accountSections {
+    max-width: 1200px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 24px;
+}
+
+.fullWidth {
+    width: 100%;
+
+    margin: 0 auto;
+}
+
+.withCompanies {
+    width: 70%;
+}
+
+.contentCard h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #E3E3E3;
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 18px;
+    font-size: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #FFFFFF14;
+    color: #FFFFFFE6;
+}
+
+.infoRow span:first-child {
+    min-width: 180px;
+}
+
+.infoRow .accountInput,
+.infoRow .accountSelect,
+.infoRow .roleText {
+    width: 320px;
+    margin-left: auto;
+}
+
+.saveButtonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.accountActionsLeft {
+    display: flex;
+    gap: 12px;
+}
+
+.accountInput {
+    width: 320px;
+    margin-left: auto;
+    background: #FFFFFF0F;
+    border: 1px solid #FFFFFF14;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #FFFFFF;
+    font-size: 16px;
+    outline: none;
+    transition:
+        border-color 0.2s,
+        background 0.2s;
+    font-family: "Inter", sans-serif;
+}
+
+.accountInput:focus {
+    border-color: #5FA8FF;
+    background: #FFFFFF17;
+}
+
+.accountSelect {
+    width: 320px;
+    margin-left: auto;
+    background: #FFFFFF0F;
+    border: 1px solid #FFFFFF14;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #FFFFFF;
+    font-size: 16px;
+    outline: none;
+    cursor: pointer;
+    font-family: "Inter", sans-serif;
+}
+
+.accountSelect option {
+    background: #022B3A;
+    color: #FFFFFF;
+}
+
+.disabledInput {
+    opacity: 0.55;
+    filter: brightness(0.7);
+    cursor: not-allowed;
+}
+
+.disabledInput:disabled {
+    color: #FFFFFFB3;
+    -webkit-text-fill-color: #FFFFFFB3;
+}
+
+.accountInput:disabled,
+.accountSelect:disabled {
+    background: #FFFFFF08;
+    border: 1px solid #FFFFFF0A;
+    color: #FFFFFFB3;
+    cursor: not-allowed;
+}
+
+.roleText {
+    font-size: 20px;
+    font-weight: 600;
+    color: #E3E3E3;
+}
+
+.formGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.formGroup label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #FFFFFFD9;
+    white-space: nowrap;
+}
+
+.formGroup .accountInput,
+.formGroup .accountSelect {
+    margin-left: auto;
+}
+
+.buttonIcon {
+    width: 18px;
+    height: 18px;
+
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(100%);
+}
+
+.saveButton,
+.logoutButton,
+.deleteButton {
+    width: 170px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: none;
+    border-radius: 14px;
+
+    color: #FFFFFF;
+
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "Inter", sans-serif;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s,
+        opacity 0.2s;
+}
+
+.saveButton {
+    background: #669BBC;
+}
+
+.logoutButton {
+    background: #001824;
+}
+
+.deleteButton {
+    background: #C1121F;
+}
+
+.saveButton:hover,
+.logoutButton:hover,
+.deleteButton:hover,
+.primaryButton:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.primaryButton {
+    width: 100%;
+    background: #669BBC;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    transition:
+        transform 0.2s,
+        opacity 0.2s;
+}
+
+.roleChangeText {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #FFFFFFC7;
+}

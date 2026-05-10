@@ -1,0 +1,177 @@
+.providerCompaniesSection {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    width: 420px;
+
+    flex-shrink: 0;
+}
+
+.providerCompaniesTitle {
+    margin-bottom: 18px;
+
+    color: #FFFFFF;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.companySection {
+    margin-bottom: 14px;
+
+    background: #022B3A;
+
+    border: 1px solid #FFFFFF14;
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+.companySectionHeader {
+    width: 100%;
+    height: 64px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 20px;
+
+    background: transparent;
+    border: none;
+
+    color: #FFFFFF;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    font-family: "Inter", sans-serif;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        background 0.2s,
+        opacity 0.2s;
+}
+
+.companySectionHeader:hover {
+    background: #FFFFFF08;
+}
+
+.companySectionHeader span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.companySectionContent {
+    padding: 20px;
+
+    border-top: 1px solid #FFFFFF14;
+}
+
+.formGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 18px;
+}
+
+.formGroup label {
+    font-size: 16px;
+    font-weight: 600;
+
+    color: #FFFFFFD9;
+
+    white-space: nowrap;
+}
+
+.accountInput {
+    width: 240px;
+
+    margin-left: auto;
+
+    background: #FFFFFF0F;
+
+    border: 1px solid #FFFFFF14;
+    border-radius: 12px;
+
+    padding: 12px 14px;
+
+    color: #FFFFFF;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s,
+        background 0.2s,
+        opacity 0.2s;
+
+    font-family: "Inter", sans-serif;
+}
+
+.accountInput:focus {
+    border-color: #5FA8FF;
+    background: #FFFFFF17;
+}
+
+.accountInput:disabled {
+    cursor: not-allowed;
+}
+
+.disabledInput {
+    opacity: 0.55;
+    filter: brightness(0.7);
+}
+
+.primaryButton {
+    width: 100%;
+
+    margin-top: 10px;
+
+    background: #669BBC;
+
+    border: none;
+    border-radius: 14px;
+
+    padding: 14px;
+
+    color: #FFFFFF;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    font-family: "Inter", sans-serif;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s,
+        opacity 0.2s;
+}
+
+.primaryButton:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.pendingBadge {
+    padding: 6px 12px;
+
+    background: #E9C46A;
+
+    border-radius: 999px;
+
+    color: #001824;
+
+    font-size: 13px;
+    font-weight: 700;
+}

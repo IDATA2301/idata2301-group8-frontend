@@ -1,0 +1,87 @@
+.accountPage {
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px 40px 40px;
+  color: #FFFFFF;
+  font-family: "Inter", sans-serif;
+}
+
+.loginWarning {
+  width: 95%;
+  margin: 0 auto 24px;
+  padding: 14px 22px;
+  background: #FFFFFF0D;
+  border: 1px solid #FFFFFF14;
+  border-radius: 14px;
+  color: #FFFFFFD1;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.profileAvatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5FA8FF, #2563EB);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profileRole {
+  margin: 6px 0 0;
+  font-size: 18px;
+  color: #FFFFFFB3;
+  font-weight: 600;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  color: #E3E3E3;
+  text-align: center;
+}
+
+.accountContent {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.accountLayout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+
+.providerCompaniesSection {
+  width: 420px;
+  flex-shrink: 0;
+}
+
+.providerCompaniesTitle {
+  margin-bottom: 18px;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 700;
+}

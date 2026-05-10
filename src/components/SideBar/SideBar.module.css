@@ -1,0 +1,58 @@
+.sideMenu {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100vh;
+    background: #082F41;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.35);
+    backdrop-filter: blur(12px);
+
+    transition: left 0.25s ease-in-out;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.open {
+    left: 0;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+.title {
+    color: white;
+    font-size: 24px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.menuLink {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 12px;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.menuLink:hover {
+    background: rgba(95,168,255,0.15);
+}

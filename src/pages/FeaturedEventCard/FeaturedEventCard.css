@@ -69,3 +69,15 @@
   font-size: 14px;
   opacity: 0.9;
 }
+
+.featured-event-container {
+  display: flex;
+  width: 1400px;
+  height: 538px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+
+  text-decoration: none;
+  color: inherit;
+}

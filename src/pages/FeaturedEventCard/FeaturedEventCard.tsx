@@ -1,44 +1,84 @@
-import "./FeaturedEventCard.css"
-import footballfeatured from "@assets/footballfeatured.jpeg"
-import location from "@assets/icons/location.svg"
+import "./FeaturedEventCard.css";
 
-export default function FeaturedEventCard() {
+import { Link } from "react-router-dom";
+
+import location from "@assets/icons/location.svg";
+import fallbackEventImage from "@assets/fallback-image.png";
+
+import type { EventResponse } from "@api/events";
+
+type Props = {
+  event: EventResponse;
+};
+
+export default function FeaturedEventCard({ event }: Props) {
+  const category =
+    event.categoryNames?.[0] ?? "Event";
+
+  const dateText =
+    event.startDate
+      ? new Date(event.startDate).toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+      : "Date TBA";
+
+  const priceText =
+    event.lowestPrice != null
+      ? `From ${event.lowestPrice} NOK`
+      : "Price TBA";
+
+  const locationText =
+    event.city ?? "Location TBA";
+
   return (
-    <div className="featured-event-container">
-
+    <Link
+      to={`/events/${event.slug}`}
+      className="featured-event-container"
+    >
       <img
         className="featured-event-image"
-        src={footballfeatured}
-        alt="Football Match"
+        src={event.imageUrl || fallbackEventImage}
+        alt={event.eventName ?? "Featured event"}
       />
 
       <div className="featured-event-card">
         <h2 className="featured-event-title">
-          Rosenborg vs. Molde – Eliteserien Match
+          {event.eventName ?? "Untitled event"}
         </h2>
 
         <p className="featured-event-description">
-          En skikkelig spennende kamp!
+          {event.description ?? "No description available."}
         </p>
 
-        <span className="featured-event-tag">Sport</span>
+        <span className="featured-event-tag">
+          {category}
+        </span>
 
         <div className="featured-event-info">
           <div className="featured-info-row">
-            <span>  <img className="location-svg" src={location} alt="location icon" />
-              Trondheim, Norway</span>
+            <span>
+              <img
+                className="location-svg"
+                src={location}
+                alt="location icon"
+              />
+
+              {locationText}
+            </span>
           </div>
 
           <div className="featured-info-row">
-            <span>Wed, 4. Mar 2026, 17:00</span>
+            <span>{dateText}</span>
           </div>
 
           <div className="featured-info-row">
-            <span>42 NOK</span>
+            <span>{priceText}</span>
           </div>
         </div>
       </div>
-
-    </div>
+    </Link>
   );
 }

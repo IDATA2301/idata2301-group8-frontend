@@ -96,7 +96,8 @@
     opacity 0.2s;
 }
 
-.accountInput:focus {
+.accountInput:focus,
+.accountSelect:focus {
   border-color: #5FA8FF;
   background: #FFFFFF17;
 }
@@ -108,76 +109,6 @@
 .accountSelect option {
   background: #022B3A;
   color: #FFFFFF;
-}
-
-.customSelect {
-  position: relative;
-  width: 320px;
-  max-width: 100%;
-  min-width: 0;
-  margin-left: auto;
-}
-
-.customSelectButton {
-  width: 100%;
-  background: #FFFFFF0F;
-  border: 1px solid #FFFFFF14;
-  border-radius: 12px;
-  padding: 12px 14px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  font-size: 16px;
-  font-family: "Inter", sans-serif;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.customSelectButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.customSelectArrow {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.customSelectMenu {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  z-index: 20;
-  width: 100%;
-  max-width: 100%;
-  background: #001824;
-  border: 1px solid #FFFFFF14;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px #00000066;
-}
-
-.customSelectOption {
-  width: 100%;
-  padding: 12px 14px;
-  background: transparent;
-  border: none;
-  color: #FFFFFF;
-  text-align: left;
-  font-size: 15px;
-  font-family: "Inter", sans-serif;
-  cursor: pointer;
-}
-
-.customSelectOption:hover {
-  background: #FFFFFF14;
-}
-
-.customSelectOption:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
 }
 
 .popupActions {
@@ -219,8 +150,7 @@
 .popupCancel:disabled,
 .popupConfirm:disabled,
 .accountInput:disabled,
-.accountSelect:disabled,
-.customSelectButton:disabled {
+.accountSelect:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -296,23 +226,12 @@
   }
 
   .accountInput,
-  .accountSelect,
-  .customSelect {
+  .accountSelect {
     width: 100%;
     max-width: 100%;
     min-width: 0;
     margin-left: 0;
     font-size: 15px;
-  }
-
-  .customSelectButton {
-    width: 100%;
-    font-size: 15px;
-  }
-
-  .customSelectMenu {
-    width: 100%;
-    max-width: 100%;
   }
 
   .popupActions {

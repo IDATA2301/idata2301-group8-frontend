@@ -2,45 +2,22 @@ import { useState } from "react";
 import toast from "@components/Toast";
 import {
   useCreateCompanyRoleChangeRequest,
+  useGetCompanies,
   useGetCompanyRoles
 } from "@api/iam";
 import styles from "./ProviderRequest.module.css";
 
-interface ProviderCompany {
-  id: number;
-  companyName: string;
-}
-
-interface UserCompany {
-  companyId: number;
-  pending?: boolean;
-}
 
 interface Props {
-  providerCompanies: ProviderCompany[];
-  userCompanies: UserCompany[];
-  onCancel: () => void;
   onConfirm: () => void;
+  onCancel: () => void;
 }
 
-export default function JoinExistingCompanyTab({
-  providerCompanies,
-  userCompanies,
-  onCancel,
-  onConfirm
-}: Props) {
-  const createCompanyRoleChangeRequest = useCreateCompanyRoleChangeRequest();
-  const companyRolesQuery = useGetCompanyRoles();
+export default function JoinExistingCompanyTab({ onConfirm, onCancel }: Props) {
+  const { mutateAsync, isPending } = useCreateCompanyRoleChangeRequest();
+  const { data: companiesResponse, isSuccess: companiesSuccess } = useGetCompanies();
+  const { data: companyRolesResponse, isSuccess: companyRolesSuccess } = useGetCompanyRoles();
   const [selectedCompany, setSelectedCompany] = useState<number | "">("");
-  const isSubmitting = createCompanyRoleChangeRequest.isPending;
-
-  const availableCompanies = providerCompanies.filter((company) => {
-    const alreadyExists = userCompanies.some(
-      (userCompany) => userCompany.companyId === company.id
-    );
-
-    return !alreadyExists;
-  });
 
   async function handleJoinCompany() {
     if (!selectedCompany) {
@@ -48,22 +25,22 @@ export default function JoinExistingCompanyTab({
       return;
     }
 
-    if (companyRolesQuery.isLoading) {
-      toast.error("Company roles are still loading");
-      return;
+    if (!companyRolesSuccess) {
+      toast.error("Failed to load company roles");
+      return
     }
 
-    const providerRole = companyRolesQuery.data?.data.find(
-      (role) => role.name?.toUpperCase() === "PROVIDER"
+    const providerRole = companyRolesResponse.data.find(
+      (role) => role.name?.toUpperCase() === "ADMIN"
     );
 
-    if (!providerRole?.id) {
+    if (typeof providerRole?.id !== "number") {
       toast.error("Provider role not found");
       return;
     }
 
     try {
-      await createCompanyRoleChangeRequest.mutateAsync({
+      await mutateAsync({
         data: {
           roleId: providerRole.id,
           companyId: selectedCompany
@@ -84,36 +61,30 @@ export default function JoinExistingCompanyTab({
 
         <select
           id="provider-company-select"
-          disabled={isSubmitting}
+          disabled={!companiesResponse}
           className={styles.accountSelect}
           value={selectedCompany}
           onChange={(e) => setSelectedCompany(Number(e.target.value))}
         >
           <option value="">Choose a company</option>
 
-          {availableCompanies.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.companyName}
-            </option>
-          ))}
+          {companiesSuccess &&
+            companiesResponse.data.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
         </select>
       </div>
 
       <div className={styles.popupActions}>
+        <button className={styles.popupCancel} onClick={onCancel}>Cancel</button>
         <button
-          disabled={isSubmitting}
-          className={styles.popupCancel}
-          onClick={onCancel}
-        >
-          Cancel
-        </button>
-
-        <button
-          disabled={isSubmitting}
+          disabled={isPending || !selectedCompany}
           className={styles.popupConfirm}
           onClick={handleJoinCompany}
         >
-          {isSubmitting ? "Sending..." : "Request"}
+          {isPending ? "Sending..." : "Request"}
         </button>
       </div>
     </>

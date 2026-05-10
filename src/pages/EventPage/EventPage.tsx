@@ -5,6 +5,7 @@ import openInNew from "@assets/icons/open-in-new.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
 import EventTicketListings from "./EventTicketListings";
 import "./style.css";
+import StateBanner from "@components/StateBanner/StateBanner";
 
 function EventPage() {
   const { slug } = useParams();
@@ -44,33 +45,14 @@ function EventPage() {
       : "";
 
   if (eventLoading) {
-    return (
-      <>
-        <ScrollToTop />
-        <main className="event-page-state">
-          <div className="event-page-state-card">
-            <p>Loading event...</p>
-          </div>
-        </main>
-      </>
-    );
+    return <StateBanner description="Loading event..." showBackLink={false} />;
   }
 
   if (eventError || !event) {
-    return (
-      <>
-        <ScrollToTop />
-        <main className="event-page-state">
-          <div className="event-page-state-card">
-            <h1>Event not found</h1>
-            <p>This event does not exist, or it may no longer be available.</p>
-            <Link to="/" className="event-page-state-link">
-              Back to homepage
-            </Link>
-          </div>
-        </main>
-      </>
-    );
+    return <StateBanner
+      title="Event not found"
+      description="This event does not exist, or it may no longer be available."
+    />;
   }
 
   return (

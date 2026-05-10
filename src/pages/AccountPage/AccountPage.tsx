@@ -1,5 +1,3 @@
-import { jwtDecode } from "jwt-decode";
-
 import styles from "./AccountPage.module.css";
 
 import AccountInfo from "./AccountInfo";
@@ -7,77 +5,63 @@ import Favorites from "./Favorites";
 import MyEvents from "./MyEvents";
 import CompanySection from "./CompanySection";
 import { Tabs } from "@components/Tabs/Tabs";
-
-interface JwtPayload {
-  email?: string;
-  role?: string;
-  providerCompany?: string;
-
-  providerCompanies?: {
-    id: number;
-    companyName: string;
-    pending?: boolean;
-    websiteUrl?: string;
-    payoutAccount?: string;
-  }[];
-
-  userCompanies?: {
-    companyId: number;
-    pending?: boolean;
-  }[];
-}
+import { useAuthContext, type CompanyRole, type GlobalRole } from "@utility/AuthContext";
+import { useGetCompanies } from "@api/iam";
+import StateBanner from "@components/StateBanner/StateBanner";
 
 export default function AccountPage() {
-  const token = localStorage.getItem("token");
+  const { user, isLoggedIn, isAdmin, isProvider } = useAuthContext()
+  const { data: companiesResponse, isSuccess: companiesSuccess } = useGetCompanies();
 
-  const decoded = token
-    ? jwtDecode<JwtPayload>(token)
-    : null;
-
-  const user = {
-    username: decoded?.email?.split("@")[0] || "Guest",
-    email: decoded?.email || "MyEmail@gmail.com",
-    role: decoded?.role || "NORMAL_USER",
-    providerCompany: decoded?.providerCompany || "",
-    providerCompanies: decoded?.providerCompanies || [],
-    userCompanies: decoded?.userCompanies || []
-  };
-
-  function formatRole(role: string) {
-    return role
-      .replaceAll("_", " ")
-      .toLowerCase()
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+  if (!isLoggedIn) {
+    return <StateBanner
+      title="Not logged in"
+      description="You must be logged in to view your account page."
+    />;
   }
 
+  const username = user.email.split("@")[0] || "Guest";
 
-  const hasCompanies = user.providerCompanies.length > 0;
+  function formatRole(role: string) {
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  }
 
+  function formatRoles(globalRoles: GlobalRole[], companyRoles: Record<string, CompanyRole[]>): string {
+    const roleParts: string[] = [];
+    globalRoles.filter(role => role !== "USER").forEach(role => {
+      roleParts.push(`${formatRole(role)} on the Platform`)
+    });
+    if (companiesSuccess) {
+      Object.entries(companyRoles).forEach(([companyId, roles]) => {
+        roles.forEach(role => {
+          const companyName = companiesResponse.data.find((company) => company.id === parseInt(companyId))?.name
+          if (companyName) {
+            roleParts.push(`${formatRole(role)} at ${companyName}`);
+          }
+        });
+      });
+    }
+    return roleParts.join(" | ");
+  }
 
   return (
     <div className={styles.accountPage}>
 
-      {!token && (
-        <div className={styles.loginWarning}>
-          Not logged in
-        </div>
-      )}
-
       <div className={styles.profileHeader}>
 
         <div className={styles.profileAvatar}>
-          {user.username.charAt(0)}
+          {username.charAt(0).toUpperCase()}
         </div>
 
         <div className={styles.profileInfo}>
 
           <h1 className={styles.pageTitle}>
-            {user.username}
+            {username}
           </h1>
 
-          {user.role !== "NORMAL_USER" && (
+          {(isAdmin || isProvider) && (
             <p className={styles.profileRole}>
-              {formatRole(user.role)}
+              {formatRoles(user.globalRoles, user.companyRoles)}
             </p>
           )}
 
@@ -99,26 +83,24 @@ export default function AccountPage() {
             label: "User Information",
             content: (
               <div className={styles.accountLayout}>
-                <AccountInfo
-                  user={user}
-                  hasCompanies={hasCompanies}
-                />
+                <AccountInfo />
 
-                {hasCompanies && (
+                {(isProvider && companiesSuccess) && (
                   <div className={styles.providerCompaniesSection}>
                     <h2 className={styles.providerCompaniesTitle}>
                       Companies
                     </h2>
 
-                    {user.providerCompanies.map((company) => (
-                      <CompanySection
-                        key={company.id}
-                        companyName={company.companyName}
-                        websiteUrl={company.websiteUrl}
-                        payoutAccount={company.payoutAccount}
-                        pending={company.pending}
-                      />
-                    ))}
+                    {Object.entries(user.companyRoles).map(([companyId, _]) => {
+                      const company = companiesResponse.data.find((company) => company.id === parseInt(companyId));
+                      if (!company) return null;
+                      return (
+                        <CompanySection
+                          key={companyId}
+                          company={company}
+                        />
+                      )
+                    })}
                   </div>
                 )}
               </div>

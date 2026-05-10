@@ -1,0 +1,41 @@
+.stateBanner {
+  min-height: 650px;
+  padding: 120px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: #E3E3E3;
+  background-color: #003049;
+}
+
+.stateBannerCard {
+  width: 600px;
+  max-width: 100%;
+  padding: 48px;
+  border-radius: 24px;
+  background-color: #001824;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.stateBannerCard h1 {
+  margin: 0 0 16px 0;
+  font-size: 2rem;
+}
+
+.stateBannerCard p {
+  margin: 0 0 32px 0;
+  opacity: 0.8;
+}
+
+.stateBannerLink {
+  padding: 16px 24px;
+  border-radius: 24px;
+  background-color: #669BBC;
+  color: #E3E3E3;
+  text-decoration: none;
+}
+
+.stateBannerLink:hover {
+  background-color: #476d84;
+}

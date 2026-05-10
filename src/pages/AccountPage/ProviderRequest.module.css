@@ -1,4 +1,4 @@
-.popupOverlay {
+.popupBox::backdrop {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -12,6 +12,7 @@
 }
 
 .popupBox {
+  margin: auto;
   width: 520px;
   background: #022B3A;
   border: 1px solid #FFFFFF14;

@@ -2,75 +2,49 @@ import { Tabs } from "@components/Tabs/Tabs";
 import styles from "./ProviderRequest.module.css";
 import JoinExistingCompanyTab from "./JoinExistingCompanyTab";
 import CreateCompanyTab from "./CreateCompanyTab";
+import type { RefObject } from "react";
 
-interface ProviderCompany {
-  id: number;
-  companyName: string;
+type Props = {
+  ref: RefObject<HTMLDialogElement | null>;
 }
 
-interface UserCompany {
-  companyId: number;
-  pending?: boolean;
-}
-
-interface Props {
-  providerCompanies: ProviderCompany[];
-  userCompanies: UserCompany[];
-  onCancel: () => void;
-  onConfirm: () => void;
-}
-
-export default function ProviderRequestPopup({
-  providerCompanies,
-  userCompanies,
-  onCancel,
-  onConfirm
-}: Props) {
+export default function ProviderRequestPopup({ ref }: Props) {
   return (
-    <div className={styles.popupOverlay}>
-      <div
-        className={styles.popupBox}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="provider-request-title"
-        aria-describedby="provider-request-description"
-      >
-        <h3 id="provider-request-title">Become a Ticket Provider</h3>
-
-        <p id="provider-request-description">
-          Send a request to become a ticket provider.
-        </p>
-
-        <Tabs
-          defaultActiveId="join-company"
-          ariaLabel="Provider request options"
-          tabPanelClassName={styles.providerRequestTabPanel}
-          items={[
-            {
-              id: "join-company",
-              label: "Join Existing Company",
-              content: (
-                <JoinExistingCompanyTab
-                  providerCompanies={providerCompanies}
-                  userCompanies={userCompanies}
-                  onCancel={onCancel}
-                  onConfirm={onConfirm}
-                />
-              )
-            },
-            {
-              id: "create-company",
-              label: "Create New Company",
-              content: (
-                <CreateCompanyTab
-                  onCancel={onCancel}
-                  onConfirm={onConfirm}
-                />
-              )
-            }
-          ]}
-        />
-      </div>
-    </div>
+    <dialog
+      ref={ref}
+      className={styles.popupBox}
+      aria-labelledby="provider-request-title"
+      aria-describedby="provider-request-description"
+      closedby="any"
+      role="dialog"
+    >
+      <h3 id="provider-request-title">Become a Ticket Provider</h3>
+      <p id="provider-request-description">
+        Send a request to become a ticket provider.
+      </p>
+      <Tabs
+        defaultActiveId="join-company"
+        ariaLabel="Provider request options"
+        tabPanelClassName={styles.providerRequestTabPanel}
+        items={[
+          {
+            id: "join-company",
+            label: "Join Existing Company",
+            content: <JoinExistingCompanyTab
+              onCancel={() => ref.current?.close()}
+              onConfirm={() => ref?.current?.close()}
+            />,
+          },
+          {
+            id: "create-company",
+            label: "Create New Company",
+            content: <CreateCompanyTab
+              onCancel={() => ref.current?.close()}
+              onConfirm={() => ref?.current?.close()}
+            />,
+          }
+        ]}
+      />
+    </dialog>
   );
 }

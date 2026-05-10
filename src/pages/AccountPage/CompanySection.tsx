@@ -1,30 +1,43 @@
 import { useState } from "react";
 import styles from "./CompanySection.module.css";
+import { useUpdateCompany, type CompanyDto } from "@api/iam";
+import toast from "@components/Toast";
 
 interface Props {
-  companyName: string;
-  websiteUrl?: string;
-  payoutAccount?: string;
-  pending?: boolean;
+  company: CompanyDto
 }
 
-export default function CompanySection({
-  companyName,
-  websiteUrl = "",
-  payoutAccount = "",
-  pending = false
-}: Props) {
+export default function CompanySection({ company }: Props) {
+  const { mutate, isPending } = useUpdateCompany()
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [website, setWebsite] = useState(websiteUrl);
-  const [payout, setPayout] = useState(payoutAccount);
+  // const [website, setWebsite] = useState(websiteUrl);
+  const [name, setName] = useState(company.name || "");
+  const [payoutAccount, setPayoutAccount] = useState(company.payoutAccount || "");
 
   function handleSave() {
-    console.log({
-      companyName,
-      website,
-      payout
-    });
+    if (name.trim() === "" || payoutAccount.trim() === "") {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (name === company.name && payoutAccount === company.payoutAccount) {
+      return;
+    }
+
+    if (company.id === undefined) {
+      return;
+    }
+    mutate({
+      id: company.id,
+      data: {
+        name,
+        payoutAccount
+      }
+    }, {
+      onSuccess: () => toast.success("Company updated successfully"),
+      onError: () => toast.error("Failed to update company")
+    })
   }
 
   return (
@@ -33,15 +46,7 @@ export default function CompanySection({
         className={styles.companySectionHeader}
         onClick={() => setOpen(!open)}
       >
-        <span>
-          {companyName}
-          {pending && (
-            <span className={styles.pendingBadge}>
-              Pending
-            </span>
-          )}
-        </span>
-
+        {company.name}
         <span>{open ? "−" : "+"}</span>
       </button>
 
@@ -51,51 +56,49 @@ export default function CompanySection({
             <label>Company Name</label>
 
             <input
-              className={`${styles.accountInput} ${styles.disabledInput}`}
-              value={companyName}
-              disabled
-              readOnly
+              className={`${styles.accountInput} ${!isEditing ? styles.disabledInput : ""}`}
+              value={name}
+              disabled={!isEditing}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
-          <div className={styles.formGroup}>
-            <label>Website URL</label>
-
-            <input
-              className={`${styles.accountInput} ${!isEditing ? styles.disabledInput : ""
-                }`}
-              value={website}
-              disabled={pending || !isEditing}
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </div>
+          {/* <div className={styles.formGroup}> */}
+          {/*   <label>Website URL</label> */}
+          {/**/}
+          {/*   <input */}
+          {/*     className={`${styles.accountInput} ${!isEditing ? styles.disabledInput : "" */}
+          {/*       }`} */}
+          {/*     value={website} */}
+          {/*     disabled={pending || !isEditing} */}
+          {/*     onChange={(e) => setWebsite(e.target.value)} */}
+          {/*   /> */}
+          {/* </div> */}
 
           <div className={styles.formGroup}>
             <label>Payout Account</label>
 
             <input
-              className={`${styles.accountInput} ${!isEditing ? styles.disabledInput : ""
-                }`}
-              value={payout}
-              disabled={pending || !isEditing}
-              onChange={(e) => setPayout(e.target.value)}
+              className={`${styles.accountInput} ${!isEditing ? styles.disabledInput : ""}`}
+              value={payoutAccount}
+              disabled={!isEditing}
+              onChange={(e) => setPayoutAccount(e.target.value)}
             />
           </div>
 
-          {!pending && (
-            <button
-              className={styles.primaryButton}
-              onClick={() => {
-                if (isEditing) {
-                  handleSave();
-                }
+          <button
+            className={styles.primaryButton}
+            disabled={isPending}
+            onClick={() => {
+              if (isEditing) {
+                handleSave();
+              }
 
-                setIsEditing(!isEditing);
-              }}
-            >
-              {isEditing ? "Save Changes" : "Edit"}
-            </button>
-          )}
+              setIsEditing(!isEditing);
+            }}
+          >
+            {isPending ? "Saving..." : isEditing ? "Save Changes" : "Edit"}
+          </button>
         </div>
       )}
     </div>

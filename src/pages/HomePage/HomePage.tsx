@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
+// import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
 import EventCards from "@pages/HomePage/EventCards";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import ScrollToTop from "@utility/ScrollToTop";
@@ -16,31 +16,31 @@ import "./style.css";
 const categories = [
   {
     name: "Festivals",
-    path: "/category/festivals",
+    path: "/search?category=Festival",
     className: "festivals",
     image: festivalsImage
   },
   {
     name: "Concerts",
-    path: "/category/concerts",
+    path: "/search?category=Concerts",
     className: "concerts",
     image: concertsImage
   },
   {
-    name: "Sport",
-    path: "/category/sport",
+    name: "Sports",
+    path: "/search?category=Sports",
     className: "sport",
     image: sportImage
   },
   {
     name: "Museums",
-    path: "/category/museums",
+    path: "/search?category=Museums",
     className: "museums",
     image: museumsImage
   },
   {
     name: "Theaters",
-    path: "/category/theaters",
+    path: "/search?category=Theaters",
     className: "theaters",
     image: theatersImage
   }
@@ -60,8 +60,9 @@ function HomePage() {
     ? eventsResponse.data
     : [];
 
-  const featuredEvent = events[0];
-  const upcomingEvents = events.slice(1);
+  // const featuredEvent = events[0];
+  // const upcomingEvents = events.slice(1);
+  const upcomingEvents = events;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,6 +131,7 @@ function HomePage() {
           </ul>
         </section>
 
+        {/*
         <section>
           <h2 className="section-title">
             Featured
@@ -148,6 +150,7 @@ function HomePage() {
 
           <hr />
         </section>
+        */}
 
         <section>
           <h2 className="section-title">
@@ -157,7 +160,7 @@ function HomePage() {
           <div className="upcoming-events-content">
             {isLoading && (
               <div className="upcoming-events-loader">
-                {Array.from({ length: 4 }).map((_, index) => (
+                {Array.from({ length: 5 }).map((_, index) => (
                   <EventCardLoader key={index} />
                 ))}
               </div>

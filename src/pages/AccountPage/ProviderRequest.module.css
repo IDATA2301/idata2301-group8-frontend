@@ -14,10 +14,12 @@
 .popupBox {
   margin: auto;
   width: 520px;
+  max-width: calc(100vw - 28px);
   background: #022B3A;
   border: 1px solid #FFFFFF14;
   border-radius: 20px;
   padding: 32px;
+  box-sizing: border-box;
   box-shadow: 0 8px 40px #00000080;
   animation: popupFade 0.18s ease-out;
 }
@@ -37,10 +39,14 @@
 }
 
 .providerRequestTabPanel {
+  width: 100%;
+  min-width: 0;
   margin-top: 24px;
 }
 
 .popupForm {
+  width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -55,6 +61,8 @@
 }
 
 .formGroup {
+  width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -72,11 +80,14 @@
 .accountInput,
 .accountSelect {
   width: 320px;
+  max-width: 100%;
+  min-width: 0;
   margin-left: auto;
   background: #FFFFFF0F;
   border: 1px solid #FFFFFF14;
   border-radius: 12px;
   padding: 12px 14px;
+  box-sizing: border-box;
   color: #FFFFFF;
   font-size: 16px;
   outline: none;
@@ -86,7 +97,8 @@
     opacity 0.2s;
 }
 
-.accountInput:focus {
+.accountInput:focus,
+.accountSelect:focus {
   border-color: #5FA8FF;
   background: #FFFFFF17;
 }
@@ -149,7 +161,6 @@
 }
 
 @keyframes popupFade {
-
   from {
     opacity: 0;
     transform: scale(0.96);
@@ -159,5 +170,90 @@
     opacity: 1;
     transform: scale(1);
   }
+}
 
+@media (max-width: 600px) {
+  .popupOverlay {
+    align-items: flex-start;
+    padding: 20px 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  .popupBox {
+    width: 100%;
+    max-width: 520px;
+    padding: 22px;
+    border-radius: 18px;
+    margin: auto 0;
+    overflow: visible;
+  }
+
+  .popupBox h3 {
+    font-size: 22px;
+  }
+
+  .popupBox p {
+    font-size: 15px;
+    margin-bottom: 22px;
+  }
+
+  .providerRequestTabPanel {
+    width: 100%;
+    min-width: 0;
+    margin-top: 20px;
+    overflow: visible;
+  }
+
+  .popupForm {
+    width: 100%;
+    min-width: 0;
+    gap: 14px;
+  }
+
+  .formGroup {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .formGroup label {
+    font-size: 15px;
+    white-space: normal;
+  }
+
+  .accountInput,
+  .accountSelect {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    font-size: 15px;
+  }
+
+  .popupActions {
+    flex-direction: column-reverse;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .popupCancel,
+  .popupConfirm {
+    width: 100%;
+    height: 48px;
+  }
+}
+
+@media (max-width: 380px) {
+  .popupBox {
+    padding: 18px;
+  }
+
+  .popupBox h3 {
+    font-size: 20px;
+  }
 }

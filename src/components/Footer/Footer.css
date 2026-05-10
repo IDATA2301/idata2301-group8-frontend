@@ -41,18 +41,16 @@
   margin-bottom: 14px;
 }
 
-.footer-col button {
-  background: none;
-  border: none;
+.footer-col a {
   color: #d6d6d6;
   font-size: 14px;
   margin: 6px 0;
-  cursor: pointer;
   text-align: left;
-  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.footer-col button:hover {
+.footer-col a:hover {
   color: white;
 }
 
@@ -67,6 +65,7 @@
 }
 
 .store-btn {
+  display: inline-block;
   border: 1px solid white;
   background: none;
   color: white;
@@ -74,6 +73,9 @@
   margin-bottom: 10px;
   border-radius: 6px;
   cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s ease;
 }
 
 .store-btn:hover {
@@ -84,10 +86,77 @@
   margin-top: 70px;
   padding-top: 25px;
   border-top: 1px solid rgba(255,255,255,0.15);
-
   display: flex;
   justify-content: space-between;
-
   color: #d6d6d6;
   font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .footer-container {
+    padding: 0 32px;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .footer-columns {
+    justify-content: flex-start;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .footer-app {
+    align-items: flex-start;
+  }
+
+  .footer-bottom {
+    gap: 16px;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 48px 0 32px;
+  }
+
+  .footer-container {
+    padding: 0 20px;
+  }
+
+  .footer-logo {
+    font-size: 24px;
+  }
+
+  .footer-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 40px;
+  }
+
+  .footer-col h4,
+  .footer-app h4 {
+    font-size: 15px;
+  }
+
+  .footer-col a {
+    font-size: 14px;
+    padding: 3px 0;
+  }
+
+  .store-btn {
+    width: 160px;
+  }
+
+  .footer-bottom {
+    margin-top: 48px;
+    font-size: 13px;
+  }
+
+  .footer-bottom p {
+    margin: 0;
+  }
 }

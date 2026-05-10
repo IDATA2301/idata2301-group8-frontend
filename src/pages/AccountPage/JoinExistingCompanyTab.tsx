@@ -7,7 +7,6 @@ import {
 } from "@api/iam";
 import styles from "./ProviderRequest.module.css";
 
-
 interface Props {
   onConfirm: () => void;
   onCancel: () => void;
@@ -27,7 +26,7 @@ export default function JoinExistingCompanyTab({ onConfirm, onCancel }: Props) {
 
     if (!companyRolesSuccess) {
       toast.error("Failed to load company roles");
-      return
+      return;
     }
 
     const providerRole = companyRolesResponse.data.find(
@@ -61,10 +60,12 @@ export default function JoinExistingCompanyTab({ onConfirm, onCancel }: Props) {
 
         <select
           id="provider-company-select"
-          disabled={!companiesResponse}
-          className={styles.accountSelect}
+          disabled={isPending || !companiesSuccess}
           value={selectedCompany}
-          onChange={(e) => setSelectedCompany(Number(e.target.value))}
+          className={styles.accountSelect}
+          onChange={(event) =>
+            setSelectedCompany(event.target.value ? Number(event.target.value) : "")
+          }
         >
           <option value="">Choose a company</option>
 
@@ -78,7 +79,14 @@ export default function JoinExistingCompanyTab({ onConfirm, onCancel }: Props) {
       </div>
 
       <div className={styles.popupActions}>
-        <button className={styles.popupCancel} onClick={onCancel}>Cancel</button>
+        <button
+          disabled={isPending}
+          className={styles.popupCancel}
+          onClick={onCancel}
+        >
+          Cancel
+        </button>
+
         <button
           disabled={isPending || !selectedCompany}
           className={styles.popupConfirm}

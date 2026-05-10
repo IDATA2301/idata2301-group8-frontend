@@ -1,15 +1,13 @@
 .TopBar {
   width: 100%;
   height: 100px;
-  var (--deep-space-blue-dark);
+  background-color: var(--deep-space-blue-dark);
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 0 40px;
   margin: 0 auto;
-
-  position: relative; 
+  position: relative;
 }
 
 .topbar-overlay {
@@ -52,3 +50,27 @@
   color: #E3E3E3;
 }
 
+@media (max-width: 768px) {
+  .TopBar {
+    height: 32px;
+    padding: 0 12px;
+  }
+
+  .menu {
+    font-size: 22px;
+  }
+
+  .logo {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  .register {
+    font-size: 12px;
+  }
+
+  .accountIcon {
+    width: 22px;
+    height: 22px;
+  }
+}

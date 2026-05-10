@@ -18,6 +18,7 @@ const getNumberParam = (
 
 function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
 
   const query = searchParams.get("q") || "";
 
@@ -100,8 +101,35 @@ function SearchPage() {
     <div className="SearchPage-search-page">
       <SearchBar query={query} setQuery={setQuery} />
 
+      <button
+        type="button"
+        className="mobile-filter-button"
+        onClick={() => setFiltersOpen(true)}
+      >
+        Filters
+      </button>
+
+      {filtersOpen && (
+        <button
+          type="button"
+          className="filters-backdrop"
+          aria-label="Close filters"
+          onClick={() => setFiltersOpen(false)}
+        />
+      )}
+
       <div className="search-content">
-        <Filters filters={filters} setFilters={setFilters} />
+        <aside className={`filters-panel ${filtersOpen ? "filters-panel-open" : ""}`}>
+          <button
+            type="button"
+            className="filters-close-button"
+            onClick={() => setFiltersOpen(false)}
+          >
+            Close
+          </button>
+
+          <Filters filters={filters} setFilters={setFilters} />
+        </aside>
 
         <EventList filters={filters} query={query} />
       </div>

@@ -234,3 +234,85 @@
     line-height: 1.6;
     color: #FFFFFFC7;
 }
+
+@media (max-width: 900px) {
+  .withCompanies {
+    width: 100%;
+  }
+
+  .accountSections {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .contentCard {
+    padding: 20px;
+    border-radius: 18px;
+    box-sizing: border-box;
+  }
+
+  .contentCard h2 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .infoRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .infoRow span:first-child {
+    min-width: 0;
+  }
+
+  .infoRow .accountInput,
+  .infoRow .accountSelect,
+  .infoRow .roleText {
+    width: 100%;
+    margin-left: 0;
+    box-sizing: border-box;
+  }
+
+  .accountInput,
+  .accountSelect {
+    width: 100%;
+    margin-left: 0;
+    box-sizing: border-box;
+    font-size: 15px;
+  }
+
+  .saveButtonContainer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .accountActionsLeft {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .saveButton,
+  .logoutButton,
+  .deleteButton {
+    width: 100%;
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .roleChangeText {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .primaryButton {
+    padding: 14px;
+    font-size: 15px;
+  }
+}

@@ -80,9 +80,11 @@ export const ConfirmProvider = ({
   const handleClose = (value: boolean) => {
     const currentConfig = config;
 
-    dialogRef.current?.close();
-    setConfig(null);
+    if (dialogRef.current?.open) {
+      dialogRef.current.close();
+    }
 
+    setConfig(null);
     currentConfig?.resolve(value);
   };
 
@@ -93,9 +95,15 @@ export const ConfirmProvider = ({
       <dialog
         ref={dialogRef}
         className={styles.confirmDialog}
+        {...({ closedby: "any" } as React.DialogHTMLAttributes<HTMLDialogElement>)}
         onCancel={(event) => {
           event.preventDefault();
           handleClose(false);
+        }}
+        onClose={() => {
+          if (config) {
+            handleClose(false);
+          }
         }}
       >
         {config && (

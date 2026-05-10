@@ -22,7 +22,6 @@ export const Tabs = ({
 }: TabsProps) => {
   const [activeId, setActiveId] = useState(defaultActiveId || items[0]?.id);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const activeItem = items.find((item) => item.id === activeId);
 
   const handleKeyDown = (e: KeyboardEvent, index: number) => {
     let newIndex = index;
@@ -43,11 +42,7 @@ export const Tabs = ({
 
   return (
     <div>
-      <div
-        role="tablist"
-        aria-label={ariaLabel}
-        className={styles.tabList}
-      >
+      <div role="tablist" aria-label={ariaLabel} className={styles.tabList}>
         {items.map((item, index) => (
           <button
             key={item.id}
@@ -61,25 +56,30 @@ export const Tabs = ({
             tabIndex={activeId === item.id ? 0 : -1}
             onClick={() => setActiveId(item.id)}
             onKeyDown={(e) => handleKeyDown(e, index)}
-            className={`${styles.tabButton} ${activeId === item.id ? styles.activeTab : ""
-              }`}
+            className={`${styles.tabButton} ${activeId === item.id ? styles.activeTab : ""}`}
           >
             {item.label}
           </button>
         ))}
       </div>
 
-      {activeItem && (
-        <div
-          id={`panel-${activeItem.id}`}
-          role="tabpanel"
-          aria-labelledby={`tab-${activeItem.id}`}
-          tabIndex={0}
-          className={tabPanelClassName}
-        >
-          {activeItem.content}
-        </div>
-      )}
+      {items.map((item) => {
+        const isActive = activeId === item.id;
+
+        return (
+          <div
+            key={item.id}
+            id={`panel-${item.id}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${item.id}`}
+            tabIndex={isActive ? 0 : -1}
+            hidden={!isActive}
+            className={tabPanelClassName}
+          >
+            {isActive && item.content}
+          </div>
+        );
+      })}
     </div>
   );
 };

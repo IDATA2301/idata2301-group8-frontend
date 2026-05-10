@@ -69,15 +69,24 @@
   z-index: 10;
   width: 36px;
   height: 36px;
+  padding: 0;
   border: none;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-button-active {
+  background: #e63946;
 }
 
 .favorite-icon {
   width: 20px;
   height: 20px;
+  display: block;
   opacity: 0.9;
   transition:
     transform 0.2s ease,

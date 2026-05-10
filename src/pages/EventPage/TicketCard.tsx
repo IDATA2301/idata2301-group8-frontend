@@ -46,17 +46,20 @@ function TicketCard({ onChange, ticket }: Props) {
         {count > 0 && (
           <>
             <button
+              type="button"
               className="ticket-card-button"
               onClick={decrement}
+              aria-label={`Decrease ${ticket.name} quantity`}
             >
               <img
                 className="ticket-card-icon"
                 src={minus}
-                alt="decrement icon"
+                alt=""
+                aria-hidden="true"
               />
             </button>
 
-            <p className="ticket-card-count">
+            <p className="ticket-card-count" aria-live="polite">
               {count}
             </p>
           </>
@@ -66,11 +69,13 @@ function TicketCard({ onChange, ticket }: Props) {
           onClick={increment}
           variant="buttonWithIcon"
           disabled={count >= maxCount}
+          aria-label={`Increase ${ticket.name} quantity`}
         >
           <img
             className="ticket-card-icon"
             src={plus}
-            alt="increment icon"
+            alt=""
+            aria-hidden="true"
           />
         </Button>
       </div>

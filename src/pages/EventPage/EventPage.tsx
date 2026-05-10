@@ -1,13 +1,9 @@
 import { Link, useParams } from "react-router-dom";
-import {
-  useGetEventBySlug,
-  useGetListingsByEvent,
-  type TicketListingResponse
-} from "@api/events";
-import ChooseTickets from "./ChooseTickets";
+import { useGetEventBySlug } from "@api/events";
 import ScrollToTop from "@utility/ScrollToTop.tsx";
 import openInNew from "@assets/icons/open-in-new.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
+import EventTicketListings from "./EventTicketListings";
 import "./style.css";
 
 function EventPage() {
@@ -24,34 +20,9 @@ function EventPage() {
   });
 
   const event =
-    typeof eventResponse?.data === "string"
+    eventResponse?.status !== 200
       ? undefined
-      : eventResponse?.data;
-
-  const eventId = event?.eventId ?? 0;
-
-  const {
-    data: listingsResponse,
-    isLoading: listingsLoading,
-    isError: listingsError
-  } = useGetListingsByEvent(eventId, {
-    query: {
-      enabled: eventId > 0
-    }
-  });
-
-  const listings =
-    typeof listingsResponse?.data === "string"
-      ? []
-      : listingsResponse?.data ?? [];
-
-  const tickets = listings
-    .filter((listing: TicketListingResponse) => listing.ticketListingId != null)
-    .map((listing: TicketListingResponse) => ({
-      id: listing.ticketListingId!,
-      name: listing.ticketType ?? "Ticket",
-      price: listing.price ?? 0
-    }));
+      : eventResponse.data;
 
   const tags = [
     ...(event?.categoryNames ?? []),
@@ -64,23 +35,18 @@ function EventPage() {
 
   const mapsUrl =
     locationQuery.length > 0
-      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        locationQuery
-      )}`
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}`
       : "https://www.google.com/maps";
 
   const iframeUrl =
     locationQuery.length > 0
-      ? `https://www.google.com/maps?q=${encodeURIComponent(
-        locationQuery
-      )}&output=embed`
+      ? `https://www.google.com/maps?q=${encodeURIComponent(locationQuery)}&output=embed`
       : "";
 
   if (eventLoading) {
     return (
       <>
         <ScrollToTop />
-
         <main className="event-page-state">
           <div className="event-page-state-card">
             <p>Loading event...</p>
@@ -94,19 +60,11 @@ function EventPage() {
     return (
       <>
         <ScrollToTop />
-
         <main className="event-page-state">
           <div className="event-page-state-card">
             <h1>Event not found</h1>
-
-            <p>
-              This event does not exist, or it may no longer be available.
-            </p>
-
-            <Link
-              to="/"
-              className="event-page-state-link"
-            >
+            <p>This event does not exist, or it may no longer be available.</p>
+            <Link to="/" className="event-page-state-link">
               Back to homepage
             </Link>
           </div>
@@ -138,10 +96,7 @@ function EventPage() {
         {tags.length > 0 && (
           <div className="event-tags">
             {tags.map((tag) => (
-              <span
-                key={tag}
-                className="tag"
-              >
+              <span key={tag} className="tag">
                 {tag}
               </span>
             ))}
@@ -150,25 +105,14 @@ function EventPage() {
       </div>
 
       <div className="center-box">
-        {listingsLoading && <p>Loading tickets...</p>}
-        {listingsError && <p>Could not load tickets.</p>}
-
-        {!listingsLoading && !listingsError && tickets.length > 0 && (
-          <ChooseTickets tickets={tickets} />
-        )}
-
-        {!listingsLoading && !listingsError && tickets.length === 0 && (
-          <p>No tickets available.</p>
-        )}
+        <EventTicketListings eventId={event.eventId} />
 
         <hr className="page-divider-line" />
 
         <div className="event-page-location-box">
           <div className="event-page-location-info-box">
             <div>
-              <h3 className="event-page-location-title">
-                Address
-              </h3>
+              <h3 className="event-page-location-title">Address</h3>
 
               <p className="event-page-location-address">
                 {event.venueName ?? "Unknown venue"}
@@ -187,10 +131,7 @@ function EventPage() {
             >
               Open in Google Maps
 
-              <img
-                src={openInNew}
-                alt="open in new tab"
-              />
+              <img src={openInNew} alt="open in new tab" />
             </Link>
           </div>
 

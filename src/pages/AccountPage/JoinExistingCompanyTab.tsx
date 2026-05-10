@@ -48,6 +48,11 @@ export default function JoinExistingCompanyTab({
       return;
     }
 
+    if (companyRolesQuery.isLoading) {
+      toast.error("Company roles are still loading");
+      return;
+    }
+
     const providerRole = companyRolesQuery.data?.data.find(
       (role) => role.name?.toUpperCase() === "PROVIDER"
     );
@@ -75,23 +80,19 @@ export default function JoinExistingCompanyTab({
   return (
     <>
       <div className={styles.formGroup}>
-        <label>Select Company</label>
+        <label htmlFor="provider-company-select">Select Company</label>
 
         <select
-          disabled={isSubmitting || companyRolesQuery.isLoading}
+          id="provider-company-select"
+          disabled={isSubmitting}
           className={styles.accountSelect}
           value={selectedCompany}
           onChange={(e) => setSelectedCompany(Number(e.target.value))}
         >
-          <option value="">
-            Choose a company
-          </option>
+          <option value="">Choose a company</option>
 
           {availableCompanies.map((company) => (
-            <option
-              key={company.id}
-              value={company.id}
-            >
+            <option key={company.id} value={company.id}>
               {company.companyName}
             </option>
           ))}
@@ -108,7 +109,7 @@ export default function JoinExistingCompanyTab({
         </button>
 
         <button
-          disabled={isSubmitting || companyRolesQuery.isLoading}
+          disabled={isSubmitting}
           className={styles.popupConfirm}
           onClick={handleJoinCompany}
         >

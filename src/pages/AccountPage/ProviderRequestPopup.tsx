@@ -28,10 +28,16 @@ export default function ProviderRequestPopup({
 }: Props) {
   return (
     <div className={styles.popupOverlay}>
-      <div className={styles.popupBox}>
-        <h3>Become a Ticket Provider</h3>
+      <div
+        className={styles.popupBox}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="provider-request-title"
+        aria-describedby="provider-request-description"
+      >
+        <h3 id="provider-request-title">Become a Ticket Provider</h3>
 
-        <p>
+        <p id="provider-request-description">
           Send a request to become a ticket provider.
         </p>
 

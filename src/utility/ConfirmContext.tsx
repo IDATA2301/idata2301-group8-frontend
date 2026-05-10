@@ -95,7 +95,7 @@ export const ConfirmProvider = ({
       <dialog
         ref={dialogRef}
         className={styles.confirmDialog}
-        {...({ closedby: "any" } as React.DialogHTMLAttributes<HTMLDialogElement>)}
+        closedby="any"
         onCancel={(event) => {
           event.preventDefault();
           handleClose(false);

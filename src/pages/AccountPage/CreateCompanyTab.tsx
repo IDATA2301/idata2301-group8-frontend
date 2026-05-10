@@ -12,11 +12,10 @@ export default function CreateCompanyTab({
   onCancel,
   onConfirm
 }: Props) {
-  const createCompanyCreationRequest = useCreateCompanyCreationRequest();
+  const { isPending, mutateAsync } = useCreateCompanyCreationRequest();
   const [companyName, setCompanyName] = useState("");
-  const [websiteUrl, setWebsiteUrl] = useState("");
+  // const [websiteUrl, setWebsiteUrl] = useState("");
   const [payoutAccount, setPayoutAccount] = useState("");
-  const isSubmitting = createCompanyCreationRequest.isPending;
 
   async function handleCreateCompany() {
     if (!companyName.trim() || !payoutAccount.trim()) {
@@ -24,13 +23,13 @@ export default function CreateCompanyTab({
       return;
     }
 
-    if (websiteUrl && !websiteUrl.startsWith("http")) {
-      toast.error("Invalid website URL");
-      return;
-    }
+    // if (websiteUrl && !websiteUrl.startsWith("http")) {
+    //   toast.error("Invalid website URL");
+    //   return;
+    // }
 
     try {
-      await createCompanyCreationRequest.mutateAsync({
+      await mutateAsync({
         data: {
           name: companyName.trim(),
           payoutAccount: payoutAccount.trim()
@@ -50,7 +49,7 @@ export default function CreateCompanyTab({
         <label>Company Name</label>
 
         <input
-          disabled={isSubmitting}
+          disabled={isPending}
           className={styles.accountInput}
           placeholder="Enter company name"
           value={companyName}
@@ -58,23 +57,23 @@ export default function CreateCompanyTab({
         />
       </div>
 
-      <div className={styles.formGroup}>
-        <label>Website URL (optional)</label>
-
-        <input
-          disabled={isSubmitting}
-          className={styles.accountInput}
-          placeholder="https://company.com"
-          value={websiteUrl}
-          onChange={(e) => setWebsiteUrl(e.target.value)}
-        />
-      </div>
+      {/* <div className={styles.formGroup}> */}
+      {/*   <label>Website URL (optional)</label> */}
+      {/**/}
+      {/*   <input */}
+      {/*     disabled={isSubmitting} */}
+      {/*     className={styles.accountInput} */}
+      {/*     placeholder="https://company.com" */}
+      {/*     value={websiteUrl} */}
+      {/*     onChange={(e) => setWebsiteUrl(e.target.value)} */}
+      {/*   /> */}
+      {/* </div> */}
 
       <div className={styles.formGroup}>
         <label>Payout Account</label>
 
         <input
-          disabled={isSubmitting}
+          disabled={isPending}
           className={styles.accountInput}
           placeholder="Enter payout account"
           value={payoutAccount}
@@ -84,7 +83,7 @@ export default function CreateCompanyTab({
 
       <div className={styles.popupActions}>
         <button
-          disabled={isSubmitting}
+          disabled={isPending}
           className={styles.popupCancel}
           onClick={onCancel}
         >
@@ -92,11 +91,11 @@ export default function CreateCompanyTab({
         </button>
 
         <button
-          disabled={isSubmitting}
+          disabled={isPending}
           className={styles.popupConfirm}
           onClick={handleCreateCompany}
         >
-          {isSubmitting ? "Sending..." : "Request"}
+          {isPending ? "Sending..." : "Request"}
         </button>
       </div>
     </>

@@ -1,0 +1,73 @@
+.eventCardLoader {
+  position: relative;
+  width: 250px;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 12px 12px 24px 24px;
+  background: var(--deep-space-blue-dark);
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.content {
+  height: 160px;
+  padding: 12px;
+}
+
+.line,
+.tag {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+
+.title {
+  width: 75%;
+  height: 18px;
+  margin-bottom: 12px;
+}
+
+.tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tag {
+  width: 58px;
+  height: 22px;
+}
+
+.date {
+  width: 85%;
+  height: 15px;
+  margin-bottom: 12px;
+}
+
+.price {
+  width: 45%;
+  height: 15px;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -159,3 +159,27 @@ body {
   border-radius: 24px;
 }
 
+.upcoming-events-content {
+  min-height: 300px;
+}
+
+.upcoming-events-loader {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  min-height: 300px;
+}
+
+.upcoming-events-message {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.upcoming-events-empty {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  color: white;
+}

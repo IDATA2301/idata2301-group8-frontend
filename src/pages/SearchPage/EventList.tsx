@@ -1,30 +1,34 @@
-import EventCard from 'src/pages/EventCard/EventCard';
-
+import EventCard from "src/pages/EventCard/EventCard";
+import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
-
-import { useGetEvents } from '@api/events';
+import { useGetEvents } from "@api/events";
 
 type Params = {
-  query: string,
-  filters: FiltersType
-}
+  query: string;
+  filters: FiltersType;
+};
 
 const EventList = ({ query, filters }: Params) => {
-
   const { data: response, isLoading } = useGetEvents({
     city: filters.locations[0] || undefined,
-    category: filters.categories[0] || undefined,
+    category: filters.categories[0] || undefined
   });
 
   if (isLoading) {
-    return <p>Loading ...</p>;
+    return (
+      <section className="events-grid">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <EventCardLoader key={index} />
+        ))}
+      </section>
+    );
   }
 
   const events = response?.data ?? [];
 
   if (!response) {
     return (
-      <section className="events-grid">
+      <section className="events-grid events-grid-message">
         <p>Backend not connected.</p>
       </section>
     );
@@ -32,7 +36,7 @@ const EventList = ({ query, filters }: Params) => {
 
   if (response.status !== 200) {
     return (
-      <section className="events-grid">
+      <section className="events-grid events-grid-message">
         <p>Something went wrong.</p>
       </section>
     );
@@ -40,7 +44,7 @@ const EventList = ({ query, filters }: Params) => {
 
   if (events.length === 0) {
     return (
-      <section className="events-grid">
+      <section className="events-grid events-grid-message">
         <p>No events found.</p>
       </section>
     );
@@ -48,14 +52,12 @@ const EventList = ({ query, filters }: Params) => {
 
   return (
     <section className="events-grid">
-
-      {events.map(event => (
+      {events.map((event) => (
         <EventCard
           key={event.eventId}
           {...event}
         />
       ))}
-
     </section>
   );
 };

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
 import EventCards from "@pages/HomePage/EventCards";
+import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import ScrollToTop from "@utility/ScrollToTop";
 import { useGetEvents, type EventResponse } from "@api/events";
 import heroimage from "@assets/heroimage.jpg";
@@ -78,7 +79,6 @@ function HomePage() {
         <main>
           <h1 className="hero-title">
             Your Gateway to <br />
-
             <span className="highlight">
               Unforgettable
             </span>{" "}
@@ -154,12 +154,31 @@ function HomePage() {
             Upcoming
           </h2>
 
-          {isLoading && <p>Loading events...</p>}
-          {isError && <p>Could not load events.</p>}
+          <div className="upcoming-events-content">
+            {isLoading && (
+              <div className="upcoming-events-loader">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <EventCardLoader key={index} />
+                ))}
+              </div>
+            )}
 
-          {!isLoading && !isError && (
-            <EventCards events={upcomingEvents} />
-          )}
+            {isError && (
+              <div className="upcoming-events-message">
+                Could not load events.
+              </div>
+            )}
+
+            {!isLoading && !isError && upcomingEvents.length > 0 && (
+              <EventCards events={upcomingEvents} />
+            )}
+
+            {!isLoading && !isError && upcomingEvents.length === 0 && (
+              <div className="upcoming-events-message">
+                No upcoming events available.
+              </div>
+            )}
+          </div>
 
           <hr />
         </section>

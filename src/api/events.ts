@@ -55,16 +55,16 @@ export interface EventResponse {
 }
 
 export interface CreateVenueRequest {
-  venueName?: string;
   venueCity?: string;
   venueCountry?: string;
+  venueName?: string;
 }
 
 export interface VenueResponse {
   venueId?: number;
-  venueName?: string;
   venueCity?: string;
   venueCountry?: string;
+  venueName?: string;
 }
 
 export interface CreateTicketListingRequest {
@@ -117,13 +117,45 @@ export interface CategoryResponse {
   categoryId?: number;
 }
 
+export interface SortObject {
+  empty?: boolean;
+  sorted?: boolean;
+  unsorted?: boolean;
+}
+
+export interface PageableObject {
+  offset?: number;
+  paged?: boolean;
+  pageNumber?: number;
+  pageSize?: number;
+  sort?: SortObject;
+  unpaged?: boolean;
+}
+
+export interface PageEventResponse {
+  totalElements?: number;
+  totalPages?: number;
+  size?: number;
+  content?: EventResponse[];
+  number?: number;
+  pageable?: PageableObject;
+  sort?: SortObject;
+  numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
+  empty?: boolean;
+}
+
 export type GetEventsParams = {
 city?: string;
 category?: string;
+query?: string;
 startDate?: string;
 endDate?: string;
 minPrice?: number;
 maxPrice?: number;
+page?: number;
+size?: number;
 };
 
 export type SearchByCityParams = {
@@ -1473,7 +1505,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     }
 
 export type getEventsResponse200 = {
-  data: EventResponse[]
+  data: PageEventResponse
   status: 200
 }
 

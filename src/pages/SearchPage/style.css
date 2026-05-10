@@ -45,7 +45,7 @@ h4 {
 .search-icon-button {
   height: 50px;
   padding: 0 18px;
-  border-radius: 0 12px 12px 0; /* top left, top right, bottom left, bottom right */
+  border-radius: 0 12px 12px 0;
   border: 1px solid #FFFFFF4D;
   border-left: none;
   background: #FFFFFF4D;
@@ -89,7 +89,57 @@ h4 {
 }
 
 .events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 250px);
+  grid-auto-rows: 300px;
   align-items: start;
+  align-content: start;
+  justify-content: start;
+  column-gap: 20px;
+  row-gap: 20px;
+  min-height: 300px;
+}
+
+.events-grid-message {
+  display: flex;
+  align-items: center;
+}
+
+.events-grid-message p {
+  color: white;
+  margin: 0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.pagination-button {
+  min-width: 42px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #FFFFFF4D;
+  border-radius: 10px;
+  background: #FFFFFF1A;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #FFFFFF33;
+}
+
+.pagination-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-button-active {
+  background: #780000;
+  border-color: #780000;
 }
 
 .filters {
@@ -116,10 +166,8 @@ h4 {
   border: 2px solid white;
   border-radius: 8px;
   background: transparent;
-
   display: inline-block;
   position: relative;
-
   transition: all 0.2s ease;
 }
 
@@ -153,14 +201,14 @@ h4 {
 }
 
 .filter-section input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1); 
+  filter: invert(1);
   cursor: pointer;
 }
 
 .date-row {
   display: grid;
   align-items: center;
-  grid-template-columns: 120px 143px; 
+  grid-template-columns: 120px 143px;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 10px;
@@ -175,9 +223,8 @@ h4 {
 .date-row input {
   width: 143px;
   height: 40px;
-
-  padding: 0 8px; 
-  box-sizing: border-box; 
+  padding: 0 8px;
+  box-sizing: border-box;
   border-radius: 8px;
 }
 
@@ -203,10 +250,4 @@ h4 {
 
 .price-inputs input {
   -moz-appearance: textfield;
-}
-
-.events-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
 }

@@ -16,7 +16,7 @@ type Props = {
 };
 
 const categories = [
-  "Festival",
+  "Festivals",
   "Concerts",
   "Sports",
   "Comedy Show",

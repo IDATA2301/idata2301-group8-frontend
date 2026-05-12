@@ -1,0 +1,171 @@
+.requestManagementPage {
+  min-height: calc(100vh - 220px);
+  background-color: var(--deep-space-blue);
+  color: white;
+  padding: 2rem 0 4rem;
+  font-family: Inter, sans-serif;
+}
+
+.pageContent {
+  width: min(862px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.pageContent h1 {
+  margin: 0 0 1.4rem;
+  font-size: 1.65rem;
+  font-weight: 800;
+}
+
+.requestSection {
+  margin-bottom: 2rem;
+}
+
+.requestSection h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.requestBox {
+  width: 862px;
+  max-width: 100%;
+  height: 332px;
+  border-radius: 18px;
+  background-color: var(--deep-space-blue-dark);
+  padding: 1.25rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.roleTableHeader,
+.roleRequestEntry {
+  display: grid;
+  grid-template-columns: 1fr 1.45fr 1.35fr 1.05fr 1.1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.eventTableHeader,
+.eventRequestEntry {
+  display: grid;
+  grid-template-columns: 1.45fr 1.8fr 1.05fr 1.1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.roleTableHeader,
+.eventTableHeader {
+  padding: 0 0.5rem 0.65rem;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.roleTableHeader span:last-child,
+.eventTableHeader span:last-child {
+  text-align: center;
+}
+
+.entriesList {
+  max-height: calc(100% - 1.8rem);
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.entriesList::-webkit-scrollbar {
+  width: 0.45rem;
+}
+
+.entriesList::-webkit-scrollbar-thumb {
+  background-color: rgba(227, 227, 227, 0.45);
+  border-radius: 999px;
+}
+
+.entriesList::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.roleRequestEntry,
+.eventRequestEntry {
+  width: 752px;
+  max-width: 100%;
+  height: 36px;
+  margin-bottom: 0.45rem;
+  padding: 0 0.5rem;
+  color: #e3e3e3;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.roleRequestEntry span,
+.eventRequestEntry span,
+.roleTableHeader span,
+.eventTableHeader span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.approveButton,
+.rejectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+}
+
+.approveButton img,
+.rejectButton img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.approveButton {
+  background-color: #0a8f22;
+}
+
+.rejectButton {
+  background-color: #780000;
+}
+
+.approveButton:hover,
+.rejectButton:hover {
+  filter: brightness(1.1);
+}
+
+@media (max-width: 750px) {
+  .pageContent {
+    width: calc(100% - 1rem);
+  }
+
+  .requestBox {
+    height: 332px;
+    overflow-x: auto;
+  }
+
+  .roleTableHeader,
+  .roleRequestEntry {
+    min-width: 780px;
+  }
+
+  .eventTableHeader,
+  .eventRequestEntry {
+    min-width: 720px;
+  }
+}

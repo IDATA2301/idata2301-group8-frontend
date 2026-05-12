@@ -1,0 +1,148 @@
+.userManagementPage {
+  min-height: calc(100vh - 220px);
+  background-color: var(--deep-space-blue);
+  color: white;
+  padding: 2rem 0;
+  font-family: Inter, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageContent {
+  width: min(881px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.pageContent h1 {
+  margin: 0 0 1rem;
+  font-size: 1.65rem;
+  font-weight: 500;
+}
+
+.managementBox {
+  width: 881px;
+  max-width: 100%;
+  height: 488px;
+  border-radius: 18px;
+  background-color: var(--deep-space-blue-dark);
+  padding: 1.4rem 1.5rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr 1.2fr 1.2fr 106px;
+  gap: 1rem;
+  padding: 0 0.5rem 0.75rem;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.entriesList {
+  max-height: calc(100% - 2rem);
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.entriesList::-webkit-scrollbar {
+  width: 0.45rem;
+}
+
+.entriesList::-webkit-scrollbar-thumb {
+  background-color: rgba(227, 227, 227, 0.45);
+  border-radius: 999px;
+}
+
+.entriesList::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.userEntry {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr 1.2fr 1.2fr 106px;
+  gap: 1rem;
+  align-items: center;
+  width: 833px;
+  max-width: 100%;
+  height: 36px;
+  padding: 0 0.5rem;
+  color: #e3e3e3;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 0.45rem;
+}
+
+.userEntry span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roleSelect {
+  width: 100%;
+  height: 31px;
+  border: 1px solid rgba(227, 227, 227, 0.5);
+  border-radius: 9px;
+  background-color: var(--deep-space-blue-dark);
+  color: #e3e3e3;
+  padding: 0 2rem 0 0.65rem;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  outline: none;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #e3e3e3 50%),
+    linear-gradient(135deg, #e3e3e3 50%, transparent 50%);
+  background-position: calc(100% - 1.1rem) 50%, calc(100% - 0.82rem) 50%;
+  background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
+  background-repeat: no-repeat;
+}
+
+.roleSelect:focus {
+  border-color: var(--steel-blue);
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 106px;
+  height: 36px;
+  border: none;
+  border-radius: 9px;
+  background-color: #c1121f;
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deleteButton img {
+  width: 11px;
+  height: 11px;
+}
+
+.deleteButton:hover {
+  filter: brightness(1.1);
+}
+
+@media (max-width: 750px) {
+  .pageContent {
+    width: calc(100% - 1rem);
+  }
+
+  .managementBox {
+    height: 430px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .tableHeader,
+  .userEntry {
+    min-width: 833px;
+  }
+}

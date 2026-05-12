@@ -55,16 +55,16 @@ export interface EventResponse {
 }
 
 export interface CreateVenueRequest {
+  venueName?: string;
   venueCity?: string;
   venueCountry?: string;
-  venueName?: string;
 }
 
 export interface VenueResponse {
   venueId?: number;
+  venueName?: string;
   venueCity?: string;
   venueCountry?: string;
-  venueName?: string;
 }
 
 export interface CreateTicketListingRequest {
@@ -160,6 +160,14 @@ size?: number;
 
 export type SearchByCityParams = {
 city: string;
+};
+
+export type GetRepresentedTicketListingsParams = {
+companyId?: number;
+};
+
+export type GetRepresentedEventsParams = {
+companyId?: number;
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -2412,6 +2420,152 @@ export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>
 
 
 
+export type getRepresentedTicketListingsResponse200 = {
+  data: TicketListingResponse[]
+  status: 200
+}
+
+export type getRepresentedTicketListingsResponse400 = {
+  data: string
+  status: 400
+}
+
+export type getRepresentedTicketListingsResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getRepresentedTicketListingsResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getRepresentedTicketListingsResponse404 = {
+  data: string
+  status: 404
+}
+
+export type getRepresentedTicketListingsResponse409 = {
+  data: string
+  status: 409
+}
+
+export type getRepresentedTicketListingsResponse500 = {
+  data: string
+  status: 500
+}
+
+export type getRepresentedTicketListingsResponseSuccess = (getRepresentedTicketListingsResponse200) & {
+  headers: Headers;
+};
+export type getRepresentedTicketListingsResponseError = (getRepresentedTicketListingsResponse400 | getRepresentedTicketListingsResponse401 | getRepresentedTicketListingsResponse403 | getRepresentedTicketListingsResponse404 | getRepresentedTicketListingsResponse409 | getRepresentedTicketListingsResponse500) & {
+  headers: Headers;
+};
+
+export type getRepresentedTicketListingsResponse = (getRepresentedTicketListingsResponseSuccess | getRepresentedTicketListingsResponseError)
+
+export const getGetRepresentedTicketListingsUrl = (params?: GetRepresentedTicketListingsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/ticket-listings/represented?${stringifiedParams}` : `/ticket-listings/represented`
+}
+
+export const getRepresentedTicketListings = async (params?: GetRepresentedTicketListingsParams, options?: RequestInit): Promise<getRepresentedTicketListingsResponse> => {
+
+  return customFetchEventApi<getRepresentedTicketListingsResponse>(getGetRepresentedTicketListingsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRepresentedTicketListingsQueryKey = (params?: GetRepresentedTicketListingsParams,) => {
+    return [
+    `/ticket-listings/represented`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetRepresentedTicketListingsQueryOptions = <TData = Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError = string>(params?: GetRepresentedTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRepresentedTicketListingsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRepresentedTicketListings>>> = ({ signal }) => getRepresentedTicketListings(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetRepresentedTicketListingsQueryResult = NonNullable<Awaited<ReturnType<typeof getRepresentedTicketListings>>>
+export type GetRepresentedTicketListingsQueryError = string
+
+
+export function useGetRepresentedTicketListings<TData = Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError = string>(
+ params: undefined |  GetRepresentedTicketListingsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRepresentedTicketListings>>,
+          TError,
+          Awaited<ReturnType<typeof getRepresentedTicketListings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRepresentedTicketListings<TData = Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError = string>(
+ params?: GetRepresentedTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRepresentedTicketListings>>,
+          TError,
+          Awaited<ReturnType<typeof getRepresentedTicketListings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRepresentedTicketListings<TData = Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError = string>(
+ params?: GetRepresentedTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetRepresentedTicketListings<TData = Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError = string>(
+ params?: GetRepresentedTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedTicketListings>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetRepresentedTicketListingsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
 export type getListingsByEventResponse200 = {
   data: TicketListingResponse[]
   status: 200
@@ -3070,6 +3224,158 @@ export function useGetEventBySlug<TData = Awaited<ReturnType<typeof getEventBySl
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetEventBySlugQueryOptions(slug,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export type getRepresentedEventsResponse200 = {
+  data: EventResponse[]
+  status: 200
+}
+
+export type getRepresentedEventsResponse400 = {
+  data: string
+  status: 400
+}
+
+export type getRepresentedEventsResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getRepresentedEventsResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getRepresentedEventsResponse404 = {
+  data: string
+  status: 404
+}
+
+export type getRepresentedEventsResponse409 = {
+  data: string
+  status: 409
+}
+
+export type getRepresentedEventsResponse500 = {
+  data: string
+  status: 500
+}
+
+export type getRepresentedEventsResponseSuccess = (getRepresentedEventsResponse200) & {
+  headers: Headers;
+};
+export type getRepresentedEventsResponseError = (getRepresentedEventsResponse400 | getRepresentedEventsResponse401 | getRepresentedEventsResponse403 | getRepresentedEventsResponse404 | getRepresentedEventsResponse409 | getRepresentedEventsResponse500) & {
+  headers: Headers;
+};
+
+export type getRepresentedEventsResponse = (getRepresentedEventsResponseSuccess | getRepresentedEventsResponseError)
+
+export const getGetRepresentedEventsUrl = (params?: GetRepresentedEventsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/events/represented?${stringifiedParams}` : `/events/represented`
+}
+
+/**
+ * @summary Get represented events
+ */
+export const getRepresentedEvents = async (params?: GetRepresentedEventsParams, options?: RequestInit): Promise<getRepresentedEventsResponse> => {
+
+  return customFetchEventApi<getRepresentedEventsResponse>(getGetRepresentedEventsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRepresentedEventsQueryKey = (params?: GetRepresentedEventsParams,) => {
+    return [
+    `/events/represented`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetRepresentedEventsQueryOptions = <TData = Awaited<ReturnType<typeof getRepresentedEvents>>, TError = string>(params?: GetRepresentedEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRepresentedEventsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRepresentedEvents>>> = ({ signal }) => getRepresentedEvents(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRepresentedEvents>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetRepresentedEventsQueryResult = NonNullable<Awaited<ReturnType<typeof getRepresentedEvents>>>
+export type GetRepresentedEventsQueryError = string
+
+
+export function useGetRepresentedEvents<TData = Awaited<ReturnType<typeof getRepresentedEvents>>, TError = string>(
+ params: undefined |  GetRepresentedEventsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedEvents>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRepresentedEvents>>,
+          TError,
+          Awaited<ReturnType<typeof getRepresentedEvents>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRepresentedEvents<TData = Awaited<ReturnType<typeof getRepresentedEvents>>, TError = string>(
+ params?: GetRepresentedEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedEvents>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRepresentedEvents>>,
+          TError,
+          Awaited<ReturnType<typeof getRepresentedEvents>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRepresentedEvents<TData = Awaited<ReturnType<typeof getRepresentedEvents>>, TError = string>(
+ params?: GetRepresentedEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get represented events
+ */
+
+export function useGetRepresentedEvents<TData = Awaited<ReturnType<typeof getRepresentedEvents>>, TError = string>(
+ params?: GetRepresentedEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRepresentedEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetRepresentedEventsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

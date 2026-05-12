@@ -16,7 +16,7 @@ import "./style.css";
 const categories = [
   {
     name: "Festivals",
-    path: "/search?category=Festival",
+    path: "/search?category=Festivals",
     className: "festivals",
     image: festivalsImage
   },

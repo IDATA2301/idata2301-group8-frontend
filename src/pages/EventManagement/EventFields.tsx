@@ -24,6 +24,7 @@ export default function EventFields({
   const updateEvent = useUpdateEvent();
   const deleteEvent = useDeleteEvent();
 
+  const [eventImage, setEventImage] = useState<File | null>(null);
   const [form, setForm] = useState({
     eventName: selectedEvent?.eventName ?? "",
     slug: selectedEvent?.slug ?? "",
@@ -59,15 +60,14 @@ export default function EventFields({
     e.preventDefault();
 
     if (mode === "edit" && selectedEvent?.eventId) {
-      updateEvent.mutate({ id: selectedEvent.eventId, data: buildRequest() }, {
-        onSuccess: handleSuccess
-      });
+      updateEvent.mutate({ id: selectedEvent.eventId, data: buildRequest() }, { onSuccess: handleSuccess });
       return;
     }
 
     // Requires endpoint: POST /approval-requests/event-creation
     // Replace direct event creation with an approval request if event creation must be reviewed.
-    createEvent.mutate({ data: buildRequest() }, { onSuccess: handleSuccess });
+    if (!eventImage) return;
+    createEvent.mutate({ data: { eventData: buildRequest(), eventImage } }, { onSuccess: handleSuccess });
   }
 
   function handleDelete() {
@@ -92,6 +92,10 @@ export default function EventFields({
           <label>
             Slug
             <input value={form.slug} onChange={(e) => updateField("slug", e.target.value)} />
+          </label>
+          <label>
+            Image file
+            <input type="file" accept="image/*" onChange={(e) => setEventImage(e.target.files?.[0] ?? null)} />
           </label>
           <label>
             Image URL
@@ -142,7 +146,7 @@ export default function EventFields({
             Delete
           </button>
         )}
-        <button type="submit" className={styles.saveButton}>
+        <button type="submit" className={styles.saveButton} disabled={mode === "create" && !eventImage}>
           {mode === "create" ? "Request" : "Save"}
         </button>
       </div>

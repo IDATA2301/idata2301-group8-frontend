@@ -61,9 +61,7 @@ export default function TicketListingFields({
 
   function handleDelete() {
     if (!companyId || !selectedTicketListing?.ticketListingId) return;
-    deleteTicketListing.mutate({ id: selectedTicketListing.ticketListingId }, {
-      onSuccess: handleSuccess
-    });
+    deleteTicketListing.mutate({ id: selectedTicketListing.ticketListingId }, { onSuccess: handleSuccess });
   }
 
   function handleSuccess() {
@@ -132,6 +130,9 @@ export default function TicketListingFields({
           </p>
           {/* Requires endpoint: GET /companies/represented */}
           {/* Replace Company ID label with real company name when IAM supports represented companies. */}
+          {mode === "edit" && (
+            <p>Requires endpoint: PUT /ticket-listings/{"{id}"} before ticket listings can be edited.</p>
+          )}
         </section>
       </div>
 
@@ -141,7 +142,6 @@ export default function TicketListingFields({
             Delete
           </button>
         )}
-
         {mode === "create" ? (
           <button type="submit" className={styles.saveButton} disabled={!companyId}>
             Request

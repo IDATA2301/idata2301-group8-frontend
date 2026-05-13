@@ -15,15 +15,15 @@ export default {
   // },
 
   events: {
-    input: 'http://localhost:8080/v3/api-docs',
+    input: "http://localhost:80/api/v3/api-docs",
     output: {
-      tsconfig: './tsconfig.app.json',
-      target: './src/api/events.ts',
-      client: 'react-query',
+      tsconfig: "./tsconfig.app.json",
+      target: "./src/api/events.ts",
+      client: "react-query",
       override: {
         mutator: {
-          path: './src/api/client.ts',
-          name: 'customFetchEventApi'
+          path: "./src/api/client.ts",
+          name: "customFetchEventApi"
         }
       }
     }

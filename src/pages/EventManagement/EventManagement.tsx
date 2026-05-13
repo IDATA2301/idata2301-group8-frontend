@@ -5,8 +5,8 @@ import styles from "./EventManagement.module.css";
 import {
   useGetAllCategories,
   useGetAllVenues,
-  useGetRepresentedEvents,
-  useGetRepresentedTicketListings
+  useGetEvents,
+  useGetTicketListings
 } from "@api/events";
 
 type SelectedCompanyId = "all" | number;
@@ -37,26 +37,36 @@ export default function EventManagement() {
   const [popup, setPopup] = useState<PopupState>(null);
 
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
-  const representedEventsQuery = useGetRepresentedEvents({ companyId: companyIdParam });
-  const representedTicketListingsQuery = useGetRepresentedTicketListings({ companyId: companyIdParam });
-  const allRepresentedTicketListingsQuery = useGetRepresentedTicketListings();
+  const eventsQuery = useGetEvents({ size: 100 });
+  const ticketListingsQuery = useGetTicketListings(
+    companyIdParam ? { companyId: companyIdParam } : undefined
+  );
+  const allTicketListingsQuery = useGetTicketListings();
   const venuesQuery = useGetAllVenues();
   const categoriesQuery = useGetAllCategories();
 
-  const visibleEvents = Array.isArray(representedEventsQuery.data?.data)
-    ? representedEventsQuery.data.data
+  const eventsData = eventsQuery.data?.data;
+  const ticketListingsData = ticketListingsQuery.data?.data;
+  const allTicketListingsData = allTicketListingsQuery.data?.data;
+  const venuesData = venuesQuery.data?.data;
+  const categoriesData = categoriesQuery.data?.data;
+
+  const allEvents = typeof eventsData === "object" && Array.isArray(eventsData.content)
+    ? eventsData.content
     : [];
-  const visibleTicketListings = Array.isArray(representedTicketListingsQuery.data?.data)
-    ? representedTicketListingsQuery.data.data
-    : [];
-  const allRepresentedTicketListings = Array.isArray(allRepresentedTicketListingsQuery.data?.data)
-    ? allRepresentedTicketListingsQuery.data.data
-    : [];
-  const venues = Array.isArray(venuesQuery.data?.data) ? venuesQuery.data.data : [];
-  const categories = Array.isArray(categoriesQuery.data?.data) ? categoriesQuery.data.data : [];
+  const visibleTicketListings = Array.isArray(ticketListingsData) ? ticketListingsData : [];
+  const allTicketListings = Array.isArray(allTicketListingsData) ? allTicketListingsData : [];
+  const venues = Array.isArray(venuesData) ? venuesData : [];
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
+
+  const visibleEvents = useMemo(() => {
+    if (selectedCompanyId === "all") return allEvents;
+    const eventIds = new Set(visibleTicketListings.map((listing) => listing.eventId));
+    return allEvents.filter((event) => event.eventId !== undefined && eventIds.has(event.eventId));
+  }, [allEvents, selectedCompanyId, visibleTicketListings]);
 
   const selectedEvent = popup?.eventId
-    ? visibleEvents.find((event) => event.eventId === popup.eventId)
+    ? allEvents.find((event) => event.eventId === popup.eventId)
     : undefined;
   const selectedTicketListing = popup?.ticketListingId
     ? visibleTicketListings.find((listing) => listing.ticketListingId === popup.ticketListingId)
@@ -64,18 +74,18 @@ export default function EventManagement() {
 
   const eventNameById = useMemo(() => {
     return new Map(
-      visibleEvents
+      allEvents
         .filter((event) => event.eventId !== undefined)
         .map((event) => [event.eventId, event.eventName ?? `Event ${event.eventId}`])
     );
-  }, [visibleEvents]);
+  }, [allEvents]);
 
   // Requires endpoint: GET /companies/represented
   // Event-service only knows companyId. IAM-service owns company names and represented-company access.
   const companyOptions: CompanyOption[] = useMemo(() => {
     const companyIds = Array.from(
       new Set(
-        allRepresentedTicketListings
+        allTicketListings
           .map((listing) => listing.companyId)
           .filter((companyId): companyId is number => companyId !== undefined)
       )
@@ -85,7 +95,7 @@ export default function EventManagement() {
       companyId,
       companyName: `Company ${companyId}`
     }));
-  }, [allRepresentedTicketListings]);
+  }, [allTicketListings]);
 
   const selectedCompanyName = selectedCompanyId === "all"
     ? "all companies"
@@ -109,9 +119,9 @@ export default function EventManagement() {
   ]);
 
   function refetchManagementData() {
-    representedEventsQuery.refetch();
-    representedTicketListingsQuery.refetch();
-    allRepresentedTicketListingsQuery.refetch();
+    eventsQuery.refetch();
+    ticketListingsQuery.refetch();
+    allTicketListingsQuery.refetch();
     venuesQuery.refetch();
     categoriesQuery.refetch();
   }
@@ -175,7 +185,7 @@ export default function EventManagement() {
         <CreationEditPopup
           type={popup.type}
           mode={popup.mode}
-          events={visibleEvents}
+          events={allEvents}
           venues={venues}
           categories={categories}
           selectedCompanyId={selectedCompanyId}

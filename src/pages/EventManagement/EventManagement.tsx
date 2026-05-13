@@ -38,9 +38,7 @@ export default function EventManagement() {
 
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
   const eventsQuery = useGetEvents({ size: 100 });
-  const ticketListingsQuery = useGetTicketListings(
-    companyIdParam ? { companyId: companyIdParam } : undefined
-  );
+  const ticketListingsQuery = useGetTicketListings(companyIdParam ? { companyId: companyIdParam } : undefined);
   const allTicketListingsQuery = useGetTicketListings();
   const venuesQuery = useGetAllVenues();
   const categoriesQuery = useGetAllCategories();
@@ -51,9 +49,7 @@ export default function EventManagement() {
   const venuesData = venuesQuery.data?.data;
   const categoriesData = categoriesQuery.data?.data;
 
-  const allEvents = typeof eventsData === "object" && Array.isArray(eventsData.content)
-    ? eventsData.content
-    : [];
+  const allEvents = typeof eventsData === "object" && Array.isArray(eventsData.content) ? eventsData.content : [];
   const visibleTicketListings = Array.isArray(ticketListingsData) ? ticketListingsData : [];
   const allTicketListings = Array.isArray(allTicketListingsData) ? allTicketListingsData : [];
   const venues = Array.isArray(venuesData) ? venuesData : [];
@@ -80,8 +76,7 @@ export default function EventManagement() {
     );
   }, [allEvents]);
 
-  // Requires endpoint: GET /companies/represented
-  // Event-service only knows companyId. IAM-service owns company names and represented-company access.
+  // Uses represented companies from the authenticated user token when auth context is connected.
   const companyOptions: CompanyOption[] = useMemo(() => {
     const companyIds = Array.from(
       new Set(

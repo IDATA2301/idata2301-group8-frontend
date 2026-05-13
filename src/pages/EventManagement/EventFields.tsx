@@ -64,8 +64,6 @@ export default function EventFields({
       return;
     }
 
-    // Requires endpoint: POST /approval-requests/event-creation
-    // Replace direct event creation with an approval request if event creation must be reviewed.
     if (!eventImage) return;
     createEvent.mutate({ data: { eventData: buildRequest(), eventImage } }, { onSuccess: handleSuccess });
   }
@@ -93,14 +91,18 @@ export default function EventFields({
             Slug
             <input value={form.slug} onChange={(e) => updateField("slug", e.target.value)} />
           </label>
-          <label>
-            Image file
-            <input type="file" accept="image/*" onChange={(e) => setEventImage(e.target.files?.[0] ?? null)} />
-          </label>
-          <label>
-            Image URL
-            <input value={form.imageUrl} onChange={(e) => updateField("imageUrl", e.target.value)} />
-          </label>
+          {mode === "create" && (
+            <label>
+              Image file
+              <input type="file" accept="image/*" onChange={(e) => setEventImage(e.target.files?.[0] ?? null)} />
+            </label>
+          )}
+          {mode === "edit" && (
+            <label>
+              Image URL
+              <input value={form.imageUrl} onChange={(e) => updateField("imageUrl", e.target.value)} />
+            </label>
+          )}
           <label>
             Description
             <textarea value={form.description} onChange={(e) => updateField("description", e.target.value)} />
@@ -147,7 +149,7 @@ export default function EventFields({
           </button>
         )}
         <button type="submit" className={styles.saveButton} disabled={mode === "create" && !eventImage}>
-          {mode === "create" ? "Request" : "Save"}
+          {mode === "create" ? "Create" : "Save"}
         </button>
       </div>
     </form>

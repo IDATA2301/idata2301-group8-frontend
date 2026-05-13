@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./CreationEditPopup.module.css";
 import type { CreateTicketListingRequest, EventResponse, TicketListingResponse } from "@api/events";
-import { useCreateTicketListing, useDeleteTicketListing } from "@api/events";
+import { useCreateTicketListing, useDeleteTicketListing, useUpdateTicketListing } from "@api/events";
 
 type SelectedCompanyId = "all" | number;
 
@@ -25,6 +25,7 @@ export default function TicketListingFields({
   const companyId = selectedCompanyId === "all" ? undefined : selectedCompanyId;
   const request = companyId ? { headers: { "X-Company-Id": String(companyId) } } : undefined;
   const createTicketListing = useCreateTicketListing({ request });
+  const updateTicketListing = useUpdateTicketListing({ request });
   const deleteTicketListing = useDeleteTicketListing({ request });
 
   const [form, setForm] = useState({
@@ -55,7 +56,16 @@ export default function TicketListingFields({
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!companyId || mode === "edit") return;
+    if (!companyId) return;
+
+    if (mode === "edit" && selectedTicketListing?.ticketListingId) {
+      updateTicketListing.mutate({
+        id: selectedTicketListing.ticketListingId,
+        data: buildRequest()
+      }, { onSuccess: handleSuccess });
+      return;
+    }
+
     createTicketListing.mutate({ data: buildRequest() }, { onSuccess: handleSuccess });
   }
 
@@ -125,14 +135,9 @@ export default function TicketListingFields({
           <h3>Ticket provider</h3>
           <p>
             {companyId
-              ? `Creating listing for Company ${companyId}.`
-              : "Select one company before creating a ticket listing."}
+              ? `Managing listing for Company ${companyId}.`
+              : "Select one company before creating or editing a ticket listing."}
           </p>
-          {/* Requires endpoint: GET /companies/represented */}
-          {/* Replace Company ID label with real company name when IAM supports represented companies. */}
-          {mode === "edit" && (
-            <p>Requires endpoint: PUT /ticket-listings/{"{id}"} before ticket listings can be edited.</p>
-          )}
         </section>
       </div>
 
@@ -142,17 +147,9 @@ export default function TicketListingFields({
             Delete
           </button>
         )}
-        {mode === "create" ? (
-          <button type="submit" className={styles.saveButton} disabled={!companyId}>
-            Request
-          </button>
-        ) : (
-          // Requires endpoint: PUT /ticket-listings/{id}
-          // <button type="submit" className={styles.saveButton} disabled={!companyId}>
-          //   Save
-          // </button>
-          null
-        )}
+        <button type="submit" className={styles.saveButton} disabled={!companyId}>
+          {mode === "create" ? "Create" : "Save"}
+        </button>
       </div>
     </form>
   );

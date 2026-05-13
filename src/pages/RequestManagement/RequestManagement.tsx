@@ -69,33 +69,6 @@ export default function RequestManagement() {
             )}
           </div>
         </RequestBox>
-
-        {/* Requires endpoint: GET /approval-requests/event-creation or type filter on GET /approval-requests */}
-        {/* Requires endpoint: POST /approval-requests/event-creation from EventManagement create flow */}
-        {/* 
-        <RequestBox title="Request event creation">
-          <div className={styles.eventTableHeader}>
-            <span>event_name</span>
-            <span>description</span>
-            <span>requested_at</span>
-            <span>approve/reject</span>
-          </div>
-
-          <div className={styles.entriesList}>
-            {eventCreationRequests.map((request) => (
-              <div key={request.id} className={styles.eventRequestEntry}>
-                <span title={request.eventName}>{request.eventName}</span>
-                <span title={request.description}>{request.description}</span>
-                <span title={formatDate(request.requestedAt)}>{formatDate(request.requestedAt)}</span>
-                <ActionButtons
-                  onApprove={() => reviewRequest(request.id, ApprovalRequestReviewRequestStatus.approved)}
-                  onReject={() => reviewRequest(request.id, ApprovalRequestReviewRequestStatus.rejected)}
-                />
-              </div>
-            ))}
-          </div>
-        </RequestBox>
-        */}
       </section>
     </main>
   );

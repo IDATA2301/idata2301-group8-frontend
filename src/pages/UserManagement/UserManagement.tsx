@@ -5,9 +5,7 @@ import { useDeleteUser, useGetGlobalRoles, useGetUsers } from "@api/iam";
 export default function UserManagement() {
   const usersQuery = useGetUsers();
   const globalRolesQuery = useGetGlobalRoles();
-  const deleteUser = useDeleteUser({
-    mutation: { onSuccess: () => usersQuery.refetch() }
-  });
+  const deleteUser = useDeleteUser({ mutation: { onSuccess: () => usersQuery.refetch() } });
 
   const users = Array.isArray(usersQuery.data?.data) ? usersQuery.data.data : [];
   const globalRoles = Array.isArray(globalRolesQuery.data?.data) ? globalRolesQuery.data.data : [];
@@ -38,9 +36,9 @@ export default function UserManagement() {
                   <span title={user.id ?? "-"}>{user.id ?? "-"}</span>
                   <span title={user.email ?? "-"}>{user.email ?? "-"}</span>
 
-                  {/* Requires endpoint: GET /users/{id}/roles or role field on GET /users */}
-                  {/* Requires endpoint: PATCH /users/{id}/global-role for direct role management */}
-                  {/* Direct role changes could also use POST /approval-requests/global-role-change */}
+                  {/* Token needed: current user's global role/admin claim for page access. */}
+                  {/* API needed: role/globalRole field on GET /users to show each user's role. */}
+                  {/* API needed: PATCH /users/{id}/global-role to edit roles directly. */}
                   <select defaultValue="" className={styles.roleSelect} disabled>
                     <option value="">unknown</option>
                     {globalRoles.map((role) => (
@@ -50,7 +48,7 @@ export default function UserManagement() {
                     ))}
                   </select>
 
-                  {/* Requires endpoint: createdAt field on GET /users */}
+                  {/* API needed: createdAt field on GET /users. Token cannot provide this for all users. */}
                   <span title="-">-</span>
 
                   <button type="button" className={styles.deleteButton} onClick={() => handleDelete(user.id)}>

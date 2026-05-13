@@ -78,16 +78,16 @@ export interface EventResponse {
 }
 
 export interface CreateVenueRequest {
+  venueCountry?: string;
   venueName?: string;
   venueCity?: string;
-  venueCountry?: string;
 }
 
 export interface VenueResponse {
+  venueId?: number;
+  venueCountry?: string;
   venueName?: string;
   venueCity?: string;
-  venueCountry?: string;
-  venueId?: number;
 }
 
 export interface CreateExtraFeatureRequest {
@@ -133,8 +133,8 @@ export interface PageableObject {
 }
 
 export interface PageEventResponse {
-  totalPages?: number;
   totalElements?: number;
+  totalPages?: number;
   size?: number;
   content?: EventResponse[];
   number?: number;

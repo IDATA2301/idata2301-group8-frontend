@@ -21,13 +21,13 @@
 }
 
 .managementBox {
-  width: 881px;
-  max-width: 100%;
+  width: 100%;
   height: 488px;
   border-radius: 18px;
   background-color: var(--deep-space-blue-dark);
   padding: 1.4rem 1.5rem;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-sizing: border-box;
 }
 
@@ -35,6 +35,7 @@
   display: grid;
   grid-template-columns: 1fr 1.7fr 1.2fr 1.2fr 106px;
   gap: 1rem;
+  min-width: 833px;
   padding: 0 0.5rem 0.75rem;
   color: white;
   font-size: 0.8rem;
@@ -44,19 +45,25 @@
 .entriesList {
   max-height: calc(100% - 2rem);
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 833px;
   padding-right: 0.35rem;
 }
 
-.entriesList::-webkit-scrollbar {
+.entriesList::-webkit-scrollbar,
+.managementBox::-webkit-scrollbar {
   width: 0.45rem;
+  height: 0.45rem;
 }
 
-.entriesList::-webkit-scrollbar-thumb {
+.entriesList::-webkit-scrollbar-thumb,
+.managementBox::-webkit-scrollbar-thumb {
   background-color: rgba(227, 227, 227, 0.45);
   border-radius: 999px;
 }
 
-.entriesList::-webkit-scrollbar-track {
+.entriesList::-webkit-scrollbar-track,
+.managementBox::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
@@ -65,8 +72,7 @@
   grid-template-columns: 1fr 1.7fr 1.2fr 1.2fr 106px;
   gap: 1rem;
   align-items: center;
-  width: 833px;
-  max-width: 100%;
+  width: 100%;
   height: 36px;
   padding: 0 0.5rem;
   color: #e3e3e3;
@@ -104,6 +110,11 @@
   border-color: var(--steel-blue);
 }
 
+.roleSelect:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .deleteButton {
   display: flex;
   align-items: center;
@@ -119,6 +130,10 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    filter 0.2s,
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .deleteButton img {
@@ -128,21 +143,102 @@
 
 .deleteButton:hover {
   filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.deleteButton:disabled:hover {
+  transform: none;
+  filter: grayscale(0.3);
+}
+
+.emptyMessage {
+  color: rgba(227, 227, 227, 0.75);
+  font-size: 0.9rem;
+  margin: 1rem 0 0.5rem;
 }
 
 @media (max-width: 750px) {
+  .userManagementPage {
+    min-height: calc(100vh - 160px);
+    align-items: flex-start;
+    padding: 1.25rem 0 3rem;
+  }
+
   .pageContent {
     width: calc(100% - 1rem);
+  }
+
+  .pageContent h1 {
+    font-size: 1.45rem;
+    margin-bottom: 0.85rem;
   }
 
   .managementBox {
     height: 430px;
     padding: 1rem;
-    overflow-x: auto;
+    border-radius: 16px;
+  }
+
+  .tableHeader,
+  .entriesList {
+    min-width: 760px;
   }
 
   .tableHeader,
   .userEntry {
-    min-width: 833px;
+    grid-template-columns: 1fr 1.6fr 1.1fr 1.1fr 96px;
+    gap: 0.7rem;
+  }
+
+  .tableHeader {
+    font-size: 0.7rem;
+  }
+
+  .userEntry {
+    height: 36px;
+    font-size: 0.78rem;
+  }
+
+  .roleSelect {
+    height: 30px;
+    font-size: 0.78rem;
+  }
+
+  .deleteButton {
+    width: 96px;
+    height: 34px;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .pageContent {
+    width: calc(100% - 0.75rem);
+  }
+
+  .managementBox {
+    height: 400px;
+    padding: 0.75rem;
+  }
+
+  .tableHeader,
+  .entriesList {
+    min-width: 720px;
+  }
+
+  .tableHeader,
+  .userEntry {
+    grid-template-columns: 1fr 1.5fr 1.05fr 1.05fr 90px;
+    gap: 0.55rem;
+  }
+
+  .deleteButton {
+    width: 90px;
   }
 }

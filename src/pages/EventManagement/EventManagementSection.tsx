@@ -1,4 +1,3 @@
-import EventManagementEntry from "./EventManagementEntry";
 import styles from "./EventManagement.module.css";
 
 type EventManagementSectionProps = {
@@ -18,6 +17,8 @@ export default function EventManagementSection({
   onCreate,
   onEntryClick
 }: EventManagementSectionProps) {
+  const gridTemplateColumns = `repeat(${headers.length}, minmax(0, 1fr))`;
+
   return (
     <section className={styles.managementSection}>
       <div className={styles.sectionHeader}>
@@ -29,10 +30,7 @@ export default function EventManagementSection({
       </div>
 
       <div className={styles.managementBox}>
-        <div
-          className={styles.tableHeader}
-          style={{ gridTemplateColumns: `repeat(${headers.length}, minmax(0, 1fr))` }}
-        >
+        <div className={styles.tableHeader} style={{ gridTemplateColumns }}>
           {headers.map((header) => (
             <span key={header}>{header}</span>
           ))}
@@ -41,12 +39,19 @@ export default function EventManagementSection({
         <div className={styles.entriesList}>
           {entries.length > 0 ? (
             entries.map((entry, index) => (
-              <EventManagementEntry
+              <button
                 key={`${title}-${index}`}
-                values={entry}
-                columnCount={headers.length}
+                type="button"
+                className={styles.eventManagementEntry}
+                style={{ gridTemplateColumns }}
                 onClick={() => onEntryClick?.(index)}
-              />
+              >
+                {entry.map((value, valueIndex) => (
+                  <span key={valueIndex} title={String(value)}>
+                    {value}
+                  </span>
+                ))}
+              </button>
             ))
           ) : (
             <p className={styles.emptyMessage}>No entries found.</p>

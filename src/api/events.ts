@@ -48,7 +48,6 @@ export interface TicketListingResponse {
 }
 
 export interface CreateEventRequest {
-  slug?: string;
   eventName?: string;
   description?: string;
   imageUrl?: string;
@@ -71,6 +70,7 @@ export interface EventResponse {
   createdAt?: string;
   startDate?: string;
   lowestPrice?: number;
+  categoryIds?: number[];
   categoryNames?: string[];
   extraFeatureNames?: string[];
   venueName?: string;
@@ -145,6 +145,11 @@ export interface PageEventResponse {
   last?: boolean;
   empty?: boolean;
 }
+
+export type UpdateEventBody = {
+  eventData: CreateEventRequest;
+  eventImage?: Blob;
+};
 
 export type GetTicketListingsParams = {
 eventId?: number;
@@ -595,15 +600,22 @@ export const getUpdateEventUrl = (id: number,) => {
  * @summary Update event
  */
 export const updateEvent = async (id: number,
-    createEventRequest: CreateEventRequest, options?: RequestInit): Promise<updateEventResponse> => {
+    updateEventBody?: UpdateEventBody, options?: RequestInit): Promise<updateEventResponse> => {
+    const formData = new FormData();
+if(updateEventBody?.eventData !== undefined) {
+ formData.append(`eventData`, JSON.stringify(updateEventBody.eventData));
+ }
+if(updateEventBody?.eventImage !== undefined) {
+ formData.append(`eventImage`, updateEventBody.eventImage);
+ }
 
   return customFetchEventApi<updateEventResponse>(getUpdateEventUrl(id),
   {
     ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      createEventRequest,)
+    method: 'PUT'
+    ,
+    body:
+      formData,
   }
 );}
 
@@ -611,8 +623,8 @@ export const updateEvent = async (id: number,
 
 
 export const getUpdateEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data?: UpdateEventBody}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data?: UpdateEventBody}, TContext> => {
 
 const mutationKey = ['updateEvent'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -624,7 +636,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEvent>>, {id: number;data: CreateEventRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEvent>>, {id: number;data?: UpdateEventBody}> = (props) => {
           const {id,data} = props ?? {};
 
           return  updateEvent(id,data,requestOptions)
@@ -638,18 +650,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UpdateEventMutationResult = NonNullable<Awaited<ReturnType<typeof updateEvent>>>
-    export type UpdateEventMutationBody = CreateEventRequest
+    export type UpdateEventMutationBody = UpdateEventBody | undefined
     export type UpdateEventMutationError = string
 
     /**
  * @summary Update event
  */
 export const useUpdateEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data?: UpdateEventBody}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateEvent>>,
         TError,
-        {id: number;data: CreateEventRequest},
+        {id: number;data?: UpdateEventBody},
         TContext
       > => {
       return useMutation(getUpdateEventMutationOptions(options), queryClient);

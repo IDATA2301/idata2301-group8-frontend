@@ -1,19 +1,54 @@
 import xIcon from "@assets/icons/x.svg";
 import styles from "./UserManagement.module.css";
-import { useDeleteUser, useGetGlobalRoles, useGetUsers } from "@api/iam";
+import {
+  useDeleteUser,
+  useGetGlobalRoles,
+  useGetUsers,
+} from "@api/iam";
 
 export default function UserManagement() {
   const usersQuery = useGetUsers();
   const globalRolesQuery = useGetGlobalRoles();
-  const deleteUser = useDeleteUser({ mutation: { onSuccess: () => usersQuery.refetch() } });
+  const deleteUser = useDeleteUser({
+    mutation: {
+      onSuccess: () => usersQuery.refetch()
+    }
+  });
 
-  const users = Array.isArray(usersQuery.data?.data) ? usersQuery.data.data : [];
-  const globalRoles = Array.isArray(globalRolesQuery.data?.data) ? globalRolesQuery.data.data : [];
+  // TODO: Enable when PATCH /users/{userId} supports updating user role.
+  // const updateUser = useUpdateUser({
+  //   mutation: {
+  //     onSuccess: () => usersQuery.refetch()
+  //   }
+  // });
+
+  const users = usersQuery.data?.status === 200 ? usersQuery.data.data : [];
+  const globalRoles = globalRolesQuery.data?.status === 200 ? globalRolesQuery.data.data : [];
+  const isSaving = deleteUser.isPending;
+  // TODO: Include updateUser.isPending when role editing is enabled.
+  // const isSaving = deleteUser.isPending || updateUser.isPending;
 
   function handleDelete(userId?: string) {
-    if (!userId) return;
+    if (!userId || isSaving) {
+      return;
+    }
+
     deleteUser.mutate({ id: userId });
   }
+
+  // TODO: Enable when PATCH /users/{userId} accepts roleId/globalRoleId.
+  // function handleRoleChange(userId: string | undefined, roleId: string) {
+  //   if (!userId || !roleId || isSaving) {
+  //     return;
+  //   }
+  //
+  //   updateUser.mutate({
+  //     id: userId,
+  //     data: {
+  //       roleId: Number(roleId)
+  //     }
+  //   });
+  // }
 
   return (
     <main className={styles.userManagementPage}>
@@ -36,9 +71,21 @@ export default function UserManagement() {
                   <span title={user.id ?? "-"}>{user.id ?? "-"}</span>
                   <span title={user.email ?? "-"}>{user.email ?? "-"}</span>
 
-                  {/* Token needed: current user's global role/admin claim for page access. */}
-                  {/* API needed: role/globalRole field on GET /users to show each user's role. */}
-                  {/* API needed: PATCH /users/{id}/global-role to edit roles directly. */}
+                  {/* TODO: Enable when GET /users returns globalRoleId/globalRoleName for each user. */}
+                  {/* <select
+                    value={user.globalRoleId?.toString() ?? ""}
+                    className={styles.roleSelect}
+                    disabled={isSaving}
+                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                  >
+                    <option value="">unknown</option>
+                    {globalRoles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.name ?? `Role ${role.id}`}
+                      </option>
+                    ))}
+                  </select> */}
+
                   <select defaultValue="" className={styles.roleSelect} disabled>
                     <option value="">unknown</option>
                     {globalRoles.map((role) => (
@@ -48,10 +95,19 @@ export default function UserManagement() {
                     ))}
                   </select>
 
-                  {/* API needed: createdAt field on GET /users. Token cannot provide this for all users. */}
+                  {/* TODO: Enable when GET /users returns createdAt. */}
+                  {/* <span title={formatDate(user.createdAt)}>
+                    {formatDate(user.createdAt)}
+                  </span> */}
+
                   <span title="-">-</span>
 
-                  <button type="button" className={styles.deleteButton} onClick={() => handleDelete(user.id)}>
+                  <button
+                    type="button"
+                    className={styles.deleteButton}
+                    disabled={isSaving}
+                    onClick={() => handleDelete(user.id)}
+                  >
                     Delete
                     <img src={xIcon} alt="" />
                   </button>
@@ -66,3 +122,8 @@ export default function UserManagement() {
     </main>
   );
 }
+
+// TODO: Enable when GET /users returns createdAt.
+// function formatDate(date?: string) {
+//   return date ? new Date(date).toLocaleDateString("nb-NO") : "-";
+// }

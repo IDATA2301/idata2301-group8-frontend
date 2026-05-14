@@ -4,36 +4,49 @@ import styles from "./RequestManagement.module.css";
 import {
   ApprovalRequestReviewRequestStatus,
   GetApprovalRequestsStatus,
+  getApprovalRequests,
   useGetApprovalRequests,
   useReviewApprovalRequest
 } from "@api/iam";
 
-type ApprovalRequest = {
-  id?: number;
-  type?: string;
-  role?: string;
-  status?: string;
-  requestedBy?: string;
-  requestedAt?: string;
-};
+type ApprovalRequestsData = Extract<
+  Awaited<ReturnType<typeof getApprovalRequests>>,
+  { status: 200 }
+>["data"];
+
+type ApprovalRequest = ApprovalRequestsData[number];
 
 export default function RequestManagement() {
-  const approvalRequestsQuery = useGetApprovalRequests({ status: GetApprovalRequestsStatus.pending });
-  const reviewApprovalRequest = useReviewApprovalRequest({
-    mutation: { onSuccess: () => approvalRequestsQuery.refetch() }
+  const approvalRequestsQuery = useGetApprovalRequests({
+    status: GetApprovalRequestsStatus.pending
   });
 
-  const approvalRequests = Array.isArray(approvalRequestsQuery.data?.data)
-    ? approvalRequestsQuery.data.data as unknown as ApprovalRequest[]
+  const reviewApprovalRequest = useReviewApprovalRequest({
+    mutation: {
+      onSuccess: () => approvalRequestsQuery.refetch()
+    }
+  });
+
+  const approvalRequests = approvalRequestsQuery.data?.status === 200
+    ? approvalRequestsQuery.data.data
     : [];
 
   const roleChangeRequests = approvalRequests.filter((request) =>
-    request.type?.toLowerCase().includes("role")
+    isRoleChangeRequest(request)
   );
 
-  function reviewRequest(id: number | undefined, status: ApprovalRequestReviewRequestStatus) {
-    if (!id) return;
-    reviewApprovalRequest.mutate({ id, data: { status } });
+  function reviewRequest(
+    id: number | undefined,
+    status: ApprovalRequestReviewRequestStatus
+  ) {
+    if (id === undefined) {
+      return;
+    }
+
+    reviewApprovalRequest.mutate({
+      id,
+      data: { status }
+    });
   }
 
   return (
@@ -41,71 +54,86 @@ export default function RequestManagement() {
       <section className={styles.pageContent}>
         <h1>Request management</h1>
 
-        <RequestBox title="Role change requests">
-          <div className={styles.roleTableHeader}>
-            <span>request_id</span>
-            <span>requested_by</span>
-            <span>role change to</span>
-            <span>requested_at</span>
-            <span>approve/reject</span>
-          </div>
+        <section className={styles.requestSection}>
+          <h2>Role change requests</h2>
 
-          <div className={styles.entriesList}>
-            {roleChangeRequests.length > 0 ? (
-              roleChangeRequests.map((request) => (
-                <div key={request.id} className={styles.roleRequestEntry}>
-                  <span title={String(request.id ?? "-")}>{request.id ?? "-"}</span>
-                  <span title={request.requestedBy ?? "-"}>{request.requestedBy ?? "-"}</span>
-                  <span title={request.role ?? "-"}>{request.role ?? "-"}</span>
-                  <span title={formatDate(request.requestedAt)}>{formatDate(request.requestedAt)}</span>
-                  <ActionButtons
-                    onApprove={() => reviewRequest(request.id, ApprovalRequestReviewRequestStatus.approved)}
-                    onReject={() => reviewRequest(request.id, ApprovalRequestReviewRequestStatus.rejected)}
-                  />
-                </div>
-              ))
-            ) : (
-              <p className={styles.emptyMessage}>No role change requests found.</p>
-            )}
+          <div className={styles.requestBox}>
+            <div className={styles.roleTableHeader}>
+              <span>request_id</span>
+              <span>requested_by</span>
+              <span>role change to</span>
+              <span>requested_at</span>
+              <span>approve/reject</span>
+            </div>
+
+            <div className={styles.entriesList}>
+              {roleChangeRequests.length > 0 ? (
+                roleChangeRequests.map((request) => (
+                  <div key={request.id} className={styles.roleRequestEntry}>
+                    <span title={String(request.id ?? "-")}>
+                      {request.id ?? "-"}
+                    </span>
+
+                    <span title={request.requestedBy ?? "-"}>
+                      {request.requestedBy ?? "-"}
+                    </span>
+
+                    <span title={request.role ?? "-"}>
+                      {request.role ?? "-"}
+                    </span>
+
+                    <span title={formatDate(request.requestedAt)}>
+                      {formatDate(request.requestedAt)}
+                    </span>
+
+                    <div className={styles.actionButtons}>
+                      <button
+                        type="button"
+                        className={styles.approveButton}
+                        aria-label="Approve request"
+                        disabled={reviewApprovalRequest.isPending}
+                        onClick={() => reviewRequest(
+                          request.id,
+                          ApprovalRequestReviewRequestStatus.approved
+                        )}
+                      >
+                        <img src={checkIcon} alt="" />
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.rejectButton}
+                        aria-label="Reject request"
+                        disabled={reviewApprovalRequest.isPending}
+                        onClick={() => reviewRequest(
+                          request.id,
+                          ApprovalRequestReviewRequestStatus.rejected
+                        )}
+                      >
+                        <img src={xIcon} alt="" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.emptyMessage}>
+                  No role change requests found.
+                </p>
+              )}
+            </div>
           </div>
-        </RequestBox>
+        </section>
       </section>
     </main>
   );
 }
 
-type RequestBoxProps = {
-  title: string;
-  children: React.ReactNode;
-};
-
-type ActionButtonsProps = {
-  onApprove: () => void;
-  onReject: () => void;
-};
+function isRoleChangeRequest(
+  request: ApprovalRequest
+): request is ApprovalRequest & { role?: string } {
+  return request.type?.toLowerCase().includes("role") === true;
+}
 
 function formatDate(date?: string) {
   return date ? new Date(date).toLocaleDateString("nb-NO") : "-";
-}
-
-function RequestBox({ title, children }: RequestBoxProps) {
-  return (
-    <section className={styles.requestSection}>
-      <h2>{title}</h2>
-      <div className={styles.requestBox}>{children}</div>
-    </section>
-  );
-}
-
-function ActionButtons({ onApprove, onReject }: ActionButtonsProps) {
-  return (
-    <div className={styles.actionButtons}>
-      <button type="button" className={styles.approveButton} aria-label="Approve request" onClick={onApprove}>
-        <img src={checkIcon} alt="" />
-      </button>
-      <button type="button" className={styles.rejectButton} aria-label="Reject request" onClick={onReject}>
-        <img src={xIcon} alt="" />
-      </button>
-    </div>
-  );
 }

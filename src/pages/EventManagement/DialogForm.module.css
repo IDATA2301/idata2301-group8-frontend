@@ -1,0 +1,375 @@
+.dialog {
+  width: min(900px, calc(100vw - 28px));
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: #022B3A;
+  color: white;
+  border: 1px solid #FFFFFF14;
+  border-radius: 20px;
+  padding: 32px;
+  font-family: Inter, sans-serif;
+  box-sizing: border-box;
+  box-shadow: 0 8px 40px #00000080;
+  animation: popupFade 0.18s ease-out;
+}
+
+.dialog::backdrop {
+  background: #00000099;
+  backdrop-filter: blur(4px);
+}
+
+.dialogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dialogContent h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.dialogGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.formSection h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.formSection label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.formSection input,
+.formSection select,
+.formSection textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #FFFFFF14;
+  border-radius: 12px;
+  background: #FFFFFF0F;
+  color: #FFFFFF;
+  padding: 0 0.85rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    opacity 0.2s,
+    filter 0.2s;
+}
+
+.formSection select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: linear-gradient(45deg, transparent 50%, #e3e3e3 50%),
+    linear-gradient(135deg, #e3e3e3 50%, transparent 50%);
+  background-position: calc(100% - 1.35rem) 50%, calc(100% - 1rem) 50%;
+  background-size: 0.35rem 0.35rem, 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+}
+
+.formSection select option {
+  background: #022B3A;
+  color: #FFFFFF;
+}
+
+.formSection input[type="date"] {
+  color: #FFFFFF;
+}
+
+.formSection input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  cursor: pointer;
+  filter: invert(89%);
+}
+
+.formSection input[type="file"] {
+  padding: 0.65rem 0.85rem;
+}
+
+.formSection textarea {
+  min-height: 76px;
+  padding: 0.75rem 0.85rem;
+  resize: vertical;
+}
+
+.formSection input:focus,
+.formSection select:focus,
+.formSection textarea:focus {
+  border-color: #5FA8FF;
+  background: #FFFFFF17;
+}
+
+.helperText {
+  margin: -0.35rem 0 0;
+  color: #FFFFFFC7;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.inlineCreate {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.fieldLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #FFFFFF14;
+  border-radius: 12px;
+  background: #FFFFFF0A;
+  padding: 0.75rem;
+}
+
+.checkboxRow {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.55rem !important;
+  cursor: pointer;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+}
+
+.checkboxRow input[type="checkbox"] {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
+  padding: 0;
+  cursor: pointer;
+  accent-color: #669BBC;
+}
+
+.selectedChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  border: 1px solid #FFFFFF14;
+  border-radius: 999px;
+  background: #FFFFFF17;
+  color: #FFFFFF;
+  font-family: Inter, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    opacity 0.2s,
+    filter 0.2s;
+}
+
+.chip:hover {
+  background: #FFFFFF24;
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: #669BBC;
+  color: #FFFFFF;
+  font-family: Inter, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    transform 0.2s,
+    opacity 0.2s,
+    filter 0.2s;
+}
+
+.secondaryButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.dialogActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.cancelButton,
+.deleteButton,
+.saveButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  min-height: 48px;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    opacity 0.2s,
+    filter 0.2s,
+    background 0.2s;
+}
+
+.cancelButton {
+  background: #001824;
+}
+
+.deleteButton {
+  background: #df101d;
+}
+
+.saveButton {
+  background: #669BBC;
+}
+
+.cancelButton:hover,
+.deleteButton:hover,
+.saveButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.cancelButton:disabled,
+.deleteButton:disabled,
+.saveButton:disabled,
+.secondaryButton:disabled,
+.chip:disabled,
+.formSection input:disabled,
+.formSection select:disabled,
+.formSection textarea:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.saveButton:disabled {
+  background: #5d7585;
+  color: #ffffff99;
+}
+
+.deleteButton:disabled {
+  background: #8a3339;
+  color: #ffffff99;
+}
+
+.cancelButton:disabled {
+  background: #00121b;
+  color: #ffffff99;
+}
+
+.secondaryButton:disabled {
+  background: #5d7585;
+  color: #ffffff99;
+}
+
+.cancelButton:disabled:hover,
+.deleteButton:disabled:hover,
+.saveButton:disabled:hover,
+.secondaryButton:disabled:hover,
+.chip:disabled:hover {
+  opacity: 0.45;
+  transform: none;
+  filter: grayscale(0.35);
+}
+
+.formSection input:disabled,
+.formSection select:disabled,
+.formSection textarea:disabled {
+  background: #FFFFFF08;
+  color: #FFFFFF99;
+}
+
+@keyframes popupFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 750px) {
+  .dialog {
+    width: calc(100vw - 28px);
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  .dialogGrid,
+  .twoColumns,
+  .inlineCreate {
+    grid-template-columns: 1fr;
+  }
+
+  .dialogActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .cancelButton,
+  .deleteButton,
+  .saveButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

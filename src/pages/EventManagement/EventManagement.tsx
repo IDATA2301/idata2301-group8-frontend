@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import EventManagementSection from "./EventManagementSection";
-import CreationEditPopup from "./CreationEditPopup";
+import EventDialog from "./EventDialog";
+import TicketListingDialog from "./TicketListingDialog";
 import styles from "./EventManagement.module.css";
+import { useAuthContext } from "@utility/AuthContext";
+import { useGetCompanies } from "@api/iam";
 import {
-  useGetAllCategories,
-  useGetAllVenues,
   useGetEvents,
   useGetTicketListings
 } from "@api/events";
@@ -23,6 +24,14 @@ type CompanyOption = {
   companyName: string;
 };
 
+type CompanyRole = {
+  companyId?: number;
+};
+
+type AuthUserWithCompanyRoles = {
+  companyRoles?: CompanyRole[];
+};
+
 function formatDate(date?: string) {
   return date ? new Date(date).toLocaleDateString("nb-NO") : "-";
 }
@@ -33,37 +42,62 @@ function formatPrice(price?: number, currency?: string) {
 }
 
 export default function EventManagement() {
+  const { user } = useAuthContext();
+  const authUser = user as AuthUserWithCompanyRoles | undefined;
   const [selectedCompanyId, setSelectedCompanyId] = useState<SelectedCompanyId>("all");
   const [popup, setPopup] = useState<PopupState>(null);
-
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
+  const companiesQuery = useGetCompanies();
   const eventsQuery = useGetEvents({ size: 100 });
-  const ticketListingsQuery = useGetTicketListings(companyIdParam ? { companyId: companyIdParam } : undefined);
-  const allTicketListingsQuery = useGetTicketListings();
-  const venuesQuery = useGetAllVenues();
-  const categoriesQuery = useGetAllCategories();
+  const ticketListingsQuery = useGetTicketListings(
+    companyIdParam ? { companyId: companyIdParam } : undefined
+  );
 
+  const companiesData = companiesQuery.data?.data;
   const eventsData = eventsQuery.data?.data;
   const ticketListingsData = ticketListingsQuery.data?.data;
-  const allTicketListingsData = allTicketListingsQuery.data?.data;
-  const venuesData = venuesQuery.data?.data;
-  const categoriesData = categoriesQuery.data?.data;
-
-  const allEvents = typeof eventsData === "object" && Array.isArray(eventsData.content) ? eventsData.content : [];
+  const companies = Array.isArray(companiesData) ? companiesData : [];
+  const allEvents =
+    typeof eventsData === "object" && Array.isArray(eventsData.content)
+      ? eventsData.content
+      : [];
   const visibleTicketListings = Array.isArray(ticketListingsData) ? ticketListingsData : [];
-  const allTicketListings = Array.isArray(allTicketListingsData) ? allTicketListingsData : [];
-  const venues = Array.isArray(venuesData) ? venuesData : [];
-  const categories = Array.isArray(categoriesData) ? categoriesData : [];
+
+  const companyOptions: CompanyOption[] = useMemo(() => {
+    const companyRoleIds = Array.from(
+      new Set(
+        authUser?.companyRoles
+          ?.map((role) => role.companyId)
+          .filter((companyId): companyId is number => companyId !== undefined) ?? []
+      )
+    );
+
+    return companyRoleIds.map((companyId) => {
+      const company = companies.find((item) => item.id === companyId);
+
+      return {
+        companyId,
+        companyName: company?.name ?? `Company ${companyId}`
+      };
+    });
+  }, [authUser?.companyRoles, companies]);
 
   const visibleEvents = useMemo(() => {
-    if (selectedCompanyId === "all") return allEvents;
+    if (selectedCompanyId === "all") {
+      return allEvents;
+    }
+
     const eventIds = new Set(visibleTicketListings.map((listing) => listing.eventId));
-    return allEvents.filter((event) => event.eventId !== undefined && eventIds.has(event.eventId));
+
+    return allEvents.filter((event) =>
+      event.eventId !== undefined && eventIds.has(event.eventId)
+    );
   }, [allEvents, selectedCompanyId, visibleTicketListings]);
 
   const selectedEvent = popup?.eventId
     ? allEvents.find((event) => event.eventId === popup.eventId)
     : undefined;
+
   const selectedTicketListing = popup?.ticketListingId
     ? visibleTicketListings.find((listing) => listing.ticketListingId === popup.ticketListingId)
     : undefined;
@@ -75,22 +109,6 @@ export default function EventManagement() {
         .map((event) => [event.eventId, event.eventName ?? `Event ${event.eventId}`])
     );
   }, [allEvents]);
-
-  // Uses represented companies from the authenticated user token when auth context is connected.
-  const companyOptions: CompanyOption[] = useMemo(() => {
-    const companyIds = Array.from(
-      new Set(
-        allTicketListings
-          .map((listing) => listing.companyId)
-          .filter((companyId): companyId is number => companyId !== undefined)
-      )
-    );
-
-    return companyIds.map((companyId) => ({
-      companyId,
-      companyName: `Company ${companyId}`
-    }));
-  }, [allTicketListings]);
 
   const selectedCompanyName = selectedCompanyId === "all"
     ? "all companies"
@@ -105,20 +123,24 @@ export default function EventManagement() {
     formatDate(event.createdAt)
   ]);
 
-  const ticketListingRows = visibleTicketListings.map((listing) => [
-    listing.ticketListingId ?? "-",
-    eventNameById.get(listing.eventId) ?? `Event ${listing.eventId ?? "-"}`,
-    listing.ticketType ?? "-",
-    formatPrice(listing.price, listing.currency),
-    listing.ticketsAvailable ?? "-"
-  ]);
+  const ticketListingRows = visibleTicketListings.map((listing) => {
+    const eventName = listing.eventId !== undefined
+      ? eventNameById.get(listing.eventId)
+      : undefined;
+
+    return [
+      listing.ticketListingId ?? "-",
+      eventName ?? `Event ${listing.eventId ?? "-"}`,
+      listing.ticketType ?? "-",
+      formatPrice(listing.price, listing.currency),
+      listing.ticketsAvailable ?? "-"
+    ];
+  });
 
   function refetchManagementData() {
     eventsQuery.refetch();
     ticketListingsQuery.refetch();
-    allTicketListingsQuery.refetch();
-    venuesQuery.refetch();
-    categoriesQuery.refetch();
+    companiesQuery.refetch();
   }
 
   return (
@@ -128,6 +150,7 @@ export default function EventManagement() {
           <div>
             <h1>Event management</h1>
           </div>
+
           <div className={styles.companySelector}>
             <label htmlFor="company-select">Managing company</label>
             <select
@@ -176,15 +199,23 @@ export default function EventManagement() {
         </div>
       </div>
 
-      {popup && (
-        <CreationEditPopup
-          type={popup.type}
+      {popup?.type === "event" && (
+        <EventDialog
+          isOpen={true}
+          mode={popup.mode}
+          selectedEvent={selectedEvent}
+          onClose={() => setPopup(null)}
+          onSuccess={refetchManagementData}
+        />
+      )}
+
+      {popup?.type === "ticketListing" && (
+        <TicketListingDialog
+          isOpen={true}
           mode={popup.mode}
           events={allEvents}
-          venues={venues}
-          categories={categories}
           selectedCompanyId={selectedCompanyId}
-          selectedEvent={selectedEvent}
+          companyOptions={companyOptions}
           selectedTicketListing={selectedTicketListing}
           onClose={() => setPopup(null)}
           onSuccess={refetchManagementData}

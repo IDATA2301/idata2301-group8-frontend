@@ -1,14 +1,28 @@
 import { useState } from "react";
-import styles from "./CreationEditPopup.module.css";
-import type { CreateTicketListingRequest, EventResponse, TicketListingResponse } from "@api/events";
-import { useCreateTicketListing, useDeleteTicketListing, useUpdateTicketListing } from "@api/events";
+import styles from "./DialogForm.module.css";
+import type {
+  CreateTicketListingRequest,
+  EventResponse,
+  TicketListingResponse
+} from "@api/events";
+import {
+  useCreateTicketListing,
+  useDeleteTicketListing,
+  useUpdateTicketListing
+} from "@api/events";
 
 type SelectedCompanyId = "all" | number;
+
+type CompanyOption = {
+  companyId: number;
+  companyName: string;
+};
 
 type TicketListingFieldsProps = {
   mode: "create" | "edit";
   events: EventResponse[];
   selectedCompanyId: SelectedCompanyId;
+  companyOptions: CompanyOption[];
   selectedTicketListing?: TicketListingResponse;
   onClose: () => void;
   onSuccess: () => void;
@@ -18,12 +32,23 @@ export default function TicketListingFields({
   mode,
   events,
   selectedCompanyId,
+  companyOptions,
   selectedTicketListing,
   onClose,
   onSuccess
 }: TicketListingFieldsProps) {
-  const companyId = selectedCompanyId === "all" ? undefined : selectedCompanyId;
-  const request = companyId ? { headers: { "X-Company-Id": String(companyId) } } : undefined;
+  const initialCompanyId =
+    selectedTicketListing?.companyId ??
+    (selectedCompanyId === "all" ? companyOptions[0]?.companyId : selectedCompanyId);
+
+  const [selectedListingCompanyId, setSelectedListingCompanyId] = useState<number | undefined>(
+    initialCompanyId
+  );
+
+  const request = selectedListingCompanyId
+    ? { headers: { "X-Company-Id": String(selectedListingCompanyId) } }
+    : undefined;
+
   const createTicketListing = useCreateTicketListing({ request });
   const updateTicketListing = useUpdateTicketListing({ request });
   const deleteTicketListing = useDeleteTicketListing({ request });
@@ -38,6 +63,26 @@ export default function TicketListingFields({
     ticketsAvailable: selectedTicketListing?.ticketsAvailable?.toString() ?? ""
   });
 
+  const isSubmitting =
+    createTicketListing.isPending ||
+    updateTicketListing.isPending ||
+    deleteTicketListing.isPending;
+
+  const hasValidCompany = selectedListingCompanyId !== undefined;
+  const hasValidEvent = form.eventId.trim().length > 0 && !Number.isNaN(Number(form.eventId));
+  const hasValidTicketType = form.ticketType.trim().length > 0;
+  const hasValidPrice = form.price.trim().length > 0 && !Number.isNaN(Number(form.price));
+  const hasValidTicketsAvailable =
+    form.ticketsAvailable.trim().length > 0 &&
+    !Number.isNaN(Number(form.ticketsAvailable));
+  const canSubmit =
+    hasValidCompany &&
+    hasValidEvent &&
+    hasValidTicketType &&
+    hasValidPrice &&
+    hasValidTicketsAvailable &&
+    !isSubmitting;
+
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
   }
@@ -45,7 +90,7 @@ export default function TicketListingFields({
   function buildRequest(): CreateTicketListingRequest {
     return {
       eventId: Number(form.eventId),
-      ticketType: form.ticketType,
+      ticketType: form.ticketType.trim(),
       startDate: form.startDate ? new Date(form.startDate).toISOString() : undefined,
       endDate: form.endDate ? new Date(form.endDate).toISOString() : undefined,
       price: Number(form.price),
@@ -56,22 +101,37 @@ export default function TicketListingFields({
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!companyId) return;
 
-    if (mode === "edit" && selectedTicketListing?.ticketListingId) {
-      updateTicketListing.mutate({
-        id: selectedTicketListing.ticketListingId,
-        data: buildRequest()
-      }, { onSuccess: handleSuccess });
+    if (!canSubmit) {
       return;
     }
 
-    createTicketListing.mutate({ data: buildRequest() }, { onSuccess: handleSuccess });
+    if (mode === "edit" && selectedTicketListing?.ticketListingId) {
+      updateTicketListing.mutate(
+        {
+          id: selectedTicketListing.ticketListingId,
+          data: buildRequest()
+        },
+        { onSuccess: handleSuccess }
+      );
+      return;
+    }
+
+    createTicketListing.mutate(
+      { data: buildRequest() },
+      { onSuccess: handleSuccess }
+    );
   }
 
   function handleDelete() {
-    if (!companyId || !selectedTicketListing?.ticketListingId) return;
-    deleteTicketListing.mutate({ id: selectedTicketListing.ticketListingId }, { onSuccess: handleSuccess });
+    if (!selectedListingCompanyId || !selectedTicketListing?.ticketListingId || isSubmitting) {
+      return;
+    }
+
+    deleteTicketListing.mutate(
+      { id: selectedTicketListing.ticketListingId },
+      { onSuccess: handleSuccess }
+    );
   }
 
   function handleSuccess() {
@@ -84,9 +144,15 @@ export default function TicketListingFields({
       <div className={styles.dialogGrid}>
         <section className={styles.formSection}>
           <h3>Ticket listing details</h3>
+
           <label>
             Event
-            <select value={form.eventId} onChange={(e) => updateField("eventId", e.target.value)}>
+            <select
+              value={form.eventId}
+              required
+              disabled={isSubmitting}
+              onChange={(e) => updateField("eventId", e.target.value)}
+            >
               <option value="">Select event</option>
               {events.map((event) => (
                 <option key={event.eventId} value={event.eventId}>
@@ -95,37 +161,73 @@ export default function TicketListingFields({
               ))}
             </select>
           </label>
+
           <label>
             Ticket type
-            <input value={form.ticketType} onChange={(e) => updateField("ticketType", e.target.value)} />
+            <input
+              value={form.ticketType}
+              required
+              disabled={isSubmitting}
+              onChange={(e) => updateField("ticketType", e.target.value)}
+            />
           </label>
+
           <div className={styles.twoColumns}>
             <label>
               Start date
-              <input type="date" value={form.startDate} onChange={(e) => updateField("startDate", e.target.value)} />
+              <input
+                type="date"
+                value={form.startDate}
+                disabled={isSubmitting}
+                onChange={(e) => updateField("startDate", e.target.value)}
+              />
             </label>
+
             <label>
               End date
-              <input type="date" value={form.endDate} onChange={(e) => updateField("endDate", e.target.value)} />
+              <input
+                type="date"
+                value={form.endDate}
+                disabled={isSubmitting}
+                onChange={(e) => updateField("endDate", e.target.value)}
+              />
             </label>
           </div>
+
           <label>
             Price
-            <input value={form.price} onChange={(e) => updateField("price", e.target.value)} />
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.price}
+              required
+              disabled={isSubmitting}
+              onChange={(e) => updateField("price", e.target.value)}
+            />
           </label>
+
           <label>
             Currency
-            <select value={form.currency} onChange={(e) => updateField("currency", e.target.value)}>
+            <select
+              value={form.currency}
+              disabled={isSubmitting}
+              onChange={(e) => updateField("currency", e.target.value)}
+            >
               <option value="NOK">NOK</option>
               <option value="EUR">EUR</option>
               <option value="USD">USD</option>
             </select>
           </label>
+
           <label>
             Tickets available
             <input
               type="number"
+              min="0"
               value={form.ticketsAvailable}
+              required
+              disabled={isSubmitting}
               onChange={(e) => updateField("ticketsAvailable", e.target.value)}
             />
           </label>
@@ -133,21 +235,58 @@ export default function TicketListingFields({
 
         <section className={styles.formSection}>
           <h3>Ticket provider</h3>
-          <p>
-            {companyId
-              ? `Managing listing for Company ${companyId}.`
-              : "Select one company before creating or editing a ticket listing."}
+
+          <label>
+            Company
+            <select
+              value={selectedListingCompanyId ?? ""}
+              required
+              disabled={isSubmitting}
+              onChange={(e) => setSelectedListingCompanyId(
+                e.target.value ? Number(e.target.value) : undefined
+              )}
+            >
+              <option value="">Select company</option>
+              {companyOptions.map((company) => (
+                <option key={company.companyId} value={company.companyId}>
+                  {company.companyName}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <p className={styles.helperText}>
+            This company will be sent as X-Company-Id when creating, updating, or deleting the ticket listing.
           </p>
         </section>
       </div>
 
       <div className={styles.dialogActions}>
+        <button
+          type="button"
+          className={styles.cancelButton}
+          disabled={isSubmitting}
+          onClick={onClose}
+        >
+          Cancel
+        </button>
+
         {mode === "edit" && (
-          <button type="button" className={styles.deleteButton} onClick={handleDelete}>
+          <button
+            type="button"
+            className={styles.deleteButton}
+            disabled={isSubmitting || !selectedListingCompanyId}
+            onClick={handleDelete}
+          >
             Delete
           </button>
         )}
-        <button type="submit" className={styles.saveButton} disabled={!companyId}>
+
+        <button
+          type="submit"
+          className={styles.saveButton}
+          disabled={!canSubmit}
+        >
           {mode === "create" ? "Create" : "Save"}
         </button>
       </div>

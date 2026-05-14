@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
+import { useAuthContext } from "@utility/AuthContext";
 import "./Footer.css";
 
 export default function Footer() {
+  const auth = useAuthContext();
+
+  const isAdmin = auth.isLoggedIn && auth.isAdmin;
+  const isProvider = auth.isLoggedIn && auth.isProvider;
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -35,9 +41,9 @@ export default function Footer() {
             <div className="footer-col">
               <h4>Other</h4>
               <Link to="/account">Account</Link>
-              <Link to="/user-management">User management</Link>
-              <Link to="/event-management">Event management</Link>
-              <Link to="/request-management">Request management</Link>
+              {isAdmin && <Link to="/user-management">User management</Link>}
+              {(isAdmin || isProvider) && <Link to="/event-management">Event management</Link>}
+              {isAdmin && <Link to="/request-management">Request management</Link>}
             </div>
           </div>
           <div className="footer-app">

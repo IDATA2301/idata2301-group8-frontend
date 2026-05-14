@@ -28,13 +28,13 @@
 }
 
 .requestBox {
-  width: 862px;
-  max-width: 100%;
+  width: 100%;
   height: 332px;
   border-radius: 18px;
   background-color: var(--deep-space-blue-dark);
   padding: 1.25rem;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-sizing: border-box;
 }
 
@@ -44,6 +44,7 @@
   grid-template-columns: 1fr 1.45fr 1.35fr 1.05fr 1.1fr;
   gap: 1rem;
   align-items: center;
+  min-width: 752px;
 }
 
 .eventTableHeader,
@@ -52,6 +53,7 @@
   grid-template-columns: 1.45fr 1.8fr 1.05fr 1.1fr;
   gap: 1rem;
   align-items: center;
+  min-width: 720px;
 }
 
 .roleTableHeader,
@@ -70,26 +72,31 @@
 .entriesList {
   max-height: calc(100% - 1.8rem);
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 752px;
   padding-right: 0.35rem;
 }
 
-.entriesList::-webkit-scrollbar {
+.entriesList::-webkit-scrollbar,
+.requestBox::-webkit-scrollbar {
   width: 0.45rem;
+  height: 0.45rem;
 }
 
-.entriesList::-webkit-scrollbar-thumb {
+.entriesList::-webkit-scrollbar-thumb,
+.requestBox::-webkit-scrollbar-thumb {
   background-color: rgba(227, 227, 227, 0.45);
   border-radius: 999px;
 }
 
-.entriesList::-webkit-scrollbar-track {
+.entriesList::-webkit-scrollbar-track,
+.requestBox::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
 .roleRequestEntry,
 .eventRequestEntry {
-  width: 752px;
-  max-width: 100%;
+  width: 100%;
   height: 36px;
   margin-bottom: 0.45rem;
   padding: 0 0.5rem;
@@ -126,6 +133,10 @@
   cursor: pointer;
   padding: 0;
   line-height: 0;
+  transition:
+    filter 0.2s,
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .approveButton img,
@@ -147,25 +158,114 @@
 .approveButton:hover,
 .rejectButton:hover {
   filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.approveButton:disabled,
+.rejectButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.approveButton:disabled:hover,
+.rejectButton:disabled:hover {
+  transform: none;
+  filter: grayscale(0.35);
+}
+
+.emptyMessage {
+  color: rgba(227, 227, 227, 0.75);
+  font-size: 0.9rem;
+  margin: 1rem 0 0.5rem;
 }
 
 @media (max-width: 750px) {
+  .requestManagementPage {
+    min-height: calc(100vh - 160px);
+    padding: 1.25rem 0 3rem;
+  }
+
   .pageContent {
     width: calc(100% - 1rem);
   }
 
+  .pageContent h1 {
+    font-size: 1.45rem;
+    margin-bottom: 1rem;
+  }
+
+  .requestSection h2 {
+    font-size: 1.1rem;
+  }
+
   .requestBox {
     height: 332px;
-    overflow-x: auto;
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .roleTableHeader,
+  .roleRequestEntry,
+  .entriesList {
+    min-width: 760px;
   }
 
   .roleTableHeader,
   .roleRequestEntry {
-    min-width: 780px;
+    grid-template-columns: 0.9fr 1.4fr 1.25fr 1fr 1fr;
+    gap: 0.7rem;
   }
 
   .eventTableHeader,
   .eventRequestEntry {
     min-width: 720px;
+    gap: 0.7rem;
+  }
+
+  .roleTableHeader,
+  .eventTableHeader {
+    font-size: 0.7rem;
+  }
+
+  .roleRequestEntry,
+  .eventRequestEntry {
+    height: 36px;
+    font-size: 0.78rem;
+  }
+
+  .approveButton,
+  .rejectButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .approveButton img,
+  .rejectButton img {
+    width: 21px;
+    height: 21px;
+  }
+}
+
+@media (max-width: 430px) {
+  .pageContent {
+    width: calc(100% - 0.75rem);
+  }
+
+  .requestBox {
+    height: 310px;
+    padding: 0.75rem;
+  }
+
+  .roleTableHeader,
+  .roleRequestEntry,
+  .entriesList {
+    min-width: 720px;
+  }
+
+  .roleTableHeader,
+  .roleRequestEntry {
+    grid-template-columns: 0.85fr 1.35fr 1.2fr 0.95fr 0.95fr;
+    gap: 0.55rem;
   }
 }

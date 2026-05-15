@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./DialogForm.module.css";
+import type { CompanyDto } from "@api/iam";
 import type {
   CreateTicketListingRequest,
   EventResponse,
@@ -13,16 +14,11 @@ import {
 
 type SelectedCompanyId = "all" | number;
 
-type CompanyOption = {
-  companyId: number;
-  companyName: string;
-};
-
 type TicketListingFieldsProps = {
   mode: "create" | "edit";
   events: EventResponse[];
   selectedCompanyId: SelectedCompanyId;
-  companyOptions: CompanyOption[];
+  companyOptions: CompanyDto[];
   selectedTicketListing?: TicketListingResponse;
   onClose: () => void;
   onSuccess: () => void;
@@ -39,19 +35,15 @@ export default function TicketListingFields({
 }: TicketListingFieldsProps) {
   const initialCompanyId =
     selectedTicketListing?.companyId ??
-    (selectedCompanyId === "all" ? companyOptions[0]?.companyId : selectedCompanyId);
+    (selectedCompanyId === "all" ? companyOptions[0]?.id : selectedCompanyId);
 
   const [selectedListingCompanyId, setSelectedListingCompanyId] = useState<number | undefined>(
     initialCompanyId
   );
 
-  const request = selectedListingCompanyId
-    ? { headers: { "X-Company-Id": String(selectedListingCompanyId) } }
-    : undefined;
-
-  const createTicketListing = useCreateTicketListing({ request });
-  const updateTicketListing = useUpdateTicketListing({ request });
-  const deleteTicketListing = useDeleteTicketListing({ request });
+  const createTicketListing = useCreateTicketListing();
+  const updateTicketListing = useUpdateTicketListing();
+  const deleteTicketListing = useDeleteTicketListing();
 
   const [form, setForm] = useState({
     eventId: selectedTicketListing?.eventId?.toString() ?? "",
@@ -67,6 +59,10 @@ export default function TicketListingFields({
     createTicketListing.isPending ||
     updateTicketListing.isPending ||
     deleteTicketListing.isPending;
+
+  const selectedCompanyName =
+    companyOptions.find((company) => company.id === selectedListingCompanyId)?.name
+    ?? `Company ${selectedListingCompanyId ?? "-"}`;
 
   const hasValidCompany = selectedListingCompanyId !== undefined;
   const hasValidEvent = form.eventId.trim().length > 0 && !Number.isNaN(Number(form.eventId));
@@ -90,6 +86,7 @@ export default function TicketListingFields({
   function buildRequest(): CreateTicketListingRequest {
     return {
       eventId: Number(form.eventId),
+      companyId: selectedListingCompanyId,
       ticketType: form.ticketType.trim(),
       startDate: form.startDate ? new Date(form.startDate).toISOString() : undefined,
       endDate: form.endDate ? new Date(form.endDate).toISOString() : undefined,
@@ -124,7 +121,7 @@ export default function TicketListingFields({
   }
 
   function handleDelete() {
-    if (!selectedListingCompanyId || !selectedTicketListing?.ticketListingId || isSubmitting) {
+    if (!selectedTicketListing?.ticketListingId || isSubmitting) {
       return;
     }
 
@@ -227,37 +224,51 @@ export default function TicketListingFields({
               min="0"
               value={form.ticketsAvailable}
               required
-              disabled={isSubmitting}
+              disabled={isSubmitting || mode === "edit"}
               onChange={(e) => updateField("ticketsAvailable", e.target.value)}
             />
           </label>
+
+          {mode === "edit" && (
+            <p className={styles.helperText}>
+              Ticket amount cannot be changed after the listing is created.
+            </p>
+          )}
         </section>
 
         <section className={styles.formSection}>
           <h3>Ticket provider</h3>
 
-          <label>
-            Company
-            <select
-              value={selectedListingCompanyId ?? ""}
-              required
-              disabled={isSubmitting}
-              onChange={(e) => setSelectedListingCompanyId(
-                e.target.value ? Number(e.target.value) : undefined
-              )}
-            >
-              <option value="">Select company</option>
-              {companyOptions.map((company) => (
-                <option key={company.companyId} value={company.companyId}>
-                  {company.companyName}
-                </option>
-              ))}
-            </select>
-          </label>
+          {mode === "create" ? (
+            <>
+              <label>
+                Company
+                <select
+                  value={selectedListingCompanyId ?? ""}
+                  required
+                  disabled={isSubmitting}
+                  onChange={(e) => setSelectedListingCompanyId(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )}
+                >
+                  <option value="">Select company</option>
+                  {companyOptions.map((company) => (
+                    <option key={company.id} value={company.id}>
+                      {company.name ?? `Company ${company.id}`}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-          <p className={styles.helperText}>
-            This company will be sent as X-Company-Id when creating, updating, or deleting the ticket listing.
-          </p>
+              <p className={styles.helperText}>
+                This company will be saved on the ticket listing.
+              </p>
+            </>
+          ) : (
+            <p className={styles.helperText}>
+              Listing company: {selectedCompanyName}. Company cannot be changed after the listing is created.
+            </p>
+          )}
         </section>
       </div>
 
@@ -275,7 +286,7 @@ export default function TicketListingFields({
           <button
             type="button"
             className={styles.deleteButton}
-            disabled={isSubmitting || !selectedListingCompanyId}
+            disabled={isSubmitting}
             onClick={handleDelete}
           >
             Delete

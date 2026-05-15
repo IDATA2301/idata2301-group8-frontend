@@ -26,6 +26,7 @@ import type {
 import { customFetchEventApi } from './client';
 export interface CreateTicketListingRequest {
   eventId?: number;
+  companyId?: number;
   ticketType?: string;
   startDate?: string;
   endDate?: string;

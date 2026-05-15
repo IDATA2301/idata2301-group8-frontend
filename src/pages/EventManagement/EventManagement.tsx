@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import EventManagementSection from "./EventManagementSection";
 import EventDialog from "./EventDialog";
 import TicketListingDialog from "./TicketListingDialog";
 import styles from "./EventManagement.module.css";
 import { useAuthContext } from "@utility/AuthContext";
-import { useGetCompanies } from "@api/iam";
+import { useGetCompanies, type CompanyDto } from "@api/iam";
 import {
   useGetEvents,
   useGetTicketListings
@@ -19,18 +19,7 @@ type PopupState = {
   ticketListingId?: number;
 } | null;
 
-type CompanyOption = {
-  companyId: number;
-  companyName: string;
-};
-
-type CompanyRole = {
-  companyId?: number;
-};
-
-type AuthUserWithCompanyRoles = {
-  companyRoles?: CompanyRole[];
-};
+type ActivePopup = Exclude<PopupState, null>;
 
 function formatDate(date?: string) {
   return date ? new Date(date).toLocaleDateString("nb-NO") : "-";
@@ -43,7 +32,8 @@ function formatPrice(price?: number, currency?: string) {
 
 export default function EventManagement() {
   const { user } = useAuthContext();
-  const authUser = user as AuthUserWithCompanyRoles | undefined;
+  const eventDialogRef = useRef<HTMLDialogElement>(null);
+  const ticketListingDialogRef = useRef<HTMLDialogElement>(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState<SelectedCompanyId>("all");
   const [popup, setPopup] = useState<PopupState>(null);
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
@@ -63,24 +53,19 @@ export default function EventManagement() {
       : [];
   const visibleTicketListings = Array.isArray(ticketListingsData) ? ticketListingsData : [];
 
-  const companyOptions: CompanyOption[] = useMemo(() => {
-    const companyRoleIds = Array.from(
-      new Set(
-        authUser?.companyRoles
-          ?.map((role) => role.companyId)
-          .filter((companyId): companyId is number => companyId !== undefined) ?? []
-      )
-    );
+  const companyOptions: CompanyDto[] = useMemo(() => {
+    const companyIds = Object.entries(user?.companyRoles || {}).map(([companyId]) => companyId);
 
-    return companyRoleIds.map((companyId) => {
-      const company = companies.find((item) => item.id === companyId);
+    return companyIds.reduce((acc: CompanyDto[], companyId) => {
+      const company = companies.find((item) => item.id === parseInt(companyId));
 
-      return {
-        companyId,
-        companyName: company?.name ?? `Company ${companyId}`
-      };
-    });
-  }, [authUser?.companyRoles, companies]);
+      if (company) {
+        acc.push(company);
+      }
+
+      return acc;
+    }, []);
+  }, [user?.companyRoles, companies]);
 
   const visibleEvents = useMemo(() => {
     if (selectedCompanyId === "all") {
@@ -111,8 +96,8 @@ export default function EventManagement() {
   }, [allEvents]);
 
   const selectedCompanyName = selectedCompanyId === "all"
-    ? "all companies"
-    : companyOptions.find((company) => company.companyId === selectedCompanyId)?.companyName
+    ? "my companies"
+    : companyOptions.find((company) => company.id === selectedCompanyId)?.name
     ?? "selected company";
 
   const eventRows = visibleEvents.map((event) => [
@@ -137,6 +122,34 @@ export default function EventManagement() {
     ];
   });
 
+  function openEventDialog(nextPopup: ActivePopup) {
+    setPopup(nextPopup);
+    ticketListingDialogRef.current?.close();
+
+    requestAnimationFrame(() => {
+      if (!eventDialogRef.current?.open) {
+        eventDialogRef.current?.showModal();
+      }
+    });
+  }
+
+  function openTicketListingDialog(nextPopup: ActivePopup) {
+    setPopup(nextPopup);
+    eventDialogRef.current?.close();
+
+    requestAnimationFrame(() => {
+      if (!ticketListingDialogRef.current?.open) {
+        ticketListingDialogRef.current?.showModal();
+      }
+    });
+  }
+
+  function closeDialogs() {
+    eventDialogRef.current?.close();
+    ticketListingDialogRef.current?.close();
+    setPopup(null);
+  }
+
   function refetchManagementData() {
     eventsQuery.refetch();
     ticketListingsQuery.refetch();
@@ -160,10 +173,10 @@ export default function EventManagement() {
                 e.target.value === "all" ? "all" : Number(e.target.value)
               )}
             >
-              <option value="all">All companies</option>
+              <option key="all" value="all">My companies</option>
               {companyOptions.map((company) => (
-                <option key={company.companyId} value={company.companyId}>
-                  {company.companyName}
+                <option key={company.id} value={company.id}>
+                  {company.name ?? `Company ${company.id}`}
                 </option>
               ))}
             </select>
@@ -176,8 +189,8 @@ export default function EventManagement() {
             buttonText="Create event"
             headers={["event_id", "event_name", "status", "venue", "created_at"]}
             entries={eventRows}
-            onCreate={() => setPopup({ type: "event", mode: "create" })}
-            onEntryClick={(index) => setPopup({
+            onCreate={() => openEventDialog({ type: "event", mode: "create" })}
+            onEntryClick={(index) => openEventDialog({
               type: "event",
               mode: "edit",
               eventId: visibleEvents[index]?.eventId
@@ -189,8 +202,8 @@ export default function EventManagement() {
             buttonText="Create ticket listing"
             headers={["listing_id", "event_name", "ticket_type", "price", "available"]}
             entries={ticketListingRows}
-            onCreate={() => setPopup({ type: "ticketListing", mode: "create" })}
-            onEntryClick={(index) => setPopup({
+            onCreate={() => openTicketListingDialog({ type: "ticketListing", mode: "create" })}
+            onEntryClick={(index) => openTicketListingDialog({
               type: "ticketListing",
               mode: "edit",
               ticketListingId: visibleTicketListings[index]?.ticketListingId
@@ -199,28 +212,24 @@ export default function EventManagement() {
         </div>
       </div>
 
-      {popup?.type === "event" && (
-        <EventDialog
-          isOpen={true}
-          mode={popup.mode}
-          selectedEvent={selectedEvent}
-          onClose={() => setPopup(null)}
-          onSuccess={refetchManagementData}
-        />
-      )}
+      <EventDialog
+        ref={eventDialogRef}
+        mode={popup?.type === "event" ? popup.mode : "create"}
+        selectedEvent={selectedEvent}
+        onClose={closeDialogs}
+        onSuccess={refetchManagementData}
+      />
 
-      {popup?.type === "ticketListing" && (
-        <TicketListingDialog
-          isOpen={true}
-          mode={popup.mode}
-          events={allEvents}
-          selectedCompanyId={selectedCompanyId}
-          companyOptions={companyOptions}
-          selectedTicketListing={selectedTicketListing}
-          onClose={() => setPopup(null)}
-          onSuccess={refetchManagementData}
-        />
-      )}
+      <TicketListingDialog
+        ref={ticketListingDialogRef}
+        mode={popup?.type === "ticketListing" ? popup.mode : "create"}
+        events={allEvents}
+        selectedCompanyId={selectedCompanyId}
+        companyOptions={companyOptions}
+        selectedTicketListing={selectedTicketListing}
+        onClose={closeDialogs}
+        onSuccess={refetchManagementData}
+      />
     </main>
   );
 }

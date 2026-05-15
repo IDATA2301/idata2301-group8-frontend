@@ -4,6 +4,7 @@ import type {
   CategoryResponse,
   CreateEventRequest,
   EventResponse,
+  ExtraFeatureResponse,
   VenueResponse
 } from "@api/events";
 import {
@@ -16,6 +17,7 @@ type EventFieldsProps = {
   mode: "create" | "edit";
   venues: VenueResponse[];
   categories: CategoryResponse[];
+  extraFeatures: ExtraFeatureResponse[];
   selectedEvent?: EventResponse;
   onClose: () => void;
   onSuccess: () => void;
@@ -26,6 +28,7 @@ export default function EventFields({
   mode,
   venues,
   categories,
+  extraFeatures,
   selectedEvent,
   onClose,
   onSuccess,
@@ -37,8 +40,13 @@ export default function EventFields({
   const [eventImage, setEventImage] = useState<File | null>(null);
   const [venueOptions, setVenueOptions] = useState<VenueResponse[]>(venues);
   const [newVenueName, setNewVenueName] = useState("");
+  const [categoryToAdd, setCategoryToAdd] = useState("");
+  const [extraFeatureToAdd, setExtraFeatureToAdd] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>(
     selectedEvent?.categoryIds ?? []
+  );
+  const [selectedExtraFeatureIds, setSelectedExtraFeatureIds] = useState<number[]>(
+    selectedEvent?.extraFeatureIds ?? []
   );
   const [form, setForm] = useState({
     eventName: selectedEvent?.eventName ?? "",
@@ -57,20 +65,34 @@ export default function EventFields({
     setForm((current) => ({ ...current, [field]: value }));
   }
 
-  function toggleCategory(categoryId?: number) {
-    if (categoryId === undefined) {
+  function addCategory(categoryIdValue: string) {
+    const categoryId = Number(categoryIdValue);
+    if (!categoryId || selectedCategoryIds.includes(categoryId)) {
+      setCategoryToAdd("");
       return;
     }
 
-    setSelectedCategoryIds((current) =>
-      current.includes(categoryId)
-        ? current.filter((id) => id !== categoryId)
-        : [...current, categoryId]
-    );
+    setSelectedCategoryIds((current) => [...current, categoryId]);
+    setCategoryToAdd("");
   }
 
   function removeCategory(categoryId: number) {
     setSelectedCategoryIds((current) => current.filter((id) => id !== categoryId));
+  }
+
+  function addExtraFeature(extraFeatureIdValue: string) {
+    const extraFeatureId = Number(extraFeatureIdValue);
+    if (!extraFeatureId || selectedExtraFeatureIds.includes(extraFeatureId)) {
+      setExtraFeatureToAdd("");
+      return;
+    }
+
+    setSelectedExtraFeatureIds((current) => [...current, extraFeatureId]);
+    setExtraFeatureToAdd("");
+  }
+
+  function removeExtraFeature(extraFeatureId: number) {
+    setSelectedExtraFeatureIds((current) => current.filter((id) => id !== extraFeatureId));
   }
 
   function buildRequest(): CreateEventRequest {
@@ -79,7 +101,8 @@ export default function EventFields({
       description: form.description,
       status: form.status,
       venueId: Number(form.venueId),
-      categoryIds: selectedCategoryIds
+      categoryIds: selectedCategoryIds,
+      extraFeatureIds: selectedExtraFeatureIds
     };
   }
 
@@ -204,7 +227,7 @@ export default function EventFields({
         </section>
 
         <section className={styles.formSection}>
-          <h3>Venue and categories</h3>
+          <h3>Venue, categories and features</h3>
 
           <label>
             Venue
@@ -245,26 +268,29 @@ export default function EventFields({
           </div>
 
           <div className={styles.fieldGroup}>
-            <span className={styles.fieldLabel}>Categories</span>
-
-            <div className={styles.categoryList}>
-              {categories.map((category) => {
-                const categoryId = category.categoryId;
-                const checked = categoryId !== undefined && selectedCategoryIds.includes(categoryId);
-
-                return (
-                  <label key={categoryId} className={styles.checkboxRow}>
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={isSubmitting}
-                      onChange={() => toggleCategory(categoryId)}
-                    />
-                    {category.categoryName ?? `Category ${categoryId}`}
-                  </label>
-                );
-              })}
-            </div>
+            <label>
+              Categories
+              <select
+                value={categoryToAdd}
+                disabled={isSubmitting}
+                onChange={(e) => {
+                  setCategoryToAdd(e.target.value);
+                  addCategory(e.target.value);
+                }}
+              >
+                <option value="">Add category</option>
+                {categories
+                  .filter((category) =>
+                    category.categoryId !== undefined &&
+                    !selectedCategoryIds.includes(category.categoryId)
+                  )
+                  .map((category) => (
+                    <option key={category.categoryId} value={category.categoryId}>
+                      {category.categoryName ?? `Category ${category.categoryId}`}
+                    </option>
+                  ))}
+              </select>
+            </label>
 
             <div className={styles.selectedChips}>
               {selectedCategoryIds.map((categoryId) => {
@@ -279,6 +305,50 @@ export default function EventFields({
                     onClick={() => removeCategory(categoryId)}
                   >
                     {category?.categoryName ?? `Category ${categoryId}`} ×
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label>
+              Extra features
+              <select
+                value={extraFeatureToAdd}
+                disabled={isSubmitting}
+                onChange={(e) => {
+                  setExtraFeatureToAdd(e.target.value);
+                  addExtraFeature(e.target.value);
+                }}
+              >
+                <option value="">Add extra feature</option>
+                {extraFeatures
+                  .filter((feature) =>
+                    feature.extraFeatureId !== undefined &&
+                    !selectedExtraFeatureIds.includes(feature.extraFeatureId)
+                  )
+                  .map((feature) => (
+                    <option key={feature.extraFeatureId} value={feature.extraFeatureId}>
+                      {feature.extraFeatureName ?? `Feature ${feature.extraFeatureId}`}
+                    </option>
+                  ))}
+              </select>
+            </label>
+
+            <div className={styles.selectedChips}>
+              {selectedExtraFeatureIds.map((extraFeatureId) => {
+                const feature = extraFeatures.find((item) => item.extraFeatureId === extraFeatureId);
+
+                return (
+                  <button
+                    key={extraFeatureId}
+                    type="button"
+                    className={styles.chip}
+                    disabled={isSubmitting}
+                    onClick={() => removeExtraFeature(extraFeatureId)}
+                  >
+                    {feature?.extraFeatureName ?? `Feature ${extraFeatureId}`} ×
                   </button>
                 );
               })}

@@ -1,60 +1,78 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import styles from "./DialogForm.module.css";
 import EventFields from "./EventFields";
-import { useGetAllCategories, useGetAllVenues, type EventResponse } from "@api/events";
+import {
+  useCreate,
+  useGetAll,
+  useGetAllCategories,
+  useGetAllVenues,
+  type EventResponse,
+  type VenueResponse
+} from "@api/events";
 
 type PopupMode = "create" | "edit";
 
 type EventDialogProps = {
-  isOpen: boolean;
   mode: PopupMode;
   selectedEvent?: EventResponse;
   onClose: () => void;
   onSuccess: () => void;
 };
 
-export default function EventDialog({
-  isOpen,
+const EventDialog = forwardRef<HTMLDialogElement, EventDialogProps>(function EventDialog({
   mode,
   selectedEvent,
   onClose,
   onSuccess
-}: EventDialogProps) {
+}, ref) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const { data: venuesResponse } = useGetAllVenues();
-  const { data: categoriesResponse } = useGetAllCategories();
+  const venuesQuery = useGetAllVenues();
+  const categoriesQuery = useGetAllCategories();
+  const extraFeaturesQuery = useGetAll();
+  const createVenue = useCreate();
+
+  useImperativeHandle(ref, () => dialogRef.current as HTMLDialogElement);
 
   const venues =
-    venuesResponse?.status === 200
-      ? venuesResponse.data
+    venuesQuery.data?.status === 200
+      ? venuesQuery.data.data
       : [];
 
   const categories =
-    categoriesResponse?.status === 200
-      ? categoriesResponse.data
+    categoriesQuery.data?.status === 200
+      ? categoriesQuery.data.data
       : [];
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
+  const extraFeatures =
+    extraFeaturesQuery.data?.status === 200
+      ? extraFeaturesQuery.data.data
+      : [];
 
-    if (!dialog) {
-      return;
-    }
+  async function handleCreateVenue(venueName: string): Promise<VenueResponse | void> {
+    const response = await createVenue.mutateAsync({
+      data: {
+        venueName
+      }
+    });
 
-    if (isOpen && !dialog.open) {
-      dialog.showModal();
+    if (response.status === 200) {
+      await venuesQuery.refetch();
+      return response.data;
     }
+  }
 
-    if (!isOpen && dialog.open) {
-      dialog.close();
-    }
-  }, [isOpen]);
+  function handleClose() {
+    dialogRef.current?.close();
+    onClose();
+  }
 
   return (
     <dialog
       ref={dialogRef}
       className={styles.dialog}
-      onCancel={onClose}
+      {...{ closedby: "any" }}
+      onCancel={handleClose}
+      onClose={onClose}
     >
       <div className={styles.dialogContent}>
         <h2>
@@ -62,14 +80,19 @@ export default function EventDialog({
         </h2>
 
         <EventFields
+          key={`${mode}-${selectedEvent?.eventId ?? "create"}`}
           mode={mode}
           venues={venues}
           categories={categories}
+          extraFeatures={extraFeatures}
           selectedEvent={selectedEvent}
-          onClose={onClose}
+          onClose={handleClose}
           onSuccess={onSuccess}
+          onCreateVenue={handleCreateVenue}
         />
       </div>
     </dialog>
   );
-}
+});
+
+export default EventDialog;

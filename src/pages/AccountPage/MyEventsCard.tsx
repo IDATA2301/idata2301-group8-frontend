@@ -7,14 +7,14 @@ interface Props {
   eventName: string;
   eventDate: string;
   startTime?: string;
-  ticketCount?: number;
+  ticketCount: number;
 }
 
 export default function MyEventCard({
   eventName,
   eventDate,
   startTime,
-  ticketCount = 2
+  ticketCount
 }: Props) {
   function formatDate(date: string) {
     return new Date(date).toLocaleDateString("en-GB", {
@@ -30,12 +30,10 @@ export default function MyEventCard({
         <h3 className={styles.eventTitle}>
           {eventName}
         </h3>
-
         <p className={styles.eventMeta}>
-          {ticketCount} tickets
+          {ticketCount} {ticketCount === 1 ? "ticket" : "tickets"}
           {" • "}
           {formatDate(eventDate)}
-
           {startTime && (
             <>
               {" • "}
@@ -44,7 +42,6 @@ export default function MyEventCard({
           )}
         </p>
       </div>
-
       <div className={styles.eventActions}>
         <button className={styles.iconButton}>
           <img
@@ -52,14 +49,12 @@ export default function MyEventCard({
             alt="Favorite"
           />
         </button>
-
         <button className={styles.iconButton}>
           <img
             src={ShareIcon}
             alt="Share"
           />
         </button>
-
         <button className={styles.iconButton}>
           <img
             src={DownloadIcon}

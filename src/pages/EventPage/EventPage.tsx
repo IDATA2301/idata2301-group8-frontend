@@ -49,32 +49,30 @@ function EventPage() {
   }
 
   if (eventError || !event) {
-    return <StateBanner
-      title="Event not found"
-      description="This event does not exist, or it may no longer be available."
-    />;
+    return (
+      <StateBanner
+        title="Event not found"
+        description="This event does not exist, or it may no longer be available."
+      />
+    );
   }
 
   return (
     <>
       <ScrollToTop />
-
       <div
         className="hero-image-event"
         style={{
           backgroundImage: `url(${event.imageUrl || fallbackEventImage})`
         }}
       />
-
       <div className="event-page-banner">
         <h1 className="event-page-title">
           {event.eventName ?? "Untitled event"}
         </h1>
-
         <p className="event-page-decription">
           {event.description ?? "No description available."}
         </p>
-
         {tags.length > 0 && (
           <div className="event-tags">
             {tags.map((tag) => (
@@ -85,26 +83,23 @@ function EventPage() {
           </div>
         )}
       </div>
-
       <div className="center-box">
-        <EventTicketListings eventId={event.eventId} />
-
+        <EventTicketListings
+          eventId={event.eventId}
+          eventName={event.eventName ?? "Untitled event"}
+        />
         <hr className="page-divider-line" />
-
         <div className="event-page-location-box">
           <div className="event-page-location-info-box">
             <div>
               <h3 className="event-page-location-title">Address</h3>
-
               <p className="event-page-location-address">
                 {event.venueName ?? "Unknown venue"}
               </p>
-
               <p className="event-page-location-address">
                 {event.city ?? "Unknown city"}
               </p>
             </div>
-
             <Link
               to={mapsUrl}
               target="_blank"
@@ -112,11 +107,9 @@ function EventPage() {
               className="event-page-location-action-button"
             >
               Open in Google Maps
-
               <img src={openInNew} alt="open in new tab" />
             </Link>
           </div>
-
           {iframeUrl && (
             <iframe
               className="event-page-location-iframe"

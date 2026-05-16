@@ -10,6 +10,8 @@ import AccountPage from "@pages/AccountPage/AccountPage";
 import UserManagement from "@pages/UserManagement/UserManagement";
 import RequestManagement from "@pages/RequestManagement/RequestManagement";
 import EventManagement from "@pages/EventManagement/EventManagement";
+import PaymentPage from "@pages/PaymentPage/PaymentPage";
+import CheckoutCompletePage from "@pages/CheckoutCompletePage/CheckoutCompletePage";
 import ScrollToTop from "@utility/ScrollToTop";
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/aboutUs" element={<AboutUsPage />} />
         <Route path="/account" element={<AccountPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/checkout-complete" element={<CheckoutCompletePage />} />
         <Route path="/user-management" element={<UserManagement />} />
         <Route path="/event-management" element={<EventManagement />} />
         <Route path="/request-management" element={<RequestManagement />} />

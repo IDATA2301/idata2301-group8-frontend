@@ -5,6 +5,7 @@ import EventCards from "@pages/HomePage/EventCards";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import ScrollToTop from "@utility/ScrollToTop";
 import { useGetEvents, type EventResponse } from "@api/events";
+import { usePrefetchSearch } from "@utility/usePrefetchSearch";
 import heroimage from "@assets/heroimage.jpg";
 import festivalsImage from "@assets/categoryimage/festival.jpg";
 import concertsImage from "@assets/categoryimage/concert.jpg";
@@ -49,6 +50,7 @@ const categories = [
 function HomePage() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const { prefetch } = usePrefetchSearch();
 
   const {
     data: eventsResponse,
@@ -98,6 +100,7 @@ function HomePage() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setQuery(e.target.value)
               }
+              onFocus={() => prefetch()}
             />
 
             <button
@@ -117,17 +120,21 @@ function HomePage() {
           </h2>
 
           <ul className="categories">
-            {categories.map((category) => (
-              <li key={category.name}>
-                <Link
-                  className={`category-card ${category.className}`}
-                  to={category.path}
-                  style={{ backgroundImage: `url(${category.image})` }}
-                >
-                  {category.name}
-                </Link>
-              </li>
-            ))}
+            {categories.map((category) => {
+              const categoryParam = new URLSearchParams(category.path.split("?")[1]).get("category");
+              return (
+                <li key={category.name}>
+                  <Link
+                    className={`category-card ${category.className}`}
+                    to={category.path}
+                    style={{ backgroundImage: `url(${category.image})` }}
+                    onMouseEnter={() => prefetch({ category: categoryParam ?? undefined })}
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
 

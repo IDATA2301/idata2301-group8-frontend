@@ -2,11 +2,13 @@ import { useSearchParams } from "react-router-dom";
 import EventCard from "src/pages/EventCard/EventCard";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
+import { sortOptions } from "@pages/SearchPage/SearchPage";
 import { useGetEvents } from "@api/events";
 
 type Params = {
   query: string;
   filters: FiltersType;
+  sort: string;
 };
 
 const EVENTS_PER_PAGE = 15;
@@ -21,10 +23,12 @@ const toIsoDate = (date: string, endOfDay = false) => {
     : new Date(`${date}T00:00:00`).toISOString();
 };
 
-const EventList = ({ query, filters }: Params) => {
+const EventList = ({ query, filters, sort }: Params) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageFromUrl = Number(searchParams.get("page") ?? "1");
   const currentPage = Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
+
+  const sortOption = sortOptions.find((o) => o.value === sort);
 
   const { data: response, isLoading } = useGetEvents({
     query: query.trim() || undefined,
@@ -37,8 +41,10 @@ const EventList = ({ query, filters }: Params) => {
       ? filters.priceMax
       : undefined,
     page: currentPage - 1,
-    size: EVENTS_PER_PAGE
-  });
+    size: EVENTS_PER_PAGE,
+    sortBy: sortOption?.sortBy,
+    sortDirection: sortOption?.sortDirection
+  } as Parameters<typeof useGetEvents>[0]);
 
   const goToPage = (page: number) => {
     setSearchParams((prev) => {

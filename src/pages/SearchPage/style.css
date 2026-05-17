@@ -88,6 +88,43 @@ h4 {
   margin-top: 30px;
 }
 
+.events-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sort-bar label {
+  color: white;
+  font-size: 14px;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid #FFFFFF4D;
+  border-radius: 8px;
+  background: #FFFFFF1A;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.sort-select:hover {
+  background: #FFFFFF33;
+}
+
+.sort-select option {
+  background: #003049;
+  color: white;
+}
+
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 250px);
@@ -347,6 +384,10 @@ h4 {
     align-items: center;
     gap: 14px;
     text-align: center;
+  }
+
+  .sort-bar {
+    justify-content: center;
   }
 
   .pagination {

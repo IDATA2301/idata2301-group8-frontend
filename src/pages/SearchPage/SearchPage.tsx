@@ -7,6 +7,20 @@ import Filters from "@pages/SearchPage/Filters";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
 import EventList from "@pages/SearchPage/EventList";
 
+export type SortOption = {
+  value: string;
+  label: string;
+  sortBy: string;
+  sortDirection: "asc" | "desc";
+};
+
+export const sortOptions: SortOption[] = [
+  { value: "date-asc", label: "Date (soonest first)", sortBy: "startDate", sortDirection: "asc" },
+  { value: "date-desc", label: "Date (latest first)", sortBy: "startDate", sortDirection: "desc" },
+  { value: "price-asc", label: "Price (lowest first)", sortBy: "lowestPrice", sortDirection: "asc" },
+  { value: "price-desc", label: "Price (highest first)", sortBy: "lowestPrice", sortDirection: "desc" }
+];
+
 const getNumberParam = (
   searchParams: URLSearchParams,
   key: string,
@@ -21,6 +35,7 @@ function SearchPage() {
   const [filtersOpen, setFiltersOpen] = React.useState(false);
 
   const query = searchParams.get("q") || "";
+  const sort = searchParams.get("sort") || "";
 
   const filters: FiltersType = {
     categories: searchParams.getAll("category"),
@@ -39,6 +54,22 @@ function SearchPage() {
         newParams.set("q", value.trim());
       } else {
         newParams.delete("q");
+      }
+
+      newParams.delete("page");
+
+      return newParams;
+    }, { replace: true });
+  };
+
+  const setSort = (value: string) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+
+      if (value) {
+        newParams.set("sort", value);
+      } else {
+        newParams.delete("sort");
       }
 
       newParams.delete("page");
@@ -131,7 +162,26 @@ function SearchPage() {
           <Filters filters={filters} setFilters={setFilters} />
         </aside>
 
-        <EventList filters={filters} query={query} />
+        <div className="events-section">
+          <div className="sort-bar">
+            <label htmlFor="sort-select">Sort by:</label>
+            <select
+              id="sort-select"
+              className="sort-select"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="">Default</option>
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <EventList filters={filters} query={query} sort={sort} />
+        </div>
       </div>
     </div>
   );

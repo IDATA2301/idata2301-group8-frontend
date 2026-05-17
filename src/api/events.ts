@@ -67,15 +67,14 @@ export interface EventResponse {
   imageUrl?: string;
   status?: string;
   createdBy?: string;
-  venueId?: number;
   createdAt?: string;
   startDate?: string;
   lowestPrice?: number;
   categoryIds?: number[];
-  categoryNames?: string[];
-  extraFeatureNames?: string[];
-  venueName?: string;
+  extraFeatureIds?: number[];
+  venueId?: number;
   city?: string;
+  country?: string;
 }
 
 export interface CreateVenueRequest {

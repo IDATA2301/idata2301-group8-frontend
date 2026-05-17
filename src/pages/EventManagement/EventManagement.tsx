@@ -30,6 +30,10 @@ function formatPrice(price?: number, currency?: string) {
   return `${price} ${currency ?? ""}`.trim();
 }
 
+function formatLocation(city?: string, country?: string) {
+  return [city, country].filter(Boolean).join(", ") || "-";
+}
+
 export default function EventManagement() {
   const { user } = useAuthContext();
   const eventDialogRef = useRef<HTMLDialogElement>(null);
@@ -104,7 +108,7 @@ export default function EventManagement() {
     event.eventId ?? "-",
     event.eventName ?? "-",
     event.status ?? "-",
-    event.venueName ?? "-",
+    formatLocation(event.city, event.country),
     formatDate(event.createdAt)
   ]);
 
@@ -187,7 +191,7 @@ export default function EventManagement() {
           <EventManagementSection
             title={`Events with listings from ${selectedCompanyName}`}
             buttonText="Create event"
-            headers={["event_id", "event_name", "status", "venue", "created_at"]}
+            headers={["event_id", "event_name", "status", "location", "created_at"]}
             entries={eventRows}
             onCreate={() => openEventDialog({ type: "event", mode: "create" })}
             onEntryClick={(index) => openEventDialog({

@@ -13,7 +13,7 @@ type Props = {
 
 export default function FeaturedEventCard({ event }: Props) {
   const category =
-    event.categoryNames?.[0] ?? "Event";
+    event.categoryIds?.[0] ?? "Event";
 
   const dateText =
     event.startDate

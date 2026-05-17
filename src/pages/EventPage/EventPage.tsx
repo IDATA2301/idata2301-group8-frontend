@@ -4,8 +4,8 @@ import ScrollToTop from "@utility/ScrollToTop.tsx";
 import openInNew from "@assets/icons/open-in-new.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
 import EventTicketListings from "./EventTicketListings";
-import "./style.css";
 import StateBanner from "@components/StateBanner/StateBanner";
+import "./style.css";
 
 function EventPage() {
   const { slug } = useParams();
@@ -25,14 +25,9 @@ function EventPage() {
       ? undefined
       : eventResponse.data;
 
-  const tags = [
-    ...(event?.categoryNames ?? []),
-    ...(event?.extraFeatureNames ?? [])
-  ];
-
-  const locationQuery = [event?.venueName, event?.city]
-    .filter(Boolean)
-    .join(" ");
+  const locationTags = [event?.city, event?.country].filter(Boolean);
+  const locationText = locationTags.join(", ") || "Unknown location";
+  const locationQuery = locationTags.join(" ");
 
   const mapsUrl =
     locationQuery.length > 0
@@ -73,9 +68,9 @@ function EventPage() {
         <p className="event-page-decription">
           {event.description ?? "No description available."}
         </p>
-        {tags.length > 0 && (
+        {locationTags.length > 0 && (
           <div className="event-tags">
-            {tags.map((tag) => (
+            {locationTags.map((tag) => (
               <span key={tag} className="tag">
                 {tag}
               </span>
@@ -92,12 +87,9 @@ function EventPage() {
         <div className="event-page-location-box">
           <div className="event-page-location-info-box">
             <div>
-              <h3 className="event-page-location-title">Address</h3>
+              <h3 className="event-page-location-title">Location</h3>
               <p className="event-page-location-address">
-                {event.venueName ?? "Unknown venue"}
-              </p>
-              <p className="event-page-location-address">
-                {event.city ?? "Unknown city"}
+                {locationText}
               </p>
             </div>
             <Link

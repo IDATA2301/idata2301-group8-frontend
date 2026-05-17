@@ -13,12 +13,9 @@ interface Props extends EventResponse {
 export default function EventCard({ isFavorite = false, onToggleFavorite, ...p }: Props) {
   const imageUrl = p.imageUrl || fallbackEventImage;
   const imageAlt = p.eventName ?? "Event image";
-  const date = p.startDate
-    ? new Date(p.startDate).toLocaleString()
-    : "No date yet";
-  const price = p.lowestPrice != null
-    ? `From ${p.lowestPrice} NOK`
-    : "No price yet";
+  const date = p.startDate ? new Date(p.startDate).toLocaleString() : "No date yet";
+  const price = p.lowestPrice != null ? `From ${p.lowestPrice} NOK` : "No price yet";
+  const locationTags = [p.city, p.country].filter(Boolean);
 
   return (
     <Link to={p.slug || ""} className="event-card">
@@ -39,20 +36,16 @@ export default function EventCard({ isFavorite = false, onToggleFavorite, ...p }
           className="favorite-icon"
         />
       </button>
-
       <img className="event-card-image" src={imageUrl} alt={imageAlt} />
-
       <div className="event-card-box">
         <h3>{p.eventName}</h3>
-
         <div className="event-tags">
-          {[...(p.categoryNames ?? []), p.city].map((category) => (
-            <span key={category} className="tag">
-              {category}
+          {locationTags.map((tag) => (
+            <span key={tag} className="tag">
+              {tag}
             </span>
           ))}
         </div>
-
         <p className="event-date">{date}</p>
         <p className="event-price">{price}</p>
       </div>

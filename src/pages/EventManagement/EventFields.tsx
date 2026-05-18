@@ -52,7 +52,7 @@ export default function EventFields({
     eventName: selectedEvent?.eventName ?? "",
     description: selectedEvent?.description ?? "",
     status: selectedEvent?.status ?? "active",
-    venueId: selectedEvent?.venueId?.toString() ?? venues[0]?.venueId?.toString() ?? ""
+    venueId: selectedEvent?.venueId?.toString() ?? venues[0]?.id?.toString() ?? ""
   });
 
   const isSubmitting = createEvent.isPending || updateEvent.isPending || deleteEvent.isPending;
@@ -115,9 +115,9 @@ export default function EventFields({
 
     const createdVenue = await onCreateVenue(venueName);
 
-    if (createdVenue?.venueId) {
+    if (createdVenue?.id) {
       setVenueOptions((current) => [...current, createdVenue]);
-      updateField("venueId", createdVenue.venueId.toString());
+      updateField("venueId", createdVenue.id.toString());
     }
 
     setNewVenueName("");
@@ -239,8 +239,8 @@ export default function EventFields({
             >
               <option value="">Select venue</option>
               {venueOptions.map((venue) => (
-                <option key={venue.venueId} value={venue.venueId}>
-                  {venue.venueName ?? `Venue ${venue.venueId}`}
+                <option key={venue.id} value={venue.id}>
+                  {venue.name ?? `Venue ${venue.id}`}
                 </option>
               ))}
             </select>

@@ -51,7 +51,7 @@ const EventDialog = forwardRef<HTMLDialogElement, EventDialogProps>(function Eve
   async function handleCreateVenue(venueName: string): Promise<VenueResponse | void> {
     const response = await createVenue.mutateAsync({
       data: {
-        venueName
+        name: venueName
       }
     });
 

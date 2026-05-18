@@ -75,16 +75,16 @@ export interface EventResponse {
 }
 
 export interface CreateVenueRequest {
-  venueName?: string;
-  venueCity?: string;
-  venueCountry?: string;
+  name?: string;
+  city?: string;
+  country?: string;
 }
 
 export interface VenueResponse {
-  venueId?: number;
-  venueName?: string;
-  venueCity?: string;
-  venueCountry?: string;
+  id?: number;
+  name?: string;
+  city?: string;
+  country?: string;
 }
 
 export interface CreateExtraFeatureRequest {

@@ -1,5 +1,5 @@
 import {
-  useGetListingsByEvent,
+  useGetTicketListings,
   type TicketListingResponse
 } from "@api/events";
 import ChooseTickets from "./ChooseTickets";
@@ -13,16 +13,19 @@ export default function EventTicketListings({ eventId }: Props) {
     data: listingsResponse,
     isLoading,
     isError
-  } = useGetListingsByEvent(eventId ?? 0, {
-    query: {
-      enabled: !!eventId
+  } = useGetTicketListings(
+    { eventId },
+    {
+      query: {
+        enabled: !!eventId
+      }
     }
-  });
+  );
 
   const listings =
-    listingsResponse?.status !== 200
-      ? []
-      : listingsResponse.data;
+    listingsResponse?.status === 200
+      ? listingsResponse.data
+      : [];
 
   const tickets = listings
     .filter((listing: TicketListingResponse) => listing.ticketListingId != null)

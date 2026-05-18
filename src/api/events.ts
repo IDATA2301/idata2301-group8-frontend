@@ -24,8 +24,31 @@ import type {
 } from '@tanstack/react-query';
 
 import { customFetchEventApi } from './client';
+export interface CreateTicketListingRequest {
+  eventId?: number;
+  companyId?: number;
+  ticketType?: string;
+  startDate?: string;
+  endDate?: string;
+  price?: number;
+  currency?: string;
+  ticketsAvailable?: number;
+}
+
+export interface TicketListingResponse {
+  ticketListingId?: number;
+  eventId?: number;
+  companyId?: number;
+  ticketType?: string;
+  startDate?: string;
+  endDate?: string;
+  price?: number;
+  currency?: string;
+  ticketsAvailable?: number;
+  createdAt?: string;
+}
+
 export interface CreateEventRequest {
-  slug?: string;
   eventName?: string;
   description?: string;
   imageUrl?: string;
@@ -48,6 +71,7 @@ export interface EventResponse {
   createdAt?: string;
   startDate?: string;
   lowestPrice?: number;
+  categoryIds?: number[];
   categoryNames?: string[];
   extraFeatureNames?: string[];
   venueName?: string;
@@ -55,39 +79,16 @@ export interface EventResponse {
 }
 
 export interface CreateVenueRequest {
-  venueCity?: string;
   venueCountry?: string;
   venueName?: string;
+  venueCity?: string;
 }
 
 export interface VenueResponse {
   venueId?: number;
-  venueCity?: string;
   venueCountry?: string;
   venueName?: string;
-}
-
-export interface CreateTicketListingRequest {
-  eventId?: number;
-  ticketType?: string;
-  startDate?: string;
-  endDate?: string;
-  price?: number;
-  currency?: string;
-  ticketsAvailable?: number;
-}
-
-export interface TicketListingResponse {
-  ticketListingId?: number;
-  eventId?: number;
-  companyId?: number;
-  ticketType?: string;
-  startDate?: string;
-  endDate?: string;
-  price?: number;
-  currency?: string;
-  ticketsAvailable?: number;
-  createdAt?: string;
+  venueCity?: string;
 }
 
 export interface CreateExtraFeatureRequest {
@@ -119,8 +120,8 @@ export interface CategoryResponse {
 
 export interface SortObject {
   empty?: boolean;
-  sorted?: boolean;
   unsorted?: boolean;
+  sorted?: boolean;
 }
 
 export interface PageableObject {
@@ -146,6 +147,16 @@ export interface PageEventResponse {
   empty?: boolean;
 }
 
+export type UpdateEventBody = {
+  eventData: CreateEventRequest;
+  eventImage?: Blob;
+};
+
+export type GetTicketListingsParams = {
+eventId?: number;
+companyId?: number;
+};
+
 export type GetEventsParams = {
 city?: string;
 category?: string;
@@ -158,6 +169,11 @@ page?: number;
 size?: number;
 };
 
+export type CreateEventBody = {
+  eventData: CreateEventRequest;
+  eventImage: Blob;
+};
+
 export type SearchByCityParams = {
 city: string;
 };
@@ -165,6 +181,224 @@ city: string;
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
+
+export type updateTicketListingResponse200 = {
+  data: TicketListingResponse
+  status: 200
+}
+
+export type updateTicketListingResponse400 = {
+  data: string
+  status: 400
+}
+
+export type updateTicketListingResponse401 = {
+  data: string
+  status: 401
+}
+
+export type updateTicketListingResponse403 = {
+  data: string
+  status: 403
+}
+
+export type updateTicketListingResponse404 = {
+  data: string
+  status: 404
+}
+
+export type updateTicketListingResponse409 = {
+  data: string
+  status: 409
+}
+
+export type updateTicketListingResponse500 = {
+  data: string
+  status: 500
+}
+
+export type updateTicketListingResponseSuccess = (updateTicketListingResponse200) & {
+  headers: Headers;
+};
+export type updateTicketListingResponseError = (updateTicketListingResponse400 | updateTicketListingResponse401 | updateTicketListingResponse403 | updateTicketListingResponse404 | updateTicketListingResponse409 | updateTicketListingResponse500) & {
+  headers: Headers;
+};
+
+export type updateTicketListingResponse = (updateTicketListingResponseSuccess | updateTicketListingResponseError)
+
+export const getUpdateTicketListingUrl = (id: number,) => {
+
+
+
+
+  return `/ticket-listings/${id}`
+}
+
+export const updateTicketListing = async (id: number,
+    createTicketListingRequest: CreateTicketListingRequest, options?: RequestInit): Promise<updateTicketListingResponse> => {
+
+  return customFetchEventApi<updateTicketListingResponse>(getUpdateTicketListingUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      createTicketListingRequest,)
+  }
+);}
+
+
+
+
+export const getUpdateTicketListingMutationOptions = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTicketListing>>, TError,{id: number;data: CreateTicketListingRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTicketListing>>, TError,{id: number;data: CreateTicketListingRequest}, TContext> => {
+
+const mutationKey = ['updateTicketListing'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTicketListing>>, {id: number;data: CreateTicketListingRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateTicketListing(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateTicketListingMutationResult = NonNullable<Awaited<ReturnType<typeof updateTicketListing>>>
+    export type UpdateTicketListingMutationBody = CreateTicketListingRequest
+    export type UpdateTicketListingMutationError = string
+
+    export const useUpdateTicketListing = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTicketListing>>, TError,{id: number;data: CreateTicketListingRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateTicketListing>>,
+        TError,
+        {id: number;data: CreateTicketListingRequest},
+        TContext
+      > => {
+      return useMutation(getUpdateTicketListingMutationOptions(options), queryClient);
+    }
+
+export type deleteTicketListingResponse200 = {
+  data: void
+  status: 200
+}
+
+export type deleteTicketListingResponse400 = {
+  data: string
+  status: 400
+}
+
+export type deleteTicketListingResponse401 = {
+  data: string
+  status: 401
+}
+
+export type deleteTicketListingResponse403 = {
+  data: string
+  status: 403
+}
+
+export type deleteTicketListingResponse404 = {
+  data: string
+  status: 404
+}
+
+export type deleteTicketListingResponse409 = {
+  data: string
+  status: 409
+}
+
+export type deleteTicketListingResponse500 = {
+  data: string
+  status: 500
+}
+
+export type deleteTicketListingResponseSuccess = (deleteTicketListingResponse200) & {
+  headers: Headers;
+};
+export type deleteTicketListingResponseError = (deleteTicketListingResponse400 | deleteTicketListingResponse401 | deleteTicketListingResponse403 | deleteTicketListingResponse404 | deleteTicketListingResponse409 | deleteTicketListingResponse500) & {
+  headers: Headers;
+};
+
+export type deleteTicketListingResponse = (deleteTicketListingResponseSuccess | deleteTicketListingResponseError)
+
+export const getDeleteTicketListingUrl = (id: number,) => {
+
+
+
+
+  return `/ticket-listings/${id}`
+}
+
+export const deleteTicketListing = async (id: number, options?: RequestInit): Promise<deleteTicketListingResponse> => {
+
+  return customFetchEventApi<deleteTicketListingResponse>(getDeleteTicketListingUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteTicketListingMutationOptions = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteTicketListing'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTicketListing>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteTicketListing(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteTicketListingMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTicketListing>>>
+
+    export type DeleteTicketListingMutationError = string
+
+    export const useDeleteTicketListing = <TError = string,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteTicketListing>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteTicketListingMutationOptions(options), queryClient);
+    }
 
 export type getEventByIdResponse200 = {
   data: EventResponse
@@ -367,15 +601,22 @@ export const getUpdateEventUrl = (id: number,) => {
  * @summary Update event
  */
 export const updateEvent = async (id: number,
-    createEventRequest: CreateEventRequest, options?: RequestInit): Promise<updateEventResponse> => {
+    updateEventBody?: UpdateEventBody, options?: RequestInit): Promise<updateEventResponse> => {
+    const formData = new FormData();
+if(updateEventBody?.eventData !== undefined) {
+ formData.append(`eventData`, JSON.stringify(updateEventBody.eventData));
+ }
+if(updateEventBody?.eventImage !== undefined) {
+ formData.append(`eventImage`, updateEventBody.eventImage);
+ }
 
   return customFetchEventApi<updateEventResponse>(getUpdateEventUrl(id),
   {
     ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      createEventRequest,)
+    method: 'PUT'
+    ,
+    body:
+      formData,
   }
 );}
 
@@ -383,8 +624,8 @@ export const updateEvent = async (id: number,
 
 
 export const getUpdateEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data?: UpdateEventBody}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data?: UpdateEventBody}, TContext> => {
 
 const mutationKey = ['updateEvent'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -396,7 +637,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEvent>>, {id: number;data: CreateEventRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEvent>>, {id: number;data?: UpdateEventBody}> = (props) => {
           const {id,data} = props ?? {};
 
           return  updateEvent(id,data,requestOptions)
@@ -410,18 +651,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UpdateEventMutationResult = NonNullable<Awaited<ReturnType<typeof updateEvent>>>
-    export type UpdateEventMutationBody = CreateEventRequest
+    export type UpdateEventMutationBody = UpdateEventBody | undefined
     export type UpdateEventMutationError = string
 
     /**
  * @summary Update event
  */
 export const useUpdateEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEvent>>, TError,{id: number;data?: UpdateEventBody}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateEvent>>,
         TError,
-        {id: number;data: CreateEventRequest},
+        {id: number;data?: UpdateEventBody},
         TContext
       > => {
       return useMutation(getUpdateEventMutationOptions(options), queryClient);
@@ -788,6 +1029,152 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getCreateMutationOptions(options), queryClient);
     }
+
+export type getTicketListingsResponse200 = {
+  data: TicketListingResponse[]
+  status: 200
+}
+
+export type getTicketListingsResponse400 = {
+  data: string
+  status: 400
+}
+
+export type getTicketListingsResponse401 = {
+  data: string
+  status: 401
+}
+
+export type getTicketListingsResponse403 = {
+  data: string
+  status: 403
+}
+
+export type getTicketListingsResponse404 = {
+  data: string
+  status: 404
+}
+
+export type getTicketListingsResponse409 = {
+  data: string
+  status: 409
+}
+
+export type getTicketListingsResponse500 = {
+  data: string
+  status: 500
+}
+
+export type getTicketListingsResponseSuccess = (getTicketListingsResponse200) & {
+  headers: Headers;
+};
+export type getTicketListingsResponseError = (getTicketListingsResponse400 | getTicketListingsResponse401 | getTicketListingsResponse403 | getTicketListingsResponse404 | getTicketListingsResponse409 | getTicketListingsResponse500) & {
+  headers: Headers;
+};
+
+export type getTicketListingsResponse = (getTicketListingsResponseSuccess | getTicketListingsResponseError)
+
+export const getGetTicketListingsUrl = (params?: GetTicketListingsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/ticket-listings?${stringifiedParams}` : `/ticket-listings`
+}
+
+export const getTicketListings = async (params?: GetTicketListingsParams, options?: RequestInit): Promise<getTicketListingsResponse> => {
+
+  return customFetchEventApi<getTicketListingsResponse>(getGetTicketListingsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetTicketListingsQueryKey = (params?: GetTicketListingsParams,) => {
+    return [
+    `/ticket-listings`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetTicketListingsQueryOptions = <TData = Awaited<ReturnType<typeof getTicketListings>>, TError = string>(params?: GetTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTicketListings>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetTicketListingsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTicketListings>>> = ({ signal }) => getTicketListings(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTicketListings>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetTicketListingsQueryResult = NonNullable<Awaited<ReturnType<typeof getTicketListings>>>
+export type GetTicketListingsQueryError = string
+
+
+export function useGetTicketListings<TData = Awaited<ReturnType<typeof getTicketListings>>, TError = string>(
+ params: undefined |  GetTicketListingsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTicketListings>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTicketListings>>,
+          TError,
+          Awaited<ReturnType<typeof getTicketListings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTicketListings<TData = Awaited<ReturnType<typeof getTicketListings>>, TError = string>(
+ params?: GetTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTicketListings>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTicketListings>>,
+          TError,
+          Awaited<ReturnType<typeof getTicketListings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTicketListings<TData = Awaited<ReturnType<typeof getTicketListings>>, TError = string>(
+ params?: GetTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTicketListings>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetTicketListings<TData = Awaited<ReturnType<typeof getTicketListings>>, TError = string>(
+ params?: GetTicketListingsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTicketListings>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetTicketListingsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 
 export type createTicketListingResponse200 = {
   data: TicketListingResponse
@@ -1711,15 +2098,22 @@ export const getCreateEventUrl = () => {
 /**
  * @summary Create event
  */
-export const createEvent = async (createEventRequest: CreateEventRequest, options?: RequestInit): Promise<createEventResponse> => {
+export const createEvent = async (createEventBody?: CreateEventBody, options?: RequestInit): Promise<createEventResponse> => {
+    const formData = new FormData();
+if(createEventBody?.eventData !== undefined) {
+ formData.append(`eventData`, JSON.stringify(createEventBody.eventData));
+ }
+if(createEventBody?.eventImage !== undefined) {
+ formData.append(`eventImage`, createEventBody.eventImage);
+ }
 
   return customFetchEventApi<createEventResponse>(getCreateEventUrl(),
   {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      createEventRequest,)
+    method: 'POST'
+    ,
+    body:
+      formData,
   }
 );}
 
@@ -1727,8 +2121,8 @@ export const createEvent = async (createEventRequest: CreateEventRequest, option
 
 
 export const getCreateEventMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data?: CreateEventBody}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data?: CreateEventBody}, TContext> => {
 
 const mutationKey = ['createEvent'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1740,7 +2134,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createEvent>>, {data: CreateEventRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createEvent>>, {data?: CreateEventBody}> = (props) => {
           const {data} = props ?? {};
 
           return  createEvent(data,requestOptions)
@@ -1754,18 +2148,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type CreateEventMutationResult = NonNullable<Awaited<ReturnType<typeof createEvent>>>
-    export type CreateEventMutationBody = CreateEventRequest
+    export type CreateEventMutationBody = CreateEventBody | undefined
     export type CreateEventMutationError = string
 
     /**
  * @summary Create event
  */
 export const useCreateEvent = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data: CreateEventRequest}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvent>>, TError,{data?: CreateEventBody}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createEvent>>,
         TError,
-        {data: CreateEventRequest},
+        {data?: CreateEventBody},
         TContext
       > => {
       return useMutation(getCreateEventMutationOptions(options), queryClient);
@@ -2400,145 +2794,6 @@ export function useSearchByCity<TData = Awaited<ReturnType<typeof searchByCity>>
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getSearchByCityQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-
-
-
-export type getListingsByEventResponse200 = {
-  data: TicketListingResponse[]
-  status: 200
-}
-
-export type getListingsByEventResponse400 = {
-  data: string
-  status: 400
-}
-
-export type getListingsByEventResponse401 = {
-  data: string
-  status: 401
-}
-
-export type getListingsByEventResponse403 = {
-  data: string
-  status: 403
-}
-
-export type getListingsByEventResponse404 = {
-  data: string
-  status: 404
-}
-
-export type getListingsByEventResponse409 = {
-  data: string
-  status: 409
-}
-
-export type getListingsByEventResponse500 = {
-  data: string
-  status: 500
-}
-
-export type getListingsByEventResponseSuccess = (getListingsByEventResponse200) & {
-  headers: Headers;
-};
-export type getListingsByEventResponseError = (getListingsByEventResponse400 | getListingsByEventResponse401 | getListingsByEventResponse403 | getListingsByEventResponse404 | getListingsByEventResponse409 | getListingsByEventResponse500) & {
-  headers: Headers;
-};
-
-export type getListingsByEventResponse = (getListingsByEventResponseSuccess | getListingsByEventResponseError)
-
-export const getGetListingsByEventUrl = (eventId: number,) => {
-
-
-
-
-  return `/ticket-listings/event/${eventId}`
-}
-
-export const getListingsByEvent = async (eventId: number, options?: RequestInit): Promise<getListingsByEventResponse> => {
-
-  return customFetchEventApi<getListingsByEventResponse>(getGetListingsByEventUrl(eventId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetListingsByEventQueryKey = (eventId: number,) => {
-    return [
-    `/ticket-listings/event/${eventId}`
-    ] as const;
-    }
-
-
-export const getGetListingsByEventQueryOptions = <TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetListingsByEventQueryKey(eventId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getListingsByEvent>>> = ({ signal }) => getListingsByEvent(eventId, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: !!(eventId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetListingsByEventQueryResult = NonNullable<Awaited<ReturnType<typeof getListingsByEvent>>>
-export type GetListingsByEventQueryError = string
-
-
-export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
- eventId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getListingsByEvent>>,
-          TError,
-          Awaited<ReturnType<typeof getListingsByEvent>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetchEventApi>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
- eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getListingsByEvent>>,
-          TError,
-          Awaited<ReturnType<typeof getListingsByEvent>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetchEventApi>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
- eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useGetListingsByEvent<TData = Awaited<ReturnType<typeof getListingsByEvent>>, TError = string>(
- eventId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getListingsByEvent>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetListingsByEventQueryOptions(eventId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3327,114 +3582,6 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getDeleteCategoryMutationOptions(options), queryClient);
-    }
-
-export type deleteTicketListingResponse200 = {
-  data: void
-  status: 200
-}
-
-export type deleteTicketListingResponse400 = {
-  data: string
-  status: 400
-}
-
-export type deleteTicketListingResponse401 = {
-  data: string
-  status: 401
-}
-
-export type deleteTicketListingResponse403 = {
-  data: string
-  status: 403
-}
-
-export type deleteTicketListingResponse404 = {
-  data: string
-  status: 404
-}
-
-export type deleteTicketListingResponse409 = {
-  data: string
-  status: 409
-}
-
-export type deleteTicketListingResponse500 = {
-  data: string
-  status: 500
-}
-
-export type deleteTicketListingResponseSuccess = (deleteTicketListingResponse200) & {
-  headers: Headers;
-};
-export type deleteTicketListingResponseError = (deleteTicketListingResponse400 | deleteTicketListingResponse401 | deleteTicketListingResponse403 | deleteTicketListingResponse404 | deleteTicketListingResponse409 | deleteTicketListingResponse500) & {
-  headers: Headers;
-};
-
-export type deleteTicketListingResponse = (deleteTicketListingResponseSuccess | deleteTicketListingResponseError)
-
-export const getDeleteTicketListingUrl = (id: number,) => {
-
-
-
-
-  return `/ticket-listings/${id}`
-}
-
-export const deleteTicketListing = async (id: number, options?: RequestInit): Promise<deleteTicketListingResponse> => {
-
-  return customFetchEventApi<deleteTicketListingResponse>(getDeleteTicketListingUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getDeleteTicketListingMutationOptions = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext> => {
-
-const mutationKey = ['deleteTicketListing'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTicketListing>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteTicketListing(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteTicketListingMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTicketListing>>>
-
-    export type DeleteTicketListingMutationError = string
-
-    export const useDeleteTicketListing = <TError = string,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTicketListing>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetchEventApi>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteTicketListing>>,
-        TError,
-        {id: number},
-        TContext
-      > => {
-      return useMutation(getDeleteTicketListingMutationOptions(options), queryClient);
     }
 
 export type removeFavoriteResponse200 = {

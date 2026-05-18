@@ -186,6 +186,11 @@ export interface GlobalRoleChangeRequestDto {
   reviewedAt?: string;
 }
 
+export type ApprovableRequestDto =
+  | CompanyCreationRequestDto
+  | CompanyRoleChangeRequestDto
+  | GlobalRoleChangeRequestDto;
+
 export type GetApprovalRequestsParams = {
   /**
    * Optional query parameter to filter approval requests by their status. If not provided, all approval requests will be returned.
@@ -2100,7 +2105,7 @@ export function useGetCompanies<
 }
 
 export type getApprovalRequestsResponse200 = {
-  data: string[];
+  data: ApprovableRequestDto[];
   status: 200;
 };
 

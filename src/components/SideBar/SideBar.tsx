@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { useAuthContext } from "@utility/AuthContext";
 import styles from "./SideBar.module.css";
 
 type Props = {
@@ -11,10 +11,13 @@ export default function SideBar({
   isOpen,
   onClose
 }: Props) {
+  const auth = useAuthContext();
+
+  const isAdmin = auth.isLoggedIn && auth.isAdmin;
+  const isProvider = auth.isLoggedIn && auth.isProvider;
 
   return (
     <>
-
       {isOpen && (
         <div
           className={styles.overlay}
@@ -29,7 +32,6 @@ export default function SideBar({
             : styles.sideMenu
         }
       >
-
         <button
           className={styles.closeButton}
           onClick={onClose}
@@ -49,8 +51,36 @@ export default function SideBar({
           My Account
         </Link>
 
-      </aside>
+        {(isAdmin || isProvider) && (
+          <Link
+            to="/event-management"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            Event management
+          </Link>
+        )}
 
+        {isAdmin && (
+          <Link
+            to="/user-management"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            User management
+          </Link>
+        )}
+
+        {isAdmin && (
+          <Link
+            to="/request-management"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            Request management
+          </Link>
+        )}
+      </aside>
     </>
   );
 }

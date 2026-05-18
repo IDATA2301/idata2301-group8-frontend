@@ -58,8 +58,8 @@ function HomePage() {
     isError
   } = useGetEvents({ filter: {} });
 
-  const events: EventResponse[] = Array.isArray(eventsResponse?.data)
-    ? eventsResponse.data
+  const events: EventResponse[] = Array.isArray(eventsResponse?.data?.content)
+    ? eventsResponse.data.content
     : [];
 
   // const featuredEvent = events[0];

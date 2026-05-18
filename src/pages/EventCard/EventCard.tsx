@@ -21,7 +21,7 @@ export default function EventCard({ isFavorite = false, onToggleFavorite, ...p }
 
   return (
     <Link
-      to={p.slug || ""}
+      to={"/events/" + p.slug || ""}
       className="event-card"
       onMouseEnter={() => p.slug && prefetch(p.slug)}
     >

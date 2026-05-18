@@ -29,7 +29,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/events/:eventslug" element={<EventPageLoader />} />
+        <Route path="/events/:slug" element={<EventPageLoader />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/aboutUs" element={<AboutUsPage />} />
         <Route path="/account" element={<AccountPage />} />

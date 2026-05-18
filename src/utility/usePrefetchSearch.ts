@@ -6,7 +6,7 @@ const EVENTS_PER_PAGE = 15;
 export function usePrefetchSearch() {
   const queryClient = useQueryClient();
 
-  const prefetch = (params: GetEventsParams = {}) => {
+  const prefetch = (params: GetEventsParams = { filter: {} }) => {
     const queryParams: GetEventsParams = {
       page: 0,
       size: EVENTS_PER_PAGE,

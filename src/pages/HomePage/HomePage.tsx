@@ -56,7 +56,7 @@ function HomePage() {
     data: eventsResponse,
     isLoading,
     isError
-  } = useGetEvents();
+  } = useGetEvents({ filter: {} });
 
   const events: EventResponse[] = Array.isArray(eventsResponse?.data)
     ? eventsResponse.data
@@ -128,7 +128,7 @@ function HomePage() {
                     className={`category-card ${category.className}`}
                     to={category.path}
                     style={{ backgroundImage: `url(${category.image})` }}
-                    onMouseEnter={() => prefetch({ category: categoryParam ?? undefined })}
+                    onMouseEnter={() => prefetch({ filter: { category: categoryParam ?? undefined } })}
                   >
                     {category.name}
                   </Link>

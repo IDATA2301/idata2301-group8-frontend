@@ -31,20 +31,22 @@ const EventList = ({ query, filters, sort }: Params) => {
   const sortOption = sortOptions.find((o) => o.value === sort);
 
   const { data: response, isLoading } = useGetEvents({
-    query: query.trim() || undefined,
-    city: filters.locations[0] || undefined,
-    category: filters.categories[0] || undefined,
-    startDate: toIsoDate(filters.startDate),
-    endDate: toIsoDate(filters.endDate, true),
-    minPrice: filters.priceMin > 0 ? filters.priceMin : undefined,
-    maxPrice: filters.priceMax > 0 && filters.priceMax !== 9999
-      ? filters.priceMax
-      : undefined,
+    filter: {
+      query: query.trim() || undefined,
+      city: filters.locations[0] || undefined,
+      category: filters.categories[0] || undefined,
+      startDate: toIsoDate(filters.startDate),
+      endDate: toIsoDate(filters.endDate, true),
+      minPrice: filters.priceMin > 0 ? filters.priceMin : undefined,
+      maxPrice: filters.priceMax > 0 && filters.priceMax !== 9999
+        ? filters.priceMax
+        : undefined,
+    },
     page: currentPage - 1,
     size: EVENTS_PER_PAGE,
-    sortBy: sortOption?.sortBy,
-    sortDirection: sortOption?.sortDirection
-  } as Parameters<typeof useGetEvents>[0]);
+    // sortBy: sortOption?.sortBy,
+    // sortDirection: sortOption?.sortDirection
+  });
 
   const goToPage = (page: number) => {
     setSearchParams((prev) => {

@@ -42,7 +42,7 @@ export default function EventManagement() {
   const [popup, setPopup] = useState<PopupState>(null);
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
   const companiesQuery = useGetCompanies();
-  const eventsQuery = useGetEvents({ size: 100 });
+  const eventsQuery = useGetEvents({ size: 100, filter: {} });
   const ticketListingsQuery = useGetTicketListings(
     companyIdParam ? { companyId: companyIdParam } : undefined
   );

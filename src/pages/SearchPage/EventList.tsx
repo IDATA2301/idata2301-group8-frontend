@@ -29,6 +29,7 @@ const EventList = ({ query, filters, sort }: Params) => {
   const currentPage = Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
 
   const sortOption = sortOptions.find((o) => o.value === sort);
+  console.log(sortOption);
 
   const { data: response, isLoading } = useGetEvents({
     filter: {

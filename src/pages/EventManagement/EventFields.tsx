@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./DialogForm.module.css";
+import toast from "@components/Toast";
 import type {
   CategoryResponse,
   CreateEventRequest,
@@ -118,11 +119,18 @@ export default function EventFields({
       return;
     }
 
-    const createdVenue = await onCreateVenue(venueName);
+    try {
+      const createdVenue = await onCreateVenue(venueName);
 
-    if (createdVenue?.id) {
-      setVenueOptions((current) => [...current, createdVenue]);
-      updateField("venueId", createdVenue.id.toString());
+      if (createdVenue?.id) {
+        setVenueOptions((current) => [...current, createdVenue]);
+        updateField("venueId", createdVenue.id.toString());
+        toast.success("Venue created successfully");
+      } else {
+        toast.error("Failed to create venue");
+      }
+    } catch {
+      toast.error("Failed to create venue");
     }
 
     setNewVenueName("");
@@ -144,7 +152,15 @@ export default function EventFields({
             eventImage: eventImage ?? undefined
           }
         },
-        { onSuccess: handleSuccess }
+        {
+          onSuccess: () => {
+            toast.success("Event updated successfully");
+            handleSuccess();
+          },
+          onError: () => {
+            toast.error("Failed to update event");
+          }
+        }
       );
       return;
     }
@@ -160,7 +176,15 @@ export default function EventFields({
           eventImage
         }
       },
-      { onSuccess: handleSuccess }
+      {
+        onSuccess: () => {
+          toast.success("Event created successfully");
+          handleSuccess();
+        },
+        onError: () => {
+          toast.error("Failed to create event");
+        }
+      }
     );
   }
 
@@ -171,7 +195,15 @@ export default function EventFields({
 
     deleteEvent.mutate(
       { id: selectedEvent.eventId },
-      { onSuccess: handleSuccess }
+      {
+        onSuccess: () => {
+          toast.success("Event deleted successfully");
+          handleSuccess();
+        },
+        onError: () => {
+          toast.error("Failed to delete event");
+        }
+      }
     );
   }
 

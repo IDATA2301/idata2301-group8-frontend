@@ -1,0 +1,56 @@
+.page {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.card {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  padding: 3rem 2rem;
+  border-radius: 1.5rem;
+  background-color: white;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.08);
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background-color: #f2f4f7;
+  color: #475467;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.card h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #101828;
+}
+
+.card p {
+  margin: 1rem 0 2rem;
+  color: #667085;
+  line-height: 1.6;
+}
+
+.link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.75rem;
+  background-color: #101828;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover {
+  background-color: #344054;
+}

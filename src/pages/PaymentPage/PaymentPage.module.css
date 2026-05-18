@@ -1,0 +1,202 @@
+.paymentPage {
+  min-height: calc(100vh - 220px);
+  background: var(--deep-space-blue);
+  color: white;
+  font-family: Inter, sans-serif;
+  padding: 2rem 0 5rem;
+}
+
+.paymentContent {
+  width: min(470px, calc(100% - 2rem));
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.orderCard {
+  width: 100%;
+  border-radius: 18px;
+  background: var(--deep-space-blue-dark);
+  padding: 1.3rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.orderCard h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.orderCard h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.orderCard p {
+  margin: 0;
+  color: #e3e3e3;
+  font-size: 0.78rem;
+}
+
+.paymentForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paymentMethods {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.7rem;
+}
+
+.methodButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100px;
+  height: 67px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background: var(--deep-space-blue-dark);
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    filter 0.2s,
+    transform 0.2s;
+}
+
+.methodButton:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.methodButton img:not(.vippsLogo) {
+  max-width: 46px;
+  max-height: 18px;
+  object-fit: contain;
+}
+
+.methodButton:first-child img {
+  width: 16px;
+  height: 16px;
+}
+
+.methodButton .vippsLogo {
+  display: block;
+  width: 53px;
+  height: 15px;
+  min-width: 53px;
+  min-height: 15px;
+  max-width: none;
+  max-height: none;
+  object-fit: fill;
+  transform: scale(3);
+  transform-origin: center;
+}
+
+.activeMethod {
+  border-color: #e3e3e3;
+}
+
+.paymentForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.paymentForm input {
+  width: 100%;
+  height: 46px;
+  border: 1px solid #e3e3e3;
+  border-radius: 16px;
+  background: var(--deep-space-blue-dark);
+  color: white;
+  padding: 0 1rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.paymentForm input::placeholder {
+  color: rgba(227, 227, 227, 0.55);
+}
+
+.paymentForm input:focus {
+  border-color: var(--steel-blue);
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.purchaseButton {
+  align-self: flex-end;
+  min-width: 86px;
+  height: 46px;
+  border: none;
+  border-radius: 16px;
+  background: var(--steel-blue);
+  color: white;
+  font-family: Inter, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    opacity 0.2s,
+    filter 0.2s,
+    transform 0.2s;
+}
+
+.purchaseButton:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.purchaseButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.purchaseButton:disabled:hover {
+  transform: none;
+  filter: grayscale(0.3);
+}
+
+@media (max-width: 520px) {
+  .paymentPage {
+    padding-top: 1.25rem;
+  }
+
+  .paymentMethods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .methodButton {
+    width: 100%;
+    height: 67px;
+  }
+
+  .twoColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .purchaseButton {
+    width: 100%;
+  }
+}

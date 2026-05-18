@@ -1,0 +1,115 @@
+.checkoutPage {
+  min-height: calc(100vh - 220px);
+  background: var(--deep-space-blue);
+  color: white;
+  font-family: Inter, sans-serif;
+  padding: 1.5rem 0 5rem;
+}
+
+.checkoutContent {
+  width: min(520px, calc(100% - 2rem));
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirmationText {
+  width: 100%;
+}
+
+.confirmationText h1 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.confirmationText p {
+  margin: 0 0 0.35rem;
+  color: #e3e3e3;
+  font-size: 0.8rem;
+}
+
+.confirmationText h2 {
+  margin: 1rem 0 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.qrCard {
+  width: 190px;
+  height: 190px;
+  border-radius: 18px;
+  background: white;
+  padding: 18px;
+  box-sizing: border-box;
+  margin: 0.2rem 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customerCard {
+  width: 100%;
+  max-width: 380px;
+  align-self: flex-start;
+}
+
+.customerCard h2 {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 0.35rem 1rem;
+  color: #e3e3e3;
+  font-size: 0.78rem;
+}
+
+.infoGrid span:nth-child(odd) {
+  font-weight: 800;
+}
+
+.paymentMethod {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.paymentMethod img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+@media (max-width: 520px) {
+  .checkoutPage {
+    padding-top: 1.25rem;
+  }
+
+  .checkoutContent {
+    align-items: stretch;
+  }
+
+  .qrCard {
+    align-self: center;
+    width: 170px;
+    height: 170px;
+  }
+
+  .customerCard {
+    max-width: none;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .infoGrid span:nth-child(even) {
+    margin-bottom: 0.55rem;
+  }
+}

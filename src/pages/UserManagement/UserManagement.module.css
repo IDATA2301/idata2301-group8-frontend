@@ -10,7 +10,7 @@
 }
 
 .pageContent {
-  width: min(881px, calc(100% - 2rem));
+  width: min(1000px, calc(100% - 2rem));
   margin: 0 auto;
 }
 
@@ -33,9 +33,9 @@
 
 .tableHeader {
   display: grid;
-  grid-template-columns: 1fr 1.7fr 1.2fr 1.2fr 106px;
+  grid-template-columns: 1.15fr 1.55fr 2fr 1fr 106px;
   gap: 1rem;
-  min-width: 833px;
+  min-width: 940px;
   padding: 0 0.5rem 0.75rem;
   color: white;
   font-size: 0.8rem;
@@ -46,7 +46,7 @@
   max-height: calc(100% - 2rem);
   overflow-y: auto;
   overflow-x: hidden;
-  min-width: 833px;
+  min-width: 940px;
   padding-right: 0.35rem;
 }
 
@@ -69,12 +69,12 @@
 
 .userEntry {
   display: grid;
-  grid-template-columns: 1fr 1.7fr 1.2fr 1.2fr 106px;
+  grid-template-columns: 1.15fr 1.55fr 2fr 1fr 106px;
   gap: 1rem;
   align-items: center;
   width: 100%;
-  height: 36px;
-  padding: 0 0.5rem;
+  min-height: 42px;
+  padding: 0.25rem 0.5rem;
   color: #e3e3e3;
   font-size: 16px;
   box-sizing: border-box;
@@ -87,31 +87,102 @@
   white-space: nowrap;
 }
 
-.roleSelect {
-  width: 100%;
-  height: 31px;
-  border: 1px solid rgba(227, 227, 227, 0.5);
+.ownUserEntry {
+  background-color: rgba(255, 255, 255, 0.045);
   border-radius: 9px;
-  background-color: var(--deep-space-blue-dark);
+}
+
+.ownUserEntry .userIdButton,
+.ownUserEntry > span,
+.ownUserEntry .roleCheckboxLabel {
+  opacity: 0.65;
+}
+
+.ownUserEntry .deleteButton {
+  opacity: 0.35;
+}
+
+.userIdButton {
+  max-width: 100%;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background-color: transparent;
   color: #e3e3e3;
-  padding: 0 2rem 0 0.65rem;
   font-family: Inter, sans-serif;
   font-size: 16px;
-  outline: none;
-  appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, #e3e3e3 50%),
-    linear-gradient(135deg, #e3e3e3 50%, transparent 50%);
-  background-position: calc(100% - 1.1rem) 50%, calc(100% - 0.82rem) 50%;
-  background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
-  background-repeat: no-repeat;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 }
 
-.roleSelect:focus {
+.userIdButton:hover {
+  border-color: rgba(227, 227, 227, 0.35);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: white;
+}
+
+.userIdButton:active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.rolesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.roleCheckboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 28px;
+  padding: 0 0.6rem;
+  border: 1px solid rgba(227, 227, 227, 0.35);
+  border-radius: 999px;
+  color: #e3e3e3;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    opacity 0.2s;
+}
+
+.roleCheckboxLabel:hover {
+  border-color: rgba(227, 227, 227, 0.65);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.roleCheckboxLabel input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  accent-color: var(--steel-blue);
+  cursor: pointer;
+}
+
+.roleCheckboxLabel:has(input:checked) {
   border-color: var(--steel-blue);
+  background-color: rgba(70, 130, 180, 0.22);
+  color: white;
 }
 
-.roleSelect:disabled {
+.roleCheckboxLabel:has(input:disabled) {
   opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.roleCheckboxLabel:has(input:disabled) input {
   cursor: not-allowed;
 }
 
@@ -187,12 +258,12 @@
 
   .tableHeader,
   .entriesList {
-    min-width: 760px;
+    min-width: 900px;
   }
 
   .tableHeader,
   .userEntry {
-    grid-template-columns: 1fr 1.6fr 1.1fr 1.1fr 96px;
+    grid-template-columns: 1.15fr 1.5fr 2fr 1fr 96px;
     gap: 0.7rem;
   }
 
@@ -201,13 +272,22 @@
   }
 
   .userEntry {
-    height: 36px;
     font-size: 0.78rem;
   }
 
-  .roleSelect {
-    height: 30px;
+  .userIdButton {
     font-size: 0.78rem;
+  }
+
+  .roleCheckboxLabel {
+    min-height: 26px;
+    padding: 0 0.45rem;
+    font-size: 0.72rem;
+  }
+
+  .roleCheckboxLabel input {
+    width: 12px;
+    height: 12px;
   }
 
   .deleteButton {
@@ -229,12 +309,12 @@
 
   .tableHeader,
   .entriesList {
-    min-width: 720px;
+    min-width: 860px;
   }
 
   .tableHeader,
   .userEntry {
-    grid-template-columns: 1fr 1.5fr 1.05fr 1.05fr 90px;
+    grid-template-columns: 1.15fr 1.45fr 2fr 1fr 90px;
     gap: 0.55rem;
   }
 

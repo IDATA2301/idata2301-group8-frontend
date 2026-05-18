@@ -6,9 +6,10 @@ import ChooseTickets from "./ChooseTickets";
 
 interface Props {
   eventId?: number;
+  eventName: string;
 }
 
-export default function EventTicketListings({ eventId }: Props) {
+export default function EventTicketListings({ eventId, eventName }: Props) {
   const {
     data: listingsResponse,
     isLoading,
@@ -47,5 +48,11 @@ export default function EventTicketListings({ eventId }: Props) {
     return <p>No tickets available.</p>;
   }
 
-  return <ChooseTickets tickets={tickets} />;
+  return (
+    <ChooseTickets
+      eventId={eventId}
+      eventName={eventName}
+      tickets={tickets}
+    />
+  );
 }

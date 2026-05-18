@@ -4,8 +4,8 @@ import ScrollToTop from "@utility/ScrollToTop.tsx";
 import openInNew from "@assets/icons/open-in-new.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
 import EventTicketListings from "./EventTicketListings";
-import "./style.css";
 import StateBanner from "@components/StateBanner/StateBanner";
+import "./style.css";
 
 function EventPage() {
   const { slug } = useParams();
@@ -25,14 +25,9 @@ function EventPage() {
       ? undefined
       : eventResponse.data;
 
-  const tags = [
-    ...(event?.categoryNames ?? []),
-    ...(event?.extraFeatureNames ?? [])
-  ];
-
-  const locationQuery = [event?.venueName, event?.city]
-    .filter(Boolean)
-    .join(" ");
+  const locationTags = [event?.city, event?.country].filter(Boolean);
+  const locationText = locationTags.join(", ") || "Unknown location";
+  const locationQuery = locationTags.join(" ");
 
   const mapsUrl =
     locationQuery.length > 0
@@ -49,35 +44,33 @@ function EventPage() {
   }
 
   if (eventError || !event) {
-    return <StateBanner
-      title="Event not found"
-      description="This event does not exist, or it may no longer be available."
-    />;
+    return (
+      <StateBanner
+        title="Event not found"
+        description="This event does not exist, or it may no longer be available."
+      />
+    );
   }
 
   return (
     <>
       <ScrollToTop />
-
       <div
         className="hero-image-event"
         style={{
           backgroundImage: `url(${event.imageUrl || fallbackEventImage})`
         }}
       />
-
       <div className="event-page-banner">
         <h1 className="event-page-title">
           {event.eventName ?? "Untitled event"}
         </h1>
-
         <p className="event-page-decription">
           {event.description ?? "No description available."}
         </p>
-
-        {tags.length > 0 && (
+        {locationTags.length > 0 && (
           <div className="event-tags">
-            {tags.map((tag) => (
+            {locationTags.map((tag) => (
               <span key={tag} className="tag">
                 {tag}
               </span>
@@ -85,26 +78,20 @@ function EventPage() {
           </div>
         )}
       </div>
-
       <div className="center-box">
-        <EventTicketListings eventId={event.eventId} />
-
+        <EventTicketListings
+          eventId={event.eventId}
+          eventName={event.eventName ?? "Untitled event"}
+        />
         <hr className="page-divider-line" />
-
         <div className="event-page-location-box">
           <div className="event-page-location-info-box">
             <div>
-              <h3 className="event-page-location-title">Address</h3>
-
+              <h3 className="event-page-location-title">Location</h3>
               <p className="event-page-location-address">
-                {event.venueName ?? "Unknown venue"}
-              </p>
-
-              <p className="event-page-location-address">
-                {event.city ?? "Unknown city"}
+                {locationText}
               </p>
             </div>
-
             <Link
               to={mapsUrl}
               target="_blank"
@@ -112,11 +99,9 @@ function EventPage() {
               className="event-page-location-action-button"
             >
               Open in Google Maps
-
               <img src={openInNew} alt="open in new tab" />
             </Link>
           </div>
-
           {iframeUrl && (
             <iframe
               className="event-page-location-iframe"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import plus from "@assets/icons/plus.svg";
 import minus from "@assets/icons/minus.svg";
 import Button from "@components/Button/Button";
@@ -18,16 +18,20 @@ function TicketCard({ onChange, ticket }: Props) {
   const maxCount = 99;
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    onChange(count);
-  }, [count, onChange]);
-
   const increment = () => {
-    setCount((prev) => Math.min(prev + 1, maxCount));
+    setCount((currentCount) => {
+      const nextCount = Math.min(currentCount + 1, maxCount);
+      onChange(nextCount);
+      return nextCount;
+    });
   };
 
   const decrement = () => {
-    setCount((prev) => Math.max(prev - 1, 0));
+    setCount((currentCount) => {
+      const nextCount = Math.max(currentCount - 1, 0);
+      onChange(nextCount);
+      return nextCount;
+    });
   };
 
   return (
@@ -36,12 +40,10 @@ function TicketCard({ onChange, ticket }: Props) {
         <p className="ticket-card-name">
           {ticket.name}
         </p>
-
         <p className="ticket-card-price">
           {ticket.price} NOK
         </p>
       </div>
-
       <div className="ticket-card-right">
         {count > 0 && (
           <>
@@ -58,13 +60,11 @@ function TicketCard({ onChange, ticket }: Props) {
                 aria-hidden="true"
               />
             </button>
-
             <p className="ticket-card-count" aria-live="polite">
               {count}
             </p>
           </>
         )}
-
         <Button
           onClick={increment}
           variant="buttonWithIcon"

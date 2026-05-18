@@ -12,7 +12,6 @@ export default function SideBar({
   onClose
 }: Props) {
   const auth = useAuthContext();
-
   const isAdmin = auth.isLoggedIn && auth.isAdmin;
   const isProvider = auth.isLoggedIn && auth.isProvider;
 
@@ -50,6 +49,52 @@ export default function SideBar({
         >
           My Account
         </Link>
+
+        <div className={styles.categorySection}>
+          <h4 className={styles.categoryTitle}>
+            Categories
+          </h4>
+
+          <Link
+            to="/search?category=Festivals"
+            className={styles.categoryLink}
+            onClick={onClose}
+          >
+            Festivals
+          </Link>
+
+          <Link
+            to="/search?category=Concerts"
+            className={styles.categoryLink}
+            onClick={onClose}
+          >
+            Concerts
+          </Link>
+
+          <Link
+            to="/search?category=Sports"
+            className={styles.categoryLink}
+            onClick={onClose}
+          >
+            Sports
+          </Link>
+
+          <Link
+            to="/search?category=Museums"
+            className={styles.categoryLink}
+            onClick={onClose}
+          >
+            Museums
+          </Link>
+
+          <Link
+            to="/search?category=Theaters"
+            className={styles.categoryLink}
+            onClick={onClose}
+          >
+            Theaters
+          </Link>
+        </div>
 
         {(isAdmin || isProvider) && (
           <Link

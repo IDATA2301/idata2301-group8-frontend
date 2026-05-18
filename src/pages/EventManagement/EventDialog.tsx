@@ -55,8 +55,11 @@ const EventDialog = forwardRef<HTMLDialogElement, EventDialogProps>(function Eve
       }
     });
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status < 300) {
       await venuesQuery.refetch();
+      if (typeof response.data === "string") {
+        return;
+      }
       return response.data;
     }
   }

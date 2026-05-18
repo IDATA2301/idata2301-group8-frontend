@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./DialogForm.module.css";
 import type {
   CategoryResponse,
@@ -39,6 +39,11 @@ export default function EventFields({
   const deleteEvent = useDeleteEvent();
   const [eventImage, setEventImage] = useState<File | null>(null);
   const [venueOptions, setVenueOptions] = useState<VenueResponse[]>(venues);
+
+  useEffect(() => {
+    setVenueOptions(venues);
+  }, [venues]);
+
   const [newVenueName, setNewVenueName] = useState("");
   const [categoryToAdd, setCategoryToAdd] = useState("");
   const [extraFeatureToAdd, setExtraFeatureToAdd] = useState("");

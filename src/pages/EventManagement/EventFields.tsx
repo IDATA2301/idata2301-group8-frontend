@@ -257,7 +257,6 @@ export default function EventFields({
             >
               <option value="active">Active</option>
               <option value="hidden">Hidden</option>
-              <option value="featured">Featured</option>
               <option value="cancelled">Cancelled</option>
             </select>
           </label>

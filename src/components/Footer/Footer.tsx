@@ -31,12 +31,12 @@ export default function Footer() {
             <div className="footer-col">
               <h4>Company</h4>
               <Link to="/aboutUs">About us</Link>
-              <Link to="/contact">Contact</Link>
+              <Link to="/place-holder">Contact</Link>
             </div>
             <div className="footer-col">
               <h4>Resources</h4>
-              <Link to="/help-centre">Help centre</Link>
-              <Link to="/support">Support</Link>
+              <Link to="/place-holder">Help centre</Link>
+              <Link to="/place-holder">Support</Link>
             </div>
             <div className="footer-col">
               <h4>Other</h4>

@@ -11,6 +11,7 @@ import UserManagement from "@pages/UserManagement/UserManagement";
 import RequestManagement from "@pages/RequestManagement/RequestManagement";
 import EventManagement from "@pages/EventManagement/EventManagement";
 import PaymentPage from "@pages/PaymentPage/PaymentPage";
+import PlaceholderPage from "@pages/PlaceholderPage/PlaceholderPage";
 import CheckoutCompletePage from "@pages/CheckoutCompletePage/CheckoutCompletePage";
 import ScrollToTop from "@utility/ScrollToTop";
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/user-management" element={<UserManagement />} />
         <Route path="/event-management" element={<EventManagement />} />
         <Route path="/request-management" element={<RequestManagement />} />
+        <Route path="/place-holder" element={<PlaceholderPage />} />
       </Routes>
       <Footer />
     </>

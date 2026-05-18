@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { EventResponse } from "@api/events";
+import { usePrefetchEvent } from "@utility/usePrefetchEvent";
 import FavoriteIcon from "@assets/icons/favorite.svg";
 import FavoriteClickedIcon from "@assets/icons/favoriteclicked.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
@@ -11,6 +12,7 @@ interface Props extends EventResponse {
 }
 
 export default function EventCard({ isFavorite = false, onToggleFavorite, ...p }: Props) {
+  const { prefetch } = usePrefetchEvent();
   const imageUrl = p.imageUrl || fallbackEventImage;
   const imageAlt = p.eventName ?? "Event image";
   const date = p.startDate
@@ -21,7 +23,11 @@ export default function EventCard({ isFavorite = false, onToggleFavorite, ...p }
     : "No price yet";
 
   return (
-    <Link to={p.slug || ""} className="event-card">
+    <Link
+      to={p.slug || ""}
+      className="event-card"
+      onMouseEnter={() => p.slug && prefetch(p.slug)}
+    >
       <button
         type="button"
         className={`favorite-button ${isFavorite ? "favorite-button-active" : ""}`}

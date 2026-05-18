@@ -1,22 +1,26 @@
 import { useState } from "react";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
-import { useCreate } from "@api/events";
+import { useCreate, type VenueResponse } from "@api/events";
 
 type VenueFieldsProps = {
+  mode: "create" | "edit";
+  selectedVenue?: VenueResponse;
   onClose: () => void;
   onSuccess: () => void;
 };
 
 export default function VenueFields({
+  mode,
+  selectedVenue,
   onClose,
   onSuccess
 }: VenueFieldsProps) {
   const createVenue = useCreate();
   const [form, setForm] = useState({
-    name: "",
-    city: "",
-    country: ""
+    name: selectedVenue?.name ?? "",
+    city: selectedVenue?.city ?? "",
+    country: selectedVenue?.country ?? ""
   });
 
   const isSubmitting = createVenue.isPending;
@@ -30,10 +34,41 @@ export default function VenueFields({
     setForm((current) => ({ ...current, [field]: value }));
   }
 
+  function getErrorMessage(data: unknown) {
+    if (typeof data === "string") {
+      return data;
+    }
+
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "message" in data &&
+      typeof data.message === "string"
+    ) {
+      return data.message;
+    }
+
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "error" in data &&
+      typeof data.error === "string"
+    ) {
+      return data.error;
+    }
+
+    return "Failed to create venue";
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!canSubmit) {
+      return;
+    }
+
+    if (mode === "edit") {
+      toast.error("Venue editing is not supported by the generated API yet");
       return;
     }
 
@@ -54,12 +89,7 @@ export default function VenueFields({
             return;
           }
 
-          if (typeof response.data === "string") {
-            toast.error(response.data);
-            return;
-          }
-
-          toast.error("Failed to create venue");
+          toast.error(getErrorMessage(response.data));
         },
         onError: (error) => {
           console.error("Failed to create venue:", error);
@@ -122,7 +152,7 @@ export default function VenueFields({
           className={styles.saveButton}
           disabled={!canSubmit}
         >
-          Create
+          {mode === "create" ? "Create" : "Save"}
         </button>
       </div>
     </form>

@@ -19,6 +19,7 @@ type PopupState = {
   mode: "create" | "edit";
   eventId?: number;
   ticketListingId?: number;
+  venueId?: number;
 } | null;
 
 type ActivePopup = Exclude<PopupState, null>;
@@ -95,6 +96,10 @@ export default function EventManagement() {
 
   const selectedTicketListing = popup?.ticketListingId
     ? visibleTicketListings.find((listing) => listing.ticketListingId === popup.ticketListingId)
+    : undefined;
+
+  const selectedVenue = popup?.venueId
+    ? venues.find((venue) => venue.id === popup.venueId)
     : undefined;
 
   const eventNameById = useMemo(() => {
@@ -250,6 +255,11 @@ export default function EventManagement() {
             headers={["venue_id", "venue_name", "city", "country"]}
             entries={venueRows}
             onCreate={() => openVenueDialog({ type: "venue", mode: "create" })}
+            onEntryClick={(index) => openVenueDialog({
+              type: "venue",
+              mode: "edit",
+              venueId: venues[index]?.id
+            })}
           />
         </div>
       </div>
@@ -275,6 +285,8 @@ export default function EventManagement() {
 
       <VenueDialog
         ref={venueDialogRef}
+        mode={popup?.type === "venue" ? popup.mode : "create"}
+        selectedVenue={selectedVenue}
         onClose={closeDialogs}
         onSuccess={refetchManagementData}
       />

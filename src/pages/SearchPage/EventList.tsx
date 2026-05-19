@@ -29,13 +29,12 @@ const EventList = ({ query, filters, sort }: Params) => {
   const currentPage = Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
 
   const sortOption = sortOptions.find((o) => o.value === sort);
-  console.log(sortOption);
 
   const { data: response, isLoading } = useGetEvents({
     filter: {
       query: query.trim() || undefined,
       city: filters.locations[0] || undefined,
-      category: filters.categories[0] || undefined,
+      category: filters.categories.length > 0 ? filters.categories : undefined,
       startDate: toIsoDate(filters.startDate),
       endDate: toIsoDate(filters.endDate, true),
       minPrice: filters.priceMin > 0 ? filters.priceMin : undefined,
@@ -45,8 +44,8 @@ const EventList = ({ query, filters, sort }: Params) => {
     },
     page: currentPage - 1,
     size: EVENTS_PER_PAGE,
-    // sortBy: sortOption?.sortBy,
-    // sortDirection: sortOption?.sortDirection
+    sortBy: sortOption?.sortBy,
+    sortDirection: sortOption?.sortDirection
   });
 
   const goToPage = (page: number) => {

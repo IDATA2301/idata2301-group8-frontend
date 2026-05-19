@@ -1,5 +1,6 @@
 import React from "react";
 import x from "@assets/icons/x.svg";
+import { useGetAllCategories } from "@api/events";
 
 export type Filters = {
   categories: string[];
@@ -15,23 +16,6 @@ type Props = {
   setFilters: (updater: React.SetStateAction<Filters>) => void;
 };
 
-const categories = [
-  "Festivals",
-  "Concerts",
-  "Sports",
-  "Comedy Show",
-  "Expo",
-  "Technology",
-  "Arts",
-  "Theaters",
-  "Dance",
-  "Cultural Performance",
-  "Film Festival",
-  "Art Exhibition",
-  "Museums",
-  "Historical Performance"
-];
-
 const locations = ["Oslo", "Bergen", "Trondheim"];
 
 const parseNumber = (value: string) => {
@@ -39,6 +23,11 @@ const parseNumber = (value: string) => {
 };
 
 const Filters = ({ filters, setFilters }: Props) => {
+  const { data: categoriesResponse } = useGetAllCategories();
+  const categories = categoriesResponse?.status === 200
+    ? categoriesResponse.data.map((c) => c.name || c.categoryName).filter(Boolean) as string[]
+    : [];
+
   const toggleArrayValue = (
     key: "categories" | "locations",
     value: string

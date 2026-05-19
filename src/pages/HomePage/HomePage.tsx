@@ -16,14 +16,14 @@ import "./style.css";
 
 const categories = [
   {
-    name: "Festivals",
-    path: "/search?category=Festivals",
+    name: "Festival",
+    path: "/search?category=Festival",
     className: "festivals",
     image: festivalsImage
   },
   {
-    name: "Concerts",
-    path: "/search?category=Concerts",
+    name: "Concert",
+    path: "/search?category=Concert",
     className: "concerts",
     image: concertsImage
   },
@@ -34,14 +34,14 @@ const categories = [
     image: sportImage
   },
   {
-    name: "Museums",
-    path: "/search?category=Museums",
+    name: "Exhibition",
+    path: "/search?category=Exhibition",
     className: "museums",
     image: museumsImage
   },
   {
-    name: "Theaters",
-    path: "/search?category=Theaters",
+    name: "Theater",
+    path: "/search?category=Theater",
     className: "theaters",
     image: theatersImage
   }

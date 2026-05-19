@@ -112,11 +112,13 @@ export interface CreateCategoryRequest {
 export interface CategoryResponse {
   categoryName?: string;
   categoryId?: number;
+  name?: string;
+  id?: number;
 }
 
 export interface EventFilterDTO {
   city?: string;
-  category?: string;
+  category?: string[];
   query?: string;
   startDate?: string;
   endDate?: string;
@@ -162,6 +164,8 @@ export type GetEventsParams = {
   filter: EventFilterDTO;
   page?: number;
   size?: number;
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 };
 
 export type CreateEventBody = {
@@ -2212,11 +2216,32 @@ export type getEventsResponse =
 export const getGetEventsUrl = (params: GetEventsParams) => {
   const normalizedParams = new URLSearchParams();
 
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
+  // Add pagination params
+  if (params.page !== undefined) {
+    normalizedParams.append("page", String(params.page));
+  }
+  if (params.size !== undefined) {
+    normalizedParams.append("size", String(params.size));
+  }
+
+  // Add filter params directly (without filter. prefix)
+  if (params.filter) {
+    Object.entries(params.filter).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        if (Array.isArray(value)) {
+          value.forEach((v) => normalizedParams.append(key, String(v)));
+        } else {
+          normalizedParams.append(key, String(value));
+        }
+      }
+    });
+  }
+
+  // Add Spring Data sort parameter: sort=property,direction
+  if (params.sortBy) {
+    const direction = params.sortDirection || "asc";
+    normalizedParams.append("sort", `${params.sortBy},${direction}`);
+  }
 
   const stringifiedParams = normalizedParams.toString();
 

@@ -33,8 +33,9 @@ function EventPage() {
     return venuesResponse.data.find((v) => v.id === event.venueId);
   }, [event?.venueId, venuesResponse]);
 
-  const locationTags = [event?.city, event?.country].filter(Boolean);
+  const locationTags = [venue?.city, venue?.country].filter(Boolean);
   const locationText = locationTags.join(", ") || "Unknown location";
+  const venueName = venue?.name;
 
   // Build location query: prefer "venue name, city" otherwise "city, country"
   const locationQuery = useMemo(() => {
@@ -102,7 +103,7 @@ function EventPage() {
         <div className="event-page-location-box">
           <div className="event-page-location-info-box">
             <div>
-              <h3 className="event-page-location-title">Location</h3>
+              <h3 className="event-page-location-title">{venueName}</h3>
               <p className="event-page-location-address">
                 {locationText}
               </p>

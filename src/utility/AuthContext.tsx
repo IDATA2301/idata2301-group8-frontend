@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { jwtDecode } from "jwt-decode";
+import { useRefresh } from '@api/iam';
+import toast from '@components/Toast';
 
 export type GlobalRole = "ADMIN" | "USER";
 
@@ -28,8 +30,11 @@ type AuthContextLoggedOut = {
   isAdmin?: boolean;
   isProvider?: boolean;
   user?: User;
+  jwt?: string;
+  isExpired?: undefined;
   login: (jwt: string) => void;
   logout: () => void;
+  refreshToken: () => Promise<boolean>;
 };
 
 type AuthContextLoggedIn = {
@@ -37,8 +42,11 @@ type AuthContextLoggedIn = {
   isAdmin: boolean;
   isProvider: boolean;
   user: User;
+  jwt: string;
+  isExpired: () => boolean;
   login: (jwt: string) => void;
   logout: () => void;
+  refreshToken: () => Promise<boolean>;
 };
 
 export type AuthContextType = AuthContextLoggedOut | AuthContextLoggedIn;
@@ -52,6 +60,8 @@ type AuthState =
     isAdmin: boolean;
     isProvider: boolean;
     user: User;
+    jwt: string;
+    isExpired: () => boolean;
   };
 
 export const useAuthContext = () => {
@@ -64,12 +74,33 @@ export const useAuthContext = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({ isLoggedIn: false });
+  const { mutateAsync } = useRefresh();
+
+  const refreshToken: () => Promise<boolean> = async () => {
+    try {
+      const response = await mutateAsync();
+      if (response.status === 200 && response.data.jwt) {
+        login(response.data.jwt);
+        return true;
+      } else {
+        logout();
+        toast.error("Session expired. Please log in again.");
+        return false;
+      }
+    } catch {
+      logout();
+      toast.error("Session expired. Please log in again.");
+      return false;
+    }
+  }
 
   const login = (jwt: string) => {
     const decoded = jwtDecode<JwtClaims>(jwt);
 
-    if (decoded.exp < Date.now() / 1000) {
-      throw new Error("Expired token");
+    const isExpired = () => decoded.exp < Date.now() / 1000;
+
+    if (isExpired()) {
+      return refreshToken();
     }
 
     const user: User = {
@@ -86,6 +117,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAdmin: user.globalRoles.includes("ADMIN"),
       isProvider: Object.keys(user.companyRoles).length > 0,
       user,
+      jwt,
+      isExpired,
     });
   };
 
@@ -106,7 +139,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...authState, login, logout }}>
+    <AuthContext.Provider value={{ ...authState, login, logout, refreshToken }}>
       {children}
     </AuthContext.Provider>
   );

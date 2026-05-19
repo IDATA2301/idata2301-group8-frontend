@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import x from "@assets/icons/x.svg";
+import { useGetAllCategories, useGetAllVenues } from "@api/events";
 
 export type Filters = {
   categories: string[];
   startDate: string;
   endDate: string;
-  priceMin: number;
-  priceMax: number;
+  priceMin: number | undefined;
+  priceMax: number | undefined;
   locations: string[];
 };
 
@@ -15,30 +16,30 @@ type Props = {
   setFilters: (updater: React.SetStateAction<Filters>) => void;
 };
 
-const categories = [
-  "Festivals",
-  "Concerts",
-  "Sports",
-  "Comedy Show",
-  "Expo",
-  "Technology",
-  "Arts",
-  "Theaters",
-  "Dance",
-  "Cultural Performance",
-  "Film Festival",
-  "Art Exhibition",
-  "Museums",
-  "Historical Performance"
-];
-
-const locations = ["Oslo", "Bergen", "Trondheim"];
-
 const parseNumber = (value: string) => {
   return value === "" ? 0 : Number(value);
 };
 
 const Filters = ({ filters, setFilters }: Props) => {
+  const { data: categoriesResponse } = useGetAllCategories();
+  const { data: venuesResponse } = useGetAllVenues();
+
+  const categories = useMemo(() => {
+    if (categoriesResponse?.status !== 200) return [];
+    return categoriesResponse.data
+      .map((c) => c.name || c.categoryName)
+      .filter((name): name is string => Boolean(name))
+      .sort((a, b) => a.localeCompare(b));
+  }, [categoriesResponse]);
+
+  const locations = useMemo(() => {
+    if (venuesResponse?.status !== 200) return [];
+    const cities = venuesResponse.data
+      .map((v) => v.city)
+      .filter((city): city is string => Boolean(city));
+    return [...new Set(cities)].sort((a, b) => a.localeCompare(b));
+  }, [venuesResponse]);
+
   const toggleArrayValue = (
     key: "categories" | "locations",
     value: string
@@ -86,30 +87,62 @@ const Filters = ({ filters, setFilters }: Props) => {
 
         <div className="date-row">
           <label>Event start after</label>
-          <input
-            type="date"
-            value={filters.startDate}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                startDate: e.target.value
-              }))
-            }
-          />
+          <div className="date-input-wrapper">
+            <button
+              type="button"
+              className={`date-clear-button ${filters.startDate ? "date-clear-button-visible" : ""}`}
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  startDate: ""
+                }))
+              }
+              aria-label="Clear start date"
+              tabIndex={filters.startDate ? 0 : -1}
+            >
+              <img src={x} alt="" />
+            </button>
+            <input
+              type="date"
+              value={filters.startDate}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  startDate: e.target.value
+                }))
+              }
+            />
+          </div>
         </div>
 
         <div className="date-row">
           <label>Event end before</label>
-          <input
-            type="date"
-            value={filters.endDate}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                endDate: e.target.value
-              }))
-            }
-          />
+          <div className="date-input-wrapper">
+            <button
+              type="button"
+              className={`date-clear-button ${filters.endDate ? "date-clear-button-visible" : ""}`}
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  endDate: ""
+                }))
+              }
+              aria-label="Clear end date"
+              tabIndex={filters.endDate ? 0 : -1}
+            >
+              <img src={x} alt="" />
+            </button>
+            <input
+              type="date"
+              value={filters.endDate}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  endDate: e.target.value
+                }))
+              }
+            />
+          </div>
         </div>
       </div>
 
@@ -119,25 +152,26 @@ const Filters = ({ filters, setFilters }: Props) => {
         <div className="price-inputs">
           <input
             type="number"
-            value={filters.priceMin}
-            onChange={(e) =>
+            value={filters.priceMin ?? ''}
+            onChange={(e) => {
+              const rawValue = e.target.value;
               setFilters((prev) => ({
                 ...prev,
-                priceMin: parseNumber(e.target.value)
-              }))
-            }
+                priceMin: rawValue === '' ? undefined : parseNumber(rawValue)
+              }));
+            }}
             placeholder="0 kr"
           />
-
           <input
             type="number"
-            value={filters.priceMax}
-            onChange={(e) =>
+            value={filters.priceMax ?? ''}
+            onChange={(e) => {
+              const rawValue = e.target.value;
               setFilters((prev) => ({
                 ...prev,
-                priceMax: parseNumber(e.target.value)
-              }))
-            }
+                priceMax: rawValue === '' ? undefined : parseNumber(rawValue)
+              }));
+            }}
             placeholder="9999 kr"
           />
         </div>

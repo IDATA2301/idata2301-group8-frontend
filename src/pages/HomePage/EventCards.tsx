@@ -12,13 +12,13 @@ export default function EventCards({ events }: Props) {
   }
 
   return (
-    <>
+    <div className="upcoming-events-scroll">
       {events.map((event) => (
         <EventCard
           key={event.eventId ?? event.slug}
           {...event}
         />
       ))}
-    </>
+    </div>
   );
 }

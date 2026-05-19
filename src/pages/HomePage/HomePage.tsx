@@ -1,29 +1,30 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-// import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
+import { useState, useMemo } from "react";
 import EventCards from "@pages/HomePage/EventCards";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import ScrollToTop from "@utility/ScrollToTop";
 import { useGetEvents, type EventResponse } from "@api/events";
 import { usePrefetchSearch } from "@utility/usePrefetchSearch";
+import { usePrefetchEvent } from "@utility/usePrefetchEvent";
 import heroimage from "@assets/heroimage.jpg";
 import festivalsImage from "@assets/categoryimage/festival.jpg";
 import concertsImage from "@assets/categoryimage/concert.jpg";
 import sportImage from "@assets/categoryimage/sport.jpg";
 import museumsImage from "@assets/categoryimage/museum.jpg";
 import theatersImage from "@assets/categoryimage/theater.jpg";
+import fallbackEventImage from "@assets/fallback-image.png";
 import "./style.css";
 
 const categories = [
   {
-    name: "Festivals",
-    path: "/search?category=Festivals",
+    name: "Festival",
+    path: "/search?category=Festival",
     className: "festivals",
     image: festivalsImage
   },
   {
-    name: "Concerts",
-    path: "/search?category=Concerts",
+    name: "Concert",
+    path: "/search?category=Concert",
     className: "concerts",
     image: concertsImage
   },
@@ -34,14 +35,14 @@ const categories = [
     image: sportImage
   },
   {
-    name: "Museums",
-    path: "/search?category=Museums",
+    name: "Exhibition",
+    path: "/search?category=Exhibition",
     className: "museums",
     image: museumsImage
   },
   {
-    name: "Theaters",
-    path: "/search?category=Theaters",
+    name: "Theater",
+    path: "/search?category=Theater",
     className: "theaters",
     image: theatersImage
   }
@@ -51,20 +52,23 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const { prefetch } = usePrefetchSearch();
+  const { prefetch: prefetchEvent } = usePrefetchEvent();
+
+  const currentTime = useMemo(() => new Date().toISOString(), []);
 
   const {
     data: eventsResponse,
     isLoading,
     isError
-  } = useGetEvents({ filter: {} });
+  } = useGetEvents({ filter: { startDate: currentTime }, sortBy: "startDate", sortDirection: "asc", size: 6 });
 
-  const events: EventResponse[] = Array.isArray(eventsResponse?.data)
-    ? eventsResponse.data
-    : [];
+  const events: EventResponse[] =
+    eventsResponse?.status === 200 && Array.isArray(eventsResponse.data.content)
+      ? eventsResponse.data.content
+      : [];
 
-  // const featuredEvent = events[0];
-  // const upcomingEvents = events.slice(1);
-  const upcomingEvents = events;
+  const nextEvent = events[0];
+  const upcomingEvents = events.slice(1);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,7 +132,7 @@ function HomePage() {
                     className={`category-card ${category.className}`}
                     to={category.path}
                     style={{ backgroundImage: `url(${category.image})` }}
-                    onMouseEnter={() => prefetch({ filter: { category: categoryParam ?? undefined } })}
+                    onMouseEnter={() => prefetch({ filter: { category: categoryParam ? [categoryParam] : undefined } })}
                   >
                     {category.name}
                   </Link>
@@ -138,26 +142,69 @@ function HomePage() {
           </ul>
         </section>
 
-        {/*
         <section>
           <h2 className="section-title">
-            Featured
+            Next event
           </h2>
 
-          {isLoading && <p>Loading featured event...</p>}
-          {isError && <p>Could not load featured event.</p>}
+          <div className="next-event-content">
+            {isLoading && (
+              <div className="next-event-loader" />
+            )}
 
-          {!isLoading && !isError && featuredEvent && (
-            <FeaturedEventCard event={featuredEvent} />
-          )}
+            {isError && (
+              <div className="next-event-message">
+                Could not load event.
+              </div>
+            )}
 
-          {!isLoading && !isError && !featuredEvent && (
-            <p>No featured event available.</p>
-          )}
+            {!isLoading && !isError && nextEvent && (
+              <Link
+                to={`/events/${nextEvent.slug}`}
+                className="next-event-card"
+                onMouseEnter={() => nextEvent.slug && prefetchEvent(nextEvent.slug)}
+              >
+                <img
+                  src={nextEvent.imageUrl || fallbackEventImage}
+                  alt={nextEvent.eventName ?? "Event image"}
+                  className="next-event-image"
+                />
+                <div className="next-event-info">
+                  <h3 className="next-event-title">{nextEvent.eventName}</h3>
+                  <div className="next-event-details">
+                    <span className="next-event-location">
+                      {[nextEvent.city, nextEvent.country].filter(Boolean).join(", ") || "Location TBA"}
+                    </span>
+                    <span className="next-event-date">
+                      {nextEvent.startDate
+                        ? new Date(nextEvent.startDate).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric"
+                        })
+                        : "Date TBA"}
+                    </span>
+                    <span className="next-event-price">
+                      {nextEvent.lowestPrice != null
+                        ? `From ${nextEvent.lowestPrice} NOK`
+                        : "Price TBA"}
+                    </span>
+                  </div>
+                  {nextEvent.description && (
+                    <p className="next-event-description">{nextEvent.description}</p>
+                  )}
+                </div>
+              </Link>
+            )}
 
-          <hr />
+            {!isLoading && !isError && !nextEvent && (
+              <div className="next-event-message">
+                No upcoming events available.
+              </div>
+            )}
+          </div>
         </section>
-        */}
 
         <section>
           <h2 className="section-title">
@@ -167,7 +214,7 @@ function HomePage() {
           <div className="upcoming-events-content">
             {isLoading && (
               <div className="upcoming-events-loader">
-                {Array.from({ length: 5 }).map((_, index) => (
+                {Array.from({ length: 4 }).map((_, index) => (
                   <EventCardLoader key={index} />
                 ))}
               </div>

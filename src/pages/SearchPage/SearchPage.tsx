@@ -21,13 +21,12 @@ export const sortOptions: SortOption[] = [
   { value: "price-desc", label: "Price (highest first)", sortBy: "lowestPrice", sortDirection: "desc" }
 ];
 
-const getNumberParam = (
+const getOptionalNumberParam = (
   searchParams: URLSearchParams,
-  key: string,
-  fallback: number
+  key: string
 ) => {
   const value = searchParams.get(key);
-  return value === null ? fallback : Number(value);
+  return value === null ? undefined : Number(value);
 };
 
 function SearchPage() {
@@ -41,8 +40,8 @@ function SearchPage() {
     categories: searchParams.getAll("category"),
     startDate: searchParams.get("startDate") || "",
     endDate: searchParams.get("endDate") || "",
-    priceMin: getNumberParam(searchParams, "minPrice", 0),
-    priceMax: getNumberParam(searchParams, "maxPrice", 9999),
+    priceMin: getOptionalNumberParam(searchParams, "minPrice"),
+    priceMax: getOptionalNumberParam(searchParams, "maxPrice"),
     locations: searchParams.getAll("location")
   };
 
@@ -110,13 +109,13 @@ function SearchPage() {
         newParams.delete("endDate");
       }
 
-      if (nextFilters.priceMin > 0) {
+      if (nextFilters.priceMin != null) {
         newParams.set("minPrice", String(nextFilters.priceMin));
       } else {
         newParams.delete("minPrice");
       }
 
-      if (nextFilters.priceMax > 0 && nextFilters.priceMax !== 9999) {
+      if (nextFilters.priceMax != null) {
         newParams.set("maxPrice", String(nextFilters.priceMax));
       } else {
         newParams.delete("maxPrice");

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import EventCard from "src/pages/EventCard/EventCard";
@@ -38,28 +39,22 @@ const EventList = ({ query, filters, sort }: Params) => {
   const pageFromUrl = Number(searchParams.get("page") ?? "1");
   const currentPage = Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
   const sortOption = sortOptions.find((o) => o.value === sort);
+  const currentTime = useMemo(() => new Date().toISOString(), []);
   const favoritesQuery = useGetFavorites();
   const addFavoriteMutation = useAddFavorite();
   const removeFavoriteMutation = useRemoveFavorite();
 
-  console.log(sortOption);
-
   const { data: response, isLoading } = useGetEvents({
-    filter: {
-      query: query.trim() || undefined,
-      city: filters.locations[0] || undefined,
-      category: filters.categories[0] || undefined,
-      startDate: toIsoDate(filters.startDate),
-      endDate: toIsoDate(filters.endDate, true),
-      minPrice: filters.priceMin > 0 ? filters.priceMin : undefined,
-      maxPrice: filters.priceMax > 0 && filters.priceMax !== 9999
-        ? filters.priceMax
-        : undefined
-    },
+    query: query.trim() || undefined,
+    city: filters.locations.length > 0 ? filters.locations : undefined,
+    category: filters.categories.length > 0 ? filters.categories : undefined,
+    startDate: toIsoDate(filters.startDate) || currentTime,
+    endDate: toIsoDate(filters.endDate, true),
+    minPrice: filters.priceMin,
+    maxPrice: filters.priceMax,
     page: currentPage - 1,
-    size: EVENTS_PER_PAGE
-    // sortBy: sortOption?.sortBy,
-    // sortDirection: sortOption?.sortDirection
+    size: EVENTS_PER_PAGE,
+    sort: sortOption?.value
   });
 
   const favorites = Array.isArray(favoritesQuery.data?.data)

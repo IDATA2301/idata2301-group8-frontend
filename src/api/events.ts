@@ -106,16 +106,6 @@ export interface CategoryResponse {
   categoryId?: number;
 }
 
-export interface EventFilterDTO {
-  city?: string;
-  category?: string;
-  query?: string;
-  startDate?: string;
-  endDate?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}
-
 export interface SortObject {
   empty?: boolean;
   unsorted?: boolean;
@@ -124,11 +114,11 @@ export interface SortObject {
 
 export interface PageableObject {
   offset?: number;
+  unpaged?: boolean;
   paged?: boolean;
   pageNumber?: number;
   pageSize?: number;
   sort?: SortObject;
-  unpaged?: boolean;
 }
 
 export interface PageEventResponse {
@@ -151,9 +141,16 @@ export type UpdateEventBody = {
 };
 
 export type GetEventsParams = {
-filter: EventFilterDTO;
+city?: string[];
+category?: string[];
+query?: string;
+startDate?: string;
+endDate?: string;
+minPrice?: number;
+maxPrice?: number;
 page?: number;
 size?: number;
+sort?: string;
 };
 
 export type CreateEventBody = {
@@ -2138,7 +2135,7 @@ export type getEventsResponseError = (getEventsResponse400 | getEventsResponse40
 
 export type getEventsResponse = (getEventsResponseSuccess | getEventsResponseError)
 
-export const getGetEventsUrl = (params: GetEventsParams,) => {
+export const getGetEventsUrl = (params?: GetEventsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -2156,7 +2153,7 @@ export const getGetEventsUrl = (params: GetEventsParams,) => {
 /**
  * @summary Get all events
  */
-export const getEvents = async (params: GetEventsParams, options?: RequestInit): Promise<getEventsResponse> => {
+export const getEvents = async (params?: GetEventsParams, options?: RequestInit): Promise<getEventsResponse> => {
 
   return customFetchEventApi<getEventsResponse>(getGetEventsUrl(params),
   {
@@ -2178,7 +2175,7 @@ export const getGetEventsQueryKey = (params?: GetEventsParams,) => {
     }
 
 
-export const getGetEventsQueryOptions = <TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(params: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+export const getGetEventsQueryOptions = <TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -2201,7 +2198,7 @@ export type GetEventsQueryError = string
 
 
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
- params: GetEventsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>> & Pick<
+ params: undefined |  GetEventsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getEvents>>,
           TError,
@@ -2211,7 +2208,7 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
- params: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>> & Pick<
+ params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getEvents>>,
           TError,
@@ -2221,7 +2218,7 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
- params: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -2229,7 +2226,7 @@ export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TErr
  */
 
 export function useGetEvents<TData = Awaited<ReturnType<typeof getEvents>>, TError = string>(
- params: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
+ params?: GetEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEvents>>, TError, TData>>, request?: SecondParameter<typeof customFetchEventApi>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 

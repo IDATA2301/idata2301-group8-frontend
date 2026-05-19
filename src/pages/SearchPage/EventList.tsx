@@ -5,6 +5,7 @@ import EventCard from "src/pages/EventCard/EventCard";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
 import type { Filters as FiltersType } from "@pages/SearchPage/Filters";
 import { sortOptions } from "@pages/SearchPage/SearchPage";
+import { useAuthContext } from "@utility/AuthContext";
 import {
   getGetFavoritesQueryKey,
   useAddFavorite,
@@ -35,12 +36,20 @@ const toIsoDate = (date: string, endOfDay = false) => {
 
 const EventList = ({ query, filters, sort }: Params) => {
   const queryClient = useQueryClient();
+  const { user } = useAuthContext();
+  const isLoggedIn = Boolean(user);
   const [searchParams, setSearchParams] = useSearchParams();
   const pageFromUrl = Number(searchParams.get("page") ?? "1");
   const currentPage = Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
   const sortOption = sortOptions.find((o) => o.value === sort);
   const currentTime = useMemo(() => new Date().toISOString(), []);
-  const favoritesQuery = useGetFavorites();
+
+  const favoritesQuery = useGetFavorites({
+    query: {
+      enabled: isLoggedIn
+    }
+  });
+
   const addFavoriteMutation = useAddFavorite();
   const removeFavoriteMutation = useRemoveFavorite();
 
@@ -57,7 +66,7 @@ const EventList = ({ query, filters, sort }: Params) => {
     sort: sortOption?.value
   });
 
-  const favorites = Array.isArray(favoritesQuery.data?.data)
+  const favorites = isLoggedIn && Array.isArray(favoritesQuery.data?.data)
     ? favoritesQuery.data.data
     : [];
 
@@ -82,6 +91,11 @@ const EventList = ({ query, filters, sort }: Params) => {
   };
 
   const handleToggleFavorite = async (nextIsFavorite: boolean, event: EventResponse) => {
+    if (!isLoggedIn) {
+      toast.error("You must be logged in to favorite events");
+      throw new Error("User must be logged in to favorite events");
+    }
+
     if (!event.eventId) {
       toast.error("Missing event id");
       throw new Error("Missing event id");

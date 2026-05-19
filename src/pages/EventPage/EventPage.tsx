@@ -1,5 +1,6 @@
+import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useGetEventBySlug } from "@api/events";
+import { useGetEventBySlug, useGetAllVenues } from "@api/events";
 import ScrollToTop from "@utility/ScrollToTop.tsx";
 import openInNew from "@assets/icons/open-in-new.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
@@ -20,14 +21,28 @@ function EventPage() {
     }
   });
 
+  const { data: venuesResponse } = useGetAllVenues();
+
   const event =
     eventResponse?.status !== 200
       ? undefined
       : eventResponse.data;
 
+  const venue = useMemo(() => {
+    if (!event?.venueId || venuesResponse?.status !== 200) return undefined;
+    return venuesResponse.data.find((v) => v.id === event.venueId);
+  }, [event?.venueId, venuesResponse]);
+
   const locationTags = [event?.city, event?.country].filter(Boolean);
   const locationText = locationTags.join(", ") || "Unknown location";
-  const locationQuery = locationTags.join(" ");
+
+  // Build location query: prefer "venue name, city" otherwise "city, country"
+  const locationQuery = useMemo(() => {
+    if (venue?.name && event?.city) {
+      return `${venue.name}, ${event.city}`;
+    }
+    return locationTags.join(", ");
+  }, [venue?.name, event?.city, locationTags]);
 
   const mapsUrl =
     locationQuery.length > 0

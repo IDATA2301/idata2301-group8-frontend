@@ -11,7 +11,6 @@ type Props = {
 };
 
 export default function Login({ switchToSignup, closeDialog }: Props) {
-
   const { login } = useAuthContext()
   const { mutateAsync, isPending } = useLogin()
 

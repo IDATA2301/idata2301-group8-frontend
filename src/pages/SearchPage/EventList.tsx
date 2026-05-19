@@ -94,7 +94,7 @@ const EventList = ({ query, filters, sort }: Params) => {
 
     try {
       if (nextIsFavorite) {
-        await addFavoriteMutation.mutateAsync({ eventId: event.eventId });
+        await addFavoriteMutation.mutateAsync({ data: { eventId: event.eventId } });
         toast.success("Added to favorites");
       } else {
         await removeFavoriteMutation.mutateAsync({ eventId: event.eventId });

@@ -28,7 +28,7 @@ const Filters = ({ filters, setFilters }: Props) => {
     if (categoriesResponse?.status !== 200) return [];
 
     return categoriesResponse.data
-      .map((c) => c.categoryName)
+      .map((c) => c.name)
       .filter((name): name is string => Boolean(name))
       .sort((a, b) => a.localeCompare(b));
   }, [categoriesResponse]);

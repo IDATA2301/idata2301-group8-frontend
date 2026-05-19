@@ -270,12 +270,12 @@ export default function EventFields({
                 <option value="">Add category</option>
                 {categories
                   .filter((category) =>
-                    category.categoryId !== undefined &&
-                    !selectedCategoryIds.includes(category.categoryId)
+                    category.id !== undefined &&
+                    !selectedCategoryIds.includes(category.id)
                   )
                   .map((category) => (
-                    <option key={category.categoryId} value={category.categoryId}>
-                      {category.categoryName ?? `Category ${category.categoryId}`}
+                    <option key={category.id} value={category.id}>
+                      {category.name ?? `Category ${category.id}`}
                     </option>
                   ))}
               </select>
@@ -283,7 +283,7 @@ export default function EventFields({
 
             <div className={styles.selectedChips}>
               {selectedCategoryIds.map((categoryId) => {
-                const category = categories.find((item) => item.categoryId === categoryId);
+                const category = categories.find((item) => item.id === categoryId);
 
                 return (
                   <button
@@ -293,7 +293,7 @@ export default function EventFields({
                     disabled={isSubmitting}
                     onClick={() => removeCategory(categoryId)}
                   >
-                    {category?.categoryName ?? `Category ${categoryId}`} ×
+                    {category?.name ?? `Category ${categoryId}`} ×
                   </button>
                 );
               })}

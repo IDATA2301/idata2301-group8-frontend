@@ -102,8 +102,8 @@ export interface CreateCategoryRequest {
 }
 
 export interface CategoryResponse {
-  categoryName?: string;
-  categoryId?: number;
+  id?: number;
+  name?: string;
 }
 
 export interface SortObject {
@@ -114,16 +114,16 @@ export interface SortObject {
 
 export interface PageableObject {
   offset?: number;
-  pageNumber?: number;
   paged?: boolean;
+  pageNumber?: number;
   pageSize?: number;
   sort?: SortObject;
   unpaged?: boolean;
 }
 
 export interface PageEventResponse {
-  totalPages?: number;
   totalElements?: number;
+  totalPages?: number;
   size?: number;
   content?: EventResponse[];
   number?: number;

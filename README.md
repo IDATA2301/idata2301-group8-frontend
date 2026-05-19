@@ -7,6 +7,8 @@
 create a `.env` file containing the following:
 
 ```bash
+REQUEST_ORIGIN=https://nordiseat.netlify.app
+
 VITE_IAM_API_URL=http://localhost:5173/api-iam
 IAM_API_URL=http://10.212.26.218/iam
 

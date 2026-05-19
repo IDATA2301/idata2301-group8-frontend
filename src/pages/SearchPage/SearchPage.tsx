@@ -17,8 +17,8 @@ export type SortOption = {
 export const sortOptions: SortOption[] = [
   { value: "date-asc", label: "Date (soonest first)", sortBy: "startDate", sortDirection: "asc" },
   { value: "date-desc", label: "Date (latest first)", sortBy: "startDate", sortDirection: "desc" },
-  { value: "price-asc", label: "Price (lowest first)", sortBy: "lowestPrice", sortDirection: "asc" },
-  { value: "price-desc", label: "Price (highest first)", sortBy: "lowestPrice", sortDirection: "desc" }
+  { value: "price-asc", label: "Price (lowest first)", sortBy: "price", sortDirection: "asc" },
+  { value: "price-desc", label: "Price (highest first)", sortBy: "price", sortDirection: "desc" }
 ];
 
 const getOptionalNumberParam = (

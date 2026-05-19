@@ -182,7 +182,7 @@ h4 {
 .filters {
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   height: fit-content;
 }
 
@@ -222,7 +222,7 @@ h4 {
   display: none;
 }
 
-.checkbox-row input:checked + .custom-checkbox {
+.checkbox-row input:checked+.custom-checkbox {
   background-position: center;
   color: #E3E3E3;
   background-size: 14px;
@@ -253,9 +253,8 @@ h4 {
 }
 
 .date-row {
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: 120px 143px;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 10px;
@@ -265,6 +264,8 @@ h4 {
   font-size: 14px;
   color: #E3E3E3;
   white-space: nowrap;
+  width: 115px;
+  flex-shrink: 0;
 }
 
 .date-row input {
@@ -273,6 +274,45 @@ h4 {
   padding: 0 8px;
   box-sizing: border-box;
   border-radius: 8px;
+}
+
+.date-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-clear-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: default;
+  flex-shrink: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.date-clear-button-visible {
+  background: #FFFFFF1A;
+  cursor: pointer;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.date-clear-button-visible:hover {
+  background: #FFFFFF33;
+}
+
+.date-clear-button img {
+  width: 14px;
+  height: 14px;
+  opacity: 0.8;
 }
 
 .price-inputs {

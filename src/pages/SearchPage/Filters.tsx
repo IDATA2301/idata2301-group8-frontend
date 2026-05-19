@@ -6,8 +6,8 @@ export type Filters = {
   categories: string[];
   startDate: string;
   endDate: string;
-  priceMin: number;
-  priceMax: number;
+  priceMin: number | undefined;
+  priceMax: number | undefined;
   locations: string[];
 };
 
@@ -87,30 +87,62 @@ const Filters = ({ filters, setFilters }: Props) => {
 
         <div className="date-row">
           <label>Event start after</label>
-          <input
-            type="date"
-            value={filters.startDate}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                startDate: e.target.value
-              }))
-            }
-          />
+          <div className="date-input-wrapper">
+            <button
+              type="button"
+              className={`date-clear-button ${filters.startDate ? "date-clear-button-visible" : ""}`}
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  startDate: ""
+                }))
+              }
+              aria-label="Clear start date"
+              tabIndex={filters.startDate ? 0 : -1}
+            >
+              <img src={x} alt="" />
+            </button>
+            <input
+              type="date"
+              value={filters.startDate}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  startDate: e.target.value
+                }))
+              }
+            />
+          </div>
         </div>
 
         <div className="date-row">
           <label>Event end before</label>
-          <input
-            type="date"
-            value={filters.endDate}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                endDate: e.target.value
-              }))
-            }
-          />
+          <div className="date-input-wrapper">
+            <button
+              type="button"
+              className={`date-clear-button ${filters.endDate ? "date-clear-button-visible" : ""}`}
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  endDate: ""
+                }))
+              }
+              aria-label="Clear end date"
+              tabIndex={filters.endDate ? 0 : -1}
+            >
+              <img src={x} alt="" />
+            </button>
+            <input
+              type="date"
+              value={filters.endDate}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  endDate: e.target.value
+                }))
+              }
+            />
+          </div>
         </div>
       </div>
 
@@ -120,25 +152,26 @@ const Filters = ({ filters, setFilters }: Props) => {
         <div className="price-inputs">
           <input
             type="number"
-            value={filters.priceMin}
-            onChange={(e) =>
+            value={filters.priceMin ?? ''}
+            onChange={(e) => {
+              const rawValue = e.target.value;
               setFilters((prev) => ({
                 ...prev,
-                priceMin: parseNumber(e.target.value)
-              }))
-            }
+                priceMin: rawValue === '' ? undefined : parseNumber(rawValue)
+              }));
+            }}
             placeholder="0 kr"
           />
-
           <input
             type="number"
-            value={filters.priceMax}
-            onChange={(e) =>
+            value={filters.priceMax ?? ''}
+            onChange={(e) => {
+              const rawValue = e.target.value;
               setFilters((prev) => ({
                 ...prev,
-                priceMax: parseNumber(e.target.value)
-              }))
-            }
+                priceMax: rawValue === '' ? undefined : parseNumber(rawValue)
+              }));
+            }}
             placeholder="9999 kr"
           />
         </div>

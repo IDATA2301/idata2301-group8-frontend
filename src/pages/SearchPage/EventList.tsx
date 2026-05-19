@@ -39,10 +39,8 @@ const EventList = ({ query, filters, sort }: Params) => {
       category: filters.categories.length > 0 ? filters.categories : undefined,
       startDate: toIsoDate(filters.startDate) || currentTime,
       endDate: toIsoDate(filters.endDate, true),
-      minPrice: filters.priceMin > 0 ? filters.priceMin : undefined,
-      maxPrice: filters.priceMax > 0 && filters.priceMax !== 9999
-        ? filters.priceMax
-        : undefined,
+      minPrice: filters.priceMin,
+      maxPrice: filters.priceMax,
     },
     page: currentPage - 1,
     size: EVENTS_PER_PAGE,

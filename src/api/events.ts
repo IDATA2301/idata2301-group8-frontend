@@ -117,7 +117,7 @@ export interface CategoryResponse {
 }
 
 export interface EventFilterDTO {
-  city?: string;
+  city?: string[];
   category?: string[];
   query?: string;
   startDate?: string;

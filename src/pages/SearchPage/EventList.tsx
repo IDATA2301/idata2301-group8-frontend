@@ -35,7 +35,7 @@ const EventList = ({ query, filters, sort }: Params) => {
   const { data: response, isLoading } = useGetEvents({
     filter: {
       query: query.trim() || undefined,
-      city: filters.locations[0] || undefined,
+      city: filters.locations.length > 0 ? filters.locations : undefined,
       category: filters.categories.length > 0 ? filters.categories : undefined,
       startDate: toIsoDate(filters.startDate) || currentTime,
       endDate: toIsoDate(filters.endDate, true),

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import x from "@assets/icons/x.svg";
-import { useGetAllCategories } from "@api/events";
+import { useGetAllCategories, useGetAllVenues } from "@api/events";
 
 export type Filters = {
   categories: string[];
@@ -16,17 +16,29 @@ type Props = {
   setFilters: (updater: React.SetStateAction<Filters>) => void;
 };
 
-const locations = ["Oslo", "Bergen", "Trondheim"];
-
 const parseNumber = (value: string) => {
   return value === "" ? 0 : Number(value);
 };
 
 const Filters = ({ filters, setFilters }: Props) => {
   const { data: categoriesResponse } = useGetAllCategories();
-  const categories = categoriesResponse?.status === 200
-    ? categoriesResponse.data.map((c) => c.name || c.categoryName).filter(Boolean) as string[]
-    : [];
+  const { data: venuesResponse } = useGetAllVenues();
+
+  const categories = useMemo(() => {
+    if (categoriesResponse?.status !== 200) return [];
+    return categoriesResponse.data
+      .map((c) => c.name || c.categoryName)
+      .filter((name): name is string => Boolean(name))
+      .sort((a, b) => a.localeCompare(b));
+  }, [categoriesResponse]);
+
+  const locations = useMemo(() => {
+    if (venuesResponse?.status !== 200) return [];
+    const cities = venuesResponse.data
+      .map((v) => v.city)
+      .filter((city): city is string => Boolean(city));
+    return [...new Set(cities)].sort((a, b) => a.localeCompare(b));
+  }, [venuesResponse]);
 
   const toggleArrayValue = (
     key: "categories" | "locations",

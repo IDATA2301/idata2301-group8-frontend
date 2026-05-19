@@ -31,7 +31,6 @@ type AuthContextLoggedOut = {
   isProvider?: boolean;
   user?: User;
   jwt?: string;
-  isExpired?: undefined;
   login: (jwt: string) => void;
   logout: () => void;
   refreshToken: () => Promise<boolean>;
@@ -43,7 +42,6 @@ type AuthContextLoggedIn = {
   isProvider: boolean;
   user: User;
   jwt: string;
-  isExpired: () => boolean;
   login: (jwt: string) => void;
   logout: () => void;
   refreshToken: () => Promise<boolean>;
@@ -61,7 +59,6 @@ type AuthState =
     isProvider: boolean;
     user: User;
     jwt: string;
-    isExpired: () => boolean;
   };
 
 export const useAuthContext = () => {
@@ -94,13 +91,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const login = (jwt: string) => {
+  const login = async (jwt: string): Promise<void> => {
     const decoded = jwtDecode<JwtClaims>(jwt);
 
-    const isExpired = () => decoded.exp < Date.now() / 1000;
 
-    if (isExpired()) {
-      return refreshToken();
+    if (decoded.exp < Date.now() / 1000) {
+      await refreshToken();
+      return
     }
 
     const user: User = {
@@ -118,7 +115,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isProvider: Object.keys(user.companyRoles).length > 0,
       user,
       jwt,
-      isExpired,
     });
   };
 

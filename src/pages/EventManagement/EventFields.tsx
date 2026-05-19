@@ -3,7 +3,6 @@ import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
 import type {
   CategoryResponse,
-  CreateEventRequest,
   EventResponse,
   ExtraFeatureResponse,
   VenueResponse
@@ -22,7 +21,6 @@ type EventFieldsProps = {
   selectedEvent?: EventResponse;
   onClose: () => void;
   onSuccess: () => void;
-  onCreateVenue?: (venueName: string) => Promise<VenueResponse | void>;
 };
 
 export default function EventFields({
@@ -32,20 +30,12 @@ export default function EventFields({
   extraFeatures,
   selectedEvent,
   onClose,
-  onSuccess,
-  onCreateVenue
+  onSuccess
 }: EventFieldsProps) {
   const createEvent = useCreateEvent();
   const updateEvent = useUpdateEvent();
   const deleteEvent = useDeleteEvent();
   const [eventImage, setEventImage] = useState<File | null>(null);
-  const [venueOptions, setVenueOptions] = useState<VenueResponse[]>(venues);
-
-  useEffect(() => {
-    setVenueOptions(venues);
-  }, [venues]);
-
-  const [newVenueName, setNewVenueName] = useState("");
   const [categoryToAdd, setCategoryToAdd] = useState("");
   const [extraFeatureToAdd, setExtraFeatureToAdd] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>(
@@ -61,6 +51,12 @@ export default function EventFields({
     venueId: selectedEvent?.venueId?.toString() ?? venues[0]?.id?.toString() ?? ""
   });
 
+  useEffect(() => {
+    if (mode === "create" && !form.venueId && venues[0]?.id) {
+      setForm((current) => ({ ...current, venueId: String(venues[0].id) }));
+    }
+  }, [mode, venues, form.venueId]);
+
   const isSubmitting = createEvent.isPending || updateEvent.isPending || deleteEvent.isPending;
   const hasValidTitle = form.eventName.trim().length > 0;
   const hasValidVenue = form.venueId.trim().length > 0 && !Number.isNaN(Number(form.venueId));
@@ -73,6 +69,7 @@ export default function EventFields({
 
   function addCategory(categoryIdValue: string) {
     const categoryId = Number(categoryIdValue);
+
     if (!categoryId || selectedCategoryIds.includes(categoryId)) {
       setCategoryToAdd("");
       return;
@@ -88,6 +85,7 @@ export default function EventFields({
 
   function addExtraFeature(extraFeatureIdValue: string) {
     const extraFeatureId = Number(extraFeatureIdValue);
+
     if (!extraFeatureId || selectedExtraFeatureIds.includes(extraFeatureId)) {
       setExtraFeatureToAdd("");
       return;
@@ -101,39 +99,15 @@ export default function EventFields({
     setSelectedExtraFeatureIds((current) => current.filter((id) => id !== extraFeatureId));
   }
 
-  function buildRequest(): CreateEventRequest {
-    return {
+  function buildEventData(): string {
+    return JSON.stringify({
       eventName: form.eventName.trim(),
       description: form.description,
       status: form.status,
       venueId: Number(form.venueId),
       categoryIds: selectedCategoryIds,
       extraFeatureIds: selectedExtraFeatureIds
-    };
-  }
-
-  async function handleCreateVenue() {
-    const venueName = newVenueName.trim();
-
-    if (!venueName || !onCreateVenue) {
-      return;
-    }
-
-    try {
-      const createdVenue = await onCreateVenue(venueName);
-
-      if (createdVenue?.id) {
-        setVenueOptions((current) => [...current, createdVenue]);
-        updateField("venueId", createdVenue.id.toString());
-        toast.success("Venue created successfully");
-      } else {
-        toast.error("Failed to create venue");
-      }
-    } catch {
-      toast.error("Failed to create venue");
-    }
-
-    setNewVenueName("");
+    });
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -148,7 +122,7 @@ export default function EventFields({
         {
           id: selectedEvent.eventId,
           data: {
-            eventData: buildRequest(),
+            eventData: buildEventData(),
             eventImage: eventImage ?? undefined
           }
         },
@@ -172,7 +146,7 @@ export default function EventFields({
     createEvent.mutate(
       {
         data: {
-          eventData: buildRequest(),
+          eventData: buildEventData(),
           eventImage
         }
       },
@@ -274,34 +248,13 @@ export default function EventFields({
               onChange={(e) => updateField("venueId", e.target.value)}
             >
               <option value="">Select venue</option>
-              {venueOptions.map((venue) => (
+              {venues.map((venue) => (
                 <option key={venue.id} value={venue.id}>
                   {venue.name ?? `Venue ${venue.id}`}
                 </option>
               ))}
             </select>
           </label>
-
-          <div className={styles.inlineCreate}>
-            <label>
-              New venue
-              <input
-                value={newVenueName}
-                disabled={isSubmitting}
-                onChange={(e) => setNewVenueName(e.target.value)}
-                placeholder="Venue name"
-              />
-            </label>
-
-            <button
-              type="button"
-              className={styles.secondaryButton}
-              onClick={handleCreateVenue}
-              disabled={!newVenueName.trim() || !onCreateVenue || isSubmitting}
-            >
-              Add venue
-            </button>
-          </div>
 
           <div className={styles.fieldGroup}>
             <label>
@@ -317,12 +270,12 @@ export default function EventFields({
                 <option value="">Add category</option>
                 {categories
                   .filter((category) =>
-                    category.categoryId !== undefined &&
-                    !selectedCategoryIds.includes(category.categoryId)
+                    category.id !== undefined &&
+                    !selectedCategoryIds.includes(category.id)
                   )
                   .map((category) => (
-                    <option key={category.categoryId} value={category.categoryId}>
-                      {category.categoryName ?? `Category ${category.categoryId}`}
+                    <option key={category.id} value={category.id}>
+                      {category.name ?? `Category ${category.id}`}
                     </option>
                   ))}
               </select>
@@ -330,7 +283,7 @@ export default function EventFields({
 
             <div className={styles.selectedChips}>
               {selectedCategoryIds.map((categoryId) => {
-                const category = categories.find((item) => item.categoryId === categoryId);
+                const category = categories.find((item) => item.id === categoryId);
 
                 return (
                   <button
@@ -340,7 +293,7 @@ export default function EventFields({
                     disabled={isSubmitting}
                     onClick={() => removeCategory(categoryId)}
                   >
-                    {category?.categoryName ?? `Category ${categoryId}`} ×
+                    {category?.name ?? `Category ${categoryId}`} ×
                   </button>
                 );
               })}

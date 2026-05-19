@@ -25,12 +25,18 @@ export default defineConfig(({ mode }) => {
         '/api-event': {
           target: env.EVENT_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api-event/, '')
+          rewrite: (path) => path.replace(/^\/api-event/, ''),
+          headers: {
+            'Origin': env.REQUEST_ORIGIN || 'http://localhost:5173'
+          }
         },
         '/api-order': {
           target: env.ORDER_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api-order/, '')
+          rewrite: (path) => path.replace(/^\/api-order/, ''),
+          headers: {
+            'Origin': env.REQUEST_ORIGIN || 'http://localhost:5173'
+          }
         }
       }
     }

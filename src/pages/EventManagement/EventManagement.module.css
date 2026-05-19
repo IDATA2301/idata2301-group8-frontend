@@ -7,7 +7,7 @@
 }
 
 .pageContent {
-  width: min(920px, calc(100% - 2rem));
+  width: min(1380px, calc(100% - 2rem));
   margin: 0 auto;
 }
 
@@ -56,8 +56,41 @@
 
 .sectionsGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 920px) minmax(260px, 420px);
   gap: 1.5rem;
+  align-items: stretch;
+}
+
+.sectionsGrid > :first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.sectionsGrid > :nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.sectionsGrid > :nth-child(3) {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sectionsGrid > :nth-child(3) .managementBox {
+  flex: 1;
+  height: auto;
+}
+
+.sectionsGrid > :nth-child(3) .tableHeader,
+.sectionsGrid > :nth-child(3) .entriesList {
+  min-width: 0;
+}
+
+.sectionsGrid > :nth-child(3) .eventManagementEntry {
+  min-width: 0;
 }
 
 .managementSection {
@@ -190,6 +223,32 @@
   margin: 1rem 0 0.5rem;
 }
 
+@media (max-width: 1100px) {
+  .pageContent {
+    width: min(920px, calc(100% - 2rem));
+  }
+
+  .sectionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionsGrid > :first-child,
+  .sectionsGrid > :nth-child(2),
+  .sectionsGrid > :nth-child(3) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .sectionsGrid > :nth-child(3) .managementBox {
+    height: 500px;
+  }
+
+  .sectionsGrid > :nth-child(3) .tableHeader,
+  .sectionsGrid > :nth-child(3) .entriesList {
+    min-width: 720px;
+  }
+}
+
 @media (max-width: 700px) {
   .eventManagementPage {
     padding: 1.25rem 0 3rem;
@@ -242,8 +301,14 @@
     border-radius: 18px;
   }
 
+  .sectionsGrid > :nth-child(3) .managementBox {
+    height: 420px;
+  }
+
   .tableHeader,
-  .entriesList {
+  .entriesList,
+  .sectionsGrid > :nth-child(3) .tableHeader,
+  .sectionsGrid > :nth-child(3) .entriesList {
     min-width: 680px;
   }
 
@@ -268,9 +333,14 @@
     padding: 0.75rem;
   }
 
+  .sectionsGrid > :nth-child(3) .managementBox {
+    height: 390px;
+  }
+
   .tableHeader,
-  .entriesList {
+  .entriesList,
+  .sectionsGrid > :nth-child(3) .tableHeader,
+  .sectionsGrid > :nth-child(3) .entriesList {
     min-width: 680px;
   }
 }
-

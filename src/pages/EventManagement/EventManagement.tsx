@@ -2,10 +2,12 @@ import { useMemo, useRef, useState } from "react";
 import EventManagementSection from "./EventManagementSection";
 import EventDialog from "./EventDialog";
 import TicketListingDialog from "./TicketListingDialog";
+import VenueDialog from "./VenueDialog";
 import styles from "./EventManagement.module.css";
 import { useAuthContext } from "@utility/AuthContext";
 import { useGetCompanies, type CompanyDto } from "@api/iam";
 import {
+  useGetAllVenues,
   useGetEvents,
   useGetTicketListings
 } from "@api/events";
@@ -13,10 +15,11 @@ import {
 type SelectedCompanyId = "all" | number;
 
 type PopupState = {
-  type: "event" | "ticketListing";
+  type: "event" | "ticketListing" | "venue";
   mode: "create" | "edit";
   eventId?: number;
   ticketListingId?: number;
+  venueId?: number;
 } | null;
 
 type ActivePopup = Exclude<PopupState, null>;
@@ -38,19 +41,23 @@ export default function EventManagement() {
   const { user } = useAuthContext();
   const eventDialogRef = useRef<HTMLDialogElement>(null);
   const ticketListingDialogRef = useRef<HTMLDialogElement>(null);
+  const venueDialogRef = useRef<HTMLDialogElement>(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState<SelectedCompanyId>("all");
   const [popup, setPopup] = useState<PopupState>(null);
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
   const companiesQuery = useGetCompanies();
-  const eventsQuery = useGetEvents({ size: 100, filter: {} });
+  const eventsQuery = useGetEvents({ size: 100 });
+  const venuesQuery = useGetAllVenues();
   const ticketListingsQuery = useGetTicketListings(
     companyIdParam ? { companyId: companyIdParam } : undefined
   );
 
   const companiesData = companiesQuery.data?.data;
   const eventsData = eventsQuery.data?.data;
+  const venuesData = venuesQuery.data?.data;
   const ticketListingsData = ticketListingsQuery.data?.data;
   const companies = Array.isArray(companiesData) ? companiesData : [];
+  const venues = Array.isArray(venuesData) ? venuesData : [];
   const allEvents =
     typeof eventsData === "object" && Array.isArray(eventsData.content)
       ? eventsData.content
@@ -91,6 +98,10 @@ export default function EventManagement() {
     ? visibleTicketListings.find((listing) => listing.ticketListingId === popup.ticketListingId)
     : undefined;
 
+  const selectedVenue = popup?.venueId
+    ? venues.find((venue) => venue.id === popup.venueId)
+    : undefined;
+
   const eventNameById = useMemo(() => {
     return new Map(
       allEvents
@@ -126,9 +137,22 @@ export default function EventManagement() {
     ];
   });
 
+  const venueRows = venues.map((venue) => [
+    venue.id ?? "-",
+    venue.name ?? "-",
+    venue.city ?? "-",
+    venue.country ?? "-"
+  ]);
+
+  function closeAllDialogs() {
+    eventDialogRef.current?.close();
+    ticketListingDialogRef.current?.close();
+    venueDialogRef.current?.close();
+  }
+
   function openEventDialog(nextPopup: ActivePopup) {
     setPopup(nextPopup);
-    ticketListingDialogRef.current?.close();
+    closeAllDialogs();
 
     requestAnimationFrame(() => {
       if (!eventDialogRef.current?.open) {
@@ -139,7 +163,7 @@ export default function EventManagement() {
 
   function openTicketListingDialog(nextPopup: ActivePopup) {
     setPopup(nextPopup);
-    eventDialogRef.current?.close();
+    closeAllDialogs();
 
     requestAnimationFrame(() => {
       if (!ticketListingDialogRef.current?.open) {
@@ -148,9 +172,19 @@ export default function EventManagement() {
     });
   }
 
+  function openVenueDialog(nextPopup: ActivePopup) {
+    setPopup(nextPopup);
+    closeAllDialogs();
+
+    requestAnimationFrame(() => {
+      if (!venueDialogRef.current?.open) {
+        venueDialogRef.current?.showModal();
+      }
+    });
+  }
+
   function closeDialogs() {
-    eventDialogRef.current?.close();
-    ticketListingDialogRef.current?.close();
+    closeAllDialogs();
     setPopup(null);
   }
 
@@ -158,6 +192,7 @@ export default function EventManagement() {
     eventsQuery.refetch();
     ticketListingsQuery.refetch();
     companiesQuery.refetch();
+    venuesQuery.refetch();
   }
 
   return (
@@ -213,6 +248,19 @@ export default function EventManagement() {
               ticketListingId: visibleTicketListings[index]?.ticketListingId
             })}
           />
+
+          <EventManagementSection
+            title="Venues"
+            buttonText="Create venue"
+            headers={["venue_id", "venue_name", "city", "country"]}
+            entries={venueRows}
+            onCreate={() => openVenueDialog({ type: "venue", mode: "create" })}
+            onEntryClick={(index) => openVenueDialog({
+              type: "venue",
+              mode: "edit",
+              venueId: venues[index]?.id
+            })}
+          />
         </div>
       </div>
 
@@ -231,6 +279,14 @@ export default function EventManagement() {
         selectedCompanyId={selectedCompanyId}
         companyOptions={companyOptions}
         selectedTicketListing={selectedTicketListing}
+        onClose={closeDialogs}
+        onSuccess={refetchManagementData}
+      />
+
+      <VenueDialog
+        ref={venueDialogRef}
+        mode={popup?.type === "venue" ? popup.mode : "create"}
+        selectedVenue={selectedVenue}
         onClose={closeDialogs}
         onSuccess={refetchManagementData}
       />

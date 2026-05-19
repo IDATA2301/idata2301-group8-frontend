@@ -18,6 +18,8 @@
 }
 
 .requestSection {
+  width: 862px;
+  max-width: 100%;
   margin-bottom: 2rem;
 }
 
@@ -28,8 +30,9 @@
 }
 
 .requestBox {
-  width: 100%;
-  height: 332px;
+  width: 862px;
+  max-width: 100%;
+  height: 387px;
   border-radius: 18px;
   background-color: var(--deep-space-blue-dark);
   padding: 1.25rem;
@@ -39,7 +42,9 @@
 }
 
 .roleTableHeader,
-.roleRequestEntry {
+.roleRequestEntry,
+.companyTableHeader,
+.companyRequestEntry {
   display: grid;
   grid-template-columns: 1fr 1.45fr 1.35fr 1.05fr 1.1fr;
   gap: 1rem;
@@ -47,17 +52,8 @@
   min-width: 752px;
 }
 
-.eventTableHeader,
-.eventRequestEntry {
-  display: grid;
-  grid-template-columns: 1.45fr 1.8fr 1.05fr 1.1fr;
-  gap: 1rem;
-  align-items: center;
-  min-width: 720px;
-}
-
 .roleTableHeader,
-.eventTableHeader {
+.companyTableHeader {
   padding: 0 0.5rem 0.65rem;
   color: white;
   font-size: 0.78rem;
@@ -65,7 +61,7 @@
 }
 
 .roleTableHeader span:last-child,
-.eventTableHeader span:last-child {
+.companyTableHeader span:last-child {
   text-align: center;
 }
 
@@ -95,7 +91,7 @@
 }
 
 .roleRequestEntry,
-.eventRequestEntry {
+.companyRequestEntry {
   width: 100%;
   height: 36px;
   margin-bottom: 0.45rem;
@@ -106,9 +102,9 @@
 }
 
 .roleRequestEntry span,
-.eventRequestEntry span,
+.companyRequestEntry span,
 .roleTableHeader span,
-.eventTableHeader span {
+.companyTableHeader span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -195,41 +191,44 @@
     margin-bottom: 1rem;
   }
 
+  .requestSection {
+    width: 100%;
+  }
+
   .requestSection h2 {
     font-size: 1.1rem;
   }
 
   .requestBox {
-    height: 332px;
+    width: 100%;
+    height: 387px;
     padding: 1rem;
     border-radius: 16px;
   }
 
   .roleTableHeader,
   .roleRequestEntry,
+  .companyTableHeader,
+  .companyRequestEntry,
   .entriesList {
     min-width: 760px;
   }
 
   .roleTableHeader,
-  .roleRequestEntry {
+  .roleRequestEntry,
+  .companyTableHeader,
+  .companyRequestEntry {
     grid-template-columns: 0.9fr 1.4fr 1.25fr 1fr 1fr;
     gap: 0.7rem;
   }
 
-  .eventTableHeader,
-  .eventRequestEntry {
-    min-width: 720px;
-    gap: 0.7rem;
-  }
-
   .roleTableHeader,
-  .eventTableHeader {
+  .companyTableHeader {
     font-size: 0.7rem;
   }
 
   .roleRequestEntry,
-  .eventRequestEntry {
+  .companyRequestEntry {
     height: 36px;
     font-size: 0.78rem;
   }
@@ -253,18 +252,22 @@
   }
 
   .requestBox {
-    height: 310px;
+    height: 387px;
     padding: 0.75rem;
   }
 
   .roleTableHeader,
   .roleRequestEntry,
+  .companyTableHeader,
+  .companyRequestEntry,
   .entriesList {
     min-width: 720px;
   }
 
   .roleTableHeader,
-  .roleRequestEntry {
+  .roleRequestEntry,
+  .companyTableHeader,
+  .companyRequestEntry {
     grid-template-columns: 0.85fr 1.35fr 1.2fr 0.95fr 0.95fr;
     gap: 0.55rem;
   }

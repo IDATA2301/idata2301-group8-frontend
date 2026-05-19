@@ -100,7 +100,7 @@ export default function VenueFields({
           onSuccess: handleSuccessResponse,
           onError: (error) => {
             console.error("Failed to update venue:", error);
-            toast.error("Failed to update venue");
+            toast.error(typeof error === "string" ? error : "Failed to update venue");
           }
         }
       );
@@ -113,7 +113,7 @@ export default function VenueFields({
         onSuccess: handleSuccessResponse,
         onError: (error) => {
           console.error("Failed to create venue:", error);
-          toast.error("Failed to create venue");
+          toast.error(typeof error === "string" ? error : "Failed to create venue");
         }
       }
     );

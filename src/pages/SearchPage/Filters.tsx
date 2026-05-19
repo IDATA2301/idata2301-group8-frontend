@@ -26,17 +26,20 @@ const Filters = ({ filters, setFilters }: Props) => {
 
   const categories = useMemo(() => {
     if (categoriesResponse?.status !== 200) return [];
+
     return categoriesResponse.data
-      .map((c) => c.name || c.categoryName)
+      .map((c) => c.categoryName)
       .filter((name): name is string => Boolean(name))
       .sort((a, b) => a.localeCompare(b));
   }, [categoriesResponse]);
 
   const locations = useMemo(() => {
     if (venuesResponse?.status !== 200) return [];
+
     const cities = venuesResponse.data
       .map((v) => v.city)
       .filter((city): city is string => Boolean(city));
+
     return [...new Set(cities)].sort((a, b) => a.localeCompare(b));
   }, [venuesResponse]);
 
@@ -152,24 +155,27 @@ const Filters = ({ filters, setFilters }: Props) => {
         <div className="price-inputs">
           <input
             type="number"
-            value={filters.priceMin ?? ''}
+            value={filters.priceMin ?? ""}
             onChange={(e) => {
               const rawValue = e.target.value;
+
               setFilters((prev) => ({
                 ...prev,
-                priceMin: rawValue === '' ? undefined : parseNumber(rawValue)
+                priceMin: rawValue === "" ? undefined : parseNumber(rawValue)
               }));
             }}
             placeholder="0 kr"
           />
+
           <input
             type="number"
-            value={filters.priceMax ?? ''}
+            value={filters.priceMax ?? ""}
             onChange={(e) => {
               const rawValue = e.target.value;
+
               setFilters((prev) => ({
                 ...prev,
-                priceMax: rawValue === '' ? undefined : parseNumber(rawValue)
+                priceMax: rawValue === "" ? undefined : parseNumber(rawValue)
               }));
             }}
             placeholder="9999 kr"

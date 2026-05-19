@@ -53,14 +53,17 @@ function HomePage() {
   const navigate = useNavigate();
   const { prefetch } = usePrefetchSearch();
   const { prefetch: prefetchEvent } = usePrefetchEvent();
-
   const currentTime = useMemo(() => new Date().toISOString(), []);
 
   const {
     data: eventsResponse,
     isLoading,
     isError
-  } = useGetEvents({ filter: { startDate: currentTime }, sortBy: "startDate", sortDirection: "asc", size: 6 });
+  } = useGetEvents({
+    startDate: currentTime,
+    sort: "startDate,asc",
+    size: 6
+  });
 
   const events: EventResponse[] =
     eventsResponse?.status === 200 && Array.isArray(eventsResponse.data.content)
@@ -126,13 +129,18 @@ function HomePage() {
           <ul className="categories">
             {categories.map((category) => {
               const categoryParam = new URLSearchParams(category.path.split("?")[1]).get("category");
+
               return (
                 <li key={category.name}>
                   <Link
                     className={`category-card ${category.className}`}
                     to={category.path}
                     style={{ backgroundImage: `url(${category.image})` }}
-                    onMouseEnter={() => prefetch({ filter: { category: categoryParam ? [categoryParam] : undefined } })}
+                    onMouseEnter={() =>
+                      prefetch({
+                        category: categoryParam ? [categoryParam] : undefined
+                      })
+                    }
                   >
                     {category.name}
                   </Link>

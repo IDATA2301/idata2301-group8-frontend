@@ -47,12 +47,21 @@ function ChooseTickets({ eventId, eventName, tickets }: Props) {
     if (totalTicketCount === 0) {
       return;
     }
+
+    const items = [...ticketCounts.entries()]
+      .filter(([, count]) => count > 0)
+      .map(([ticketListingId, quantity]) => ({
+        ticketListingId,
+        quantity
+      }));
+
     navigate("/payment", {
       state: {
         eventId,
         eventName,
         ticketCount: totalTicketCount,
-        totalPrice: totalTicketPrice
+        totalPrice: totalTicketPrice,
+        items
       }
     });
   }

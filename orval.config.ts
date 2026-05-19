@@ -1,6 +1,6 @@
 export default {
   iam: {
-    input: 'http://64.226.83.250/iam/v3/api-docs',
+    input: 'https://64.226.83.250/iam/v3/api-docs',
     output: {
       tsconfig: './tsconfig.app.json',
       target: './src/api/iam.ts',
@@ -15,7 +15,7 @@ export default {
   },
 
   events: {
-    input: "http://localhost:8080/v3/api-docs",
+    input: "https://64.226.83.250/event/v3/api-docs",
     output: {
       tsconfig: "./tsconfig.app.json",
       target: "./src/api/events.ts",
@@ -29,18 +29,18 @@ export default {
     }
   },
 
-  // order: {
-  //   input: 'http://localhost:8080/v3/api-docs',
-  //   output: {
-  //     tsconfig: './tsconfig.app.json',
-  //     target: './src/api/orders.ts',
-  //     client: 'react-query',
-  //     override: {
-  //       mutator: {
-  //         path: './src/api/client.ts',
-  //         name: 'customFetchOrderApi'
-  //       }
-  //     }
-  //   }
-  // }
+  order: {
+    input: 'https://64.226.83.250/order/v3/api-docs',
+    output: {
+      tsconfig: './tsconfig.app.json',
+      target: './src/api/orders.ts',
+      client: 'react-query',
+      override: {
+        mutator: {
+          path: './src/api/client.ts',
+          name: 'customFetchOrderApi'
+        }
+      }
+    }
+  }
 };

@@ -4,10 +4,16 @@ import creditCardIcon from "@assets/icons/credit_card.svg";
 import styles from "./CheckoutCompletePage.module.css";
 
 type CheckoutState = {
+  orderId?: string;
   orderNumber?: string;
   email?: string;
   paymentMethod?: string;
   cardLastFour?: string;
+  eventId?: number;
+  eventName?: string;
+  ticketCount?: number;
+  totalPrice?: number;
+  paymentStatus?: string;
 };
 
 export default function CheckoutCompletePage() {
@@ -28,17 +34,22 @@ export default function CheckoutCompletePage() {
   }
 
   const order = {
+    orderId: state.orderId,
     orderNumber: state.orderNumber,
     email: state.email,
     paymentMethod: state.paymentMethod,
-    cardLastFour: state.cardLastFour
+    cardLastFour: state.cardLastFour,
+    eventName: state.eventName,
+    ticketCount: state.ticketCount,
+    totalPrice: state.totalPrice
   };
 
   const qrValue = JSON.stringify({
+    orderId: order.orderId,
     orderNumber: order.orderNumber,
     email: order.email,
-    paymentMethod: formatPaymentMethod(order.paymentMethod),
-    cardLastFour: order.cardLastFour
+    eventName: order.eventName,
+    ticketCount: order.ticketCount
   });
 
   return (
@@ -52,6 +63,16 @@ export default function CheckoutCompletePage() {
           <p>
             A confirmation email has been sent to <strong>{order.email}</strong>
           </p>
+          {order.eventName && (
+            <p>
+              Event: <strong>{order.eventName}</strong>
+            </p>
+          )}
+          {order.ticketCount && order.ticketCount > 0 && (
+            <p>
+              Tickets: <strong>{order.ticketCount}</strong>
+            </p>
+          )}
           <h2>Your tickets:</h2>
         </div>
         <div className={styles.qrCard} aria-label="Ticket QR code">
@@ -74,6 +95,12 @@ export default function CheckoutCompletePage() {
               <img src={creditCardIcon} alt="" aria-hidden="true" />
               {formatPaymentMethod(order.paymentMethod)} ending in {order.cardLastFour}
             </span>
+            {order.totalPrice !== undefined && (
+              <>
+                <span>Total paid</span>
+                <span>{formatPrice(order.totalPrice)} NOK</span>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -86,4 +113,11 @@ function formatPaymentMethod(method?: string) {
   if (method === "applepay") return "Apple Pay";
   if (method === "vipps") return "Vipps";
   return "Card";
+}
+
+function formatPrice(price: number) {
+  return new Intl.NumberFormat("nb-NO", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(price);
 }

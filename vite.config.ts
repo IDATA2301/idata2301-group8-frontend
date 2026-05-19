@@ -9,14 +9,18 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: "/",
+    base: env.BASE_URL || "/",
     plugins: [react(), tsconfigPaths()],
     server: {
       proxy: {
         '/api-iam': {
           target: env.IAM_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api-iam/, '')
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api-iam/, ''),
+          headers: {
+            'Origin': env.REQUEST_ORIGIN || 'http://localhost:5173'
+          }
         },
         '/api-event': {
           target: env.EVENT_API_URL,

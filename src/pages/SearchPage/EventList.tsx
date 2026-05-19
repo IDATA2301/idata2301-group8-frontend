@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import EventCard from "src/pages/EventCard/EventCard";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
@@ -29,13 +30,14 @@ const EventList = ({ query, filters, sort }: Params) => {
   const currentPage = Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
 
   const sortOption = sortOptions.find((o) => o.value === sort);
+  const currentTime = useMemo(() => new Date().toISOString(), []);
 
   const { data: response, isLoading } = useGetEvents({
     filter: {
       query: query.trim() || undefined,
       city: filters.locations[0] || undefined,
       category: filters.categories.length > 0 ? filters.categories : undefined,
-      startDate: toIsoDate(filters.startDate),
+      startDate: toIsoDate(filters.startDate) || currentTime,
       endDate: toIsoDate(filters.endDate, true),
       minPrice: filters.priceMin > 0 ? filters.priceMin : undefined,
       maxPrice: filters.priceMax > 0 && filters.priceMax !== 9999

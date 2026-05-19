@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 // import FeaturedEventCard from "src/pages/FeaturedEventCard/FeaturedEventCard";
 import EventCards from "@pages/HomePage/EventCards";
 import EventCardLoader from "@components/EventCardLoader/EventCardLoader";
@@ -52,15 +52,18 @@ function HomePage() {
   const navigate = useNavigate();
   const { prefetch } = usePrefetchSearch();
 
+  const currentTime = useMemo(() => new Date().toISOString(), []);
+
   const {
     data: eventsResponse,
     isLoading,
     isError
-  } = useGetEvents({ filter: {} });
+  } = useGetEvents({ filter: { startDate: currentTime }, sortBy: "startDate", sortDirection: "asc", size: 4 });
 
-  const events: EventResponse[] = Array.isArray(eventsResponse?.data?.content)
-    ? eventsResponse.data.content
-    : [];
+  const events: EventResponse[] =
+    eventsResponse?.status === 200 && Array.isArray(eventsResponse.data.content)
+      ? eventsResponse.data.content
+      : [];
 
   // const featuredEvent = events[0];
   // const upcomingEvents = events.slice(1);
@@ -128,7 +131,7 @@ function HomePage() {
                     className={`category-card ${category.className}`}
                     to={category.path}
                     style={{ backgroundImage: `url(${category.image})` }}
-                    onMouseEnter={() => prefetch({ filter: { category: categoryParam ?? undefined } })}
+                    onMouseEnter={() => prefetch({ filter: { category: categoryParam ? [categoryParam] : undefined } })}
                   >
                     {category.name}
                   </Link>
@@ -167,7 +170,7 @@ function HomePage() {
           <div className="upcoming-events-content">
             {isLoading && (
               <div className="upcoming-events-loader">
-                {Array.from({ length: 5 }).map((_, index) => (
+                {Array.from({ length: 4 }).map((_, index) => (
                   <EventCardLoader key={index} />
                 ))}
               </div>

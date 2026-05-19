@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./DialogForm.module.css";
+import toast from "@components/Toast";
 import type { CompanyDto } from "@api/iam";
 import type {
   CreateTicketListingRequest,
@@ -109,14 +110,30 @@ export default function TicketListingFields({
           id: selectedTicketListing.ticketListingId,
           data: buildRequest()
         },
-        { onSuccess: handleSuccess }
+        {
+          onSuccess: () => {
+            toast.success("Ticket listing updated successfully");
+            handleSuccess();
+          },
+          onError: () => {
+            toast.error("Failed to update ticket listing");
+          }
+        }
       );
       return;
     }
 
     createTicketListing.mutate(
       { data: buildRequest() },
-      { onSuccess: handleSuccess }
+      {
+        onSuccess: () => {
+          toast.success("Ticket listing created successfully");
+          handleSuccess();
+        },
+        onError: () => {
+          toast.error("Failed to create ticket listing");
+        }
+      }
     );
   }
 
@@ -127,7 +144,15 @@ export default function TicketListingFields({
 
     deleteTicketListing.mutate(
       { id: selectedTicketListing.ticketListingId },
-      { onSuccess: handleSuccess }
+      {
+        onSuccess: () => {
+          toast.success("Ticket listing deleted successfully");
+          handleSuccess();
+        },
+        onError: () => {
+          toast.error("Failed to delete ticket listing");
+        }
+      }
     );
   }
 

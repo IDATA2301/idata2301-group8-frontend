@@ -64,7 +64,7 @@
   min-height: 42px;
   border: 1px solid #FFFFFF14;
   border-radius: 12px;
-  background: #FFFFFF0F;
+  background-color: #FFFFFF0F;
   color: #FFFFFF;
   padding: 0 0.85rem;
   font-family: Inter, sans-serif;
@@ -73,18 +73,25 @@
   outline: none;
   transition:
     border-color 0.2s,
-    background 0.2s,
+    background-color 0.2s,
     opacity 0.2s,
     filter 0.2s;
 }
 
 .formSection select {
   appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   padding-right: 2.5rem;
-  background-image: linear-gradient(45deg, transparent 50%, #e3e3e3 50%),
+  background-image:
+    linear-gradient(45deg, transparent 50%, #e3e3e3 50%),
     linear-gradient(135deg, #e3e3e3 50%, transparent 50%);
-  background-position: calc(100% - 1.35rem) 50%, calc(100% - 1rem) 50%;
-  background-size: 0.35rem 0.35rem, 0.35rem 0.35rem;
+  background-position:
+    calc(100% - 1.35rem) 50%,
+    calc(100% - 1rem) 50%;
+  background-size:
+    0.35rem 0.35rem,
+    0.35rem 0.35rem;
   background-repeat: no-repeat;
 }
 
@@ -117,7 +124,7 @@
 .formSection select:focus,
 .formSection textarea:focus {
   border-color: #5FA8FF;
-  background: #FFFFFF17;
+  background-color: #FFFFFF17;
 }
 
 .helperText {
@@ -301,7 +308,7 @@
 .formSection input:disabled,
 .formSection select:disabled,
 .formSection textarea:disabled {
-  background: #FFFFFF08;
+  background-color: #FFFFFF08;
   color: #FFFFFF99;
 }
 

@@ -38,7 +38,7 @@ function formatLocation(city?: string, country?: string) {
 }
 
 export default function EventManagement() {
-  const { user } = useAuthContext();
+  const { user, isAdmin } = useAuthContext();
   const eventDialogRef = useRef<HTMLDialogElement>(null);
   const ticketListingDialogRef = useRef<HTMLDialogElement>(null);
   const venueDialogRef = useRef<HTMLDialogElement>(null);
@@ -65,10 +65,14 @@ export default function EventManagement() {
   const visibleTicketListings = Array.isArray(ticketListingsData) ? ticketListingsData : [];
 
   const companyOptions: CompanyDto[] = useMemo(() => {
-    const companyIds = Object.entries(user?.companyRoles || {}).map(([companyId]) => companyId);
+    if (isAdmin) {
+      return companies;
+    }
+
+    const companyIds = Object.keys(user?.companyRoles || {});
 
     return companyIds.reduce((acc: CompanyDto[], companyId) => {
-      const company = companies.find((item) => item.id === parseInt(companyId));
+      const company = companies.find((item) => item.id === Number(companyId));
 
       if (company) {
         acc.push(company);
@@ -76,7 +80,7 @@ export default function EventManagement() {
 
       return acc;
     }, []);
-  }, [user?.companyRoles, companies]);
+  }, [isAdmin, user?.companyRoles, companies]);
 
   const visibleEvents = useMemo(() => {
     if (selectedCompanyId === "all") {

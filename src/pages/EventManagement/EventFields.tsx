@@ -3,7 +3,6 @@ import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
 import type {
   CategoryResponse,
-  CreateEventRequest,
   EventResponse,
   ExtraFeatureResponse,
   VenueResponse
@@ -100,15 +99,15 @@ export default function EventFields({
     setSelectedExtraFeatureIds((current) => current.filter((id) => id !== extraFeatureId));
   }
 
-  function buildRequest(): CreateEventRequest {
-    return {
+  function buildEventData(): string {
+    return JSON.stringify({
       eventName: form.eventName.trim(),
       description: form.description,
       status: form.status,
       venueId: Number(form.venueId),
       categoryIds: selectedCategoryIds,
       extraFeatureIds: selectedExtraFeatureIds
-    };
+    });
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -123,7 +122,7 @@ export default function EventFields({
         {
           id: selectedEvent.eventId,
           data: {
-            eventData: buildRequest(),
+            eventData: buildEventData(),
             eventImage: eventImage ?? undefined
           }
         },
@@ -147,7 +146,7 @@ export default function EventFields({
     createEvent.mutate(
       {
         data: {
-          eventData: buildRequest(),
+          eventData: buildEventData(),
           eventImage
         }
       },

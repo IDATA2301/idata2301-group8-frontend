@@ -61,17 +61,6 @@ export interface TicketListingResponse {
   createdAt?: string;
 }
 
-export interface CreateEventRequest {
-  eventName?: string;
-  description?: string;
-  imageUrl?: string;
-  status?: string;
-  createdBy?: string;
-  venueId?: number;
-  categoryIds?: number[];
-  extraFeatureIds?: number[];
-}
-
 export interface EventResponse {
   eventId?: number;
   slug?: string;
@@ -129,8 +118,8 @@ export interface EventFilterDTO {
 
 export interface SortObject {
   empty?: boolean;
-  sorted?: boolean;
   unsorted?: boolean;
+  sorted?: boolean;
 }
 
 export interface PageableObject {
@@ -143,8 +132,8 @@ export interface PageableObject {
 }
 
 export interface PageEventResponse {
-  totalElements?: number;
   totalPages?: number;
+  totalElements?: number;
   size?: number;
   content?: EventResponse[];
   number?: number;
@@ -157,7 +146,7 @@ export interface PageEventResponse {
 }
 
 export type UpdateEventBody = {
-  eventData: CreateEventRequest;
+  eventData: string;
   eventImage?: Blob;
 };
 
@@ -168,7 +157,7 @@ size?: number;
 };
 
 export type CreateEventBody = {
-  eventData: CreateEventRequest;
+  eventData: string;
   eventImage: Blob;
 };
 
@@ -964,7 +953,7 @@ export const updateEvent = async (id: number,
     updateEventBody?: UpdateEventBody, options?: RequestInit): Promise<updateEventResponse> => {
     const formData = new FormData();
 if(updateEventBody?.eventData !== undefined) {
- formData.append(`eventData`, JSON.stringify(updateEventBody.eventData));
+ formData.append(`eventData`, updateEventBody.eventData);
  }
 if(updateEventBody?.eventImage !== undefined) {
  formData.append(`eventImage`, updateEventBody.eventImage);
@@ -2315,7 +2304,7 @@ export const getCreateEventUrl = () => {
 export const createEvent = async (createEventBody?: CreateEventBody, options?: RequestInit): Promise<createEventResponse> => {
     const formData = new FormData();
 if(createEventBody?.eventData !== undefined) {
- formData.append(`eventData`, JSON.stringify(createEventBody.eventData));
+ formData.append(`eventData`, createEventBody.eventData);
  }
 if(createEventBody?.eventImage !== undefined) {
  formData.append(`eventImage`, createEventBody.eventImage);

@@ -80,7 +80,13 @@
 }
 
 .favorite-button-active {
-  background: #e63946;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.favorite-button:hover,
+.favorite-button:active,
+.favorite-button:focus {
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .favorite-icon {
@@ -88,11 +94,9 @@
   height: 20px;
   display: block;
   opacity: 0.9;
+  transform: translateY(2px);
   transition:
     transform 0.2s ease,
     opacity 0.2s ease;
 }
 
-.favorite-button:hover .favorite-icon {
-  transform: scale(1.1);
-}

@@ -72,7 +72,7 @@ export const customFetch = async <T>(
 
   const res = await fetch(baseUrl + url, {
     ...options,
-    credentials: "include",
+    ...(isRefreshEndpoint ? { credentials: "include" } : {}),
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),

@@ -98,7 +98,7 @@ export interface FavoriteResponse {
 }
 
 export interface CreateCategoryRequest {
-  categoryName?: string;
+  name?: string;
 }
 
 export interface CategoryResponse {
@@ -114,11 +114,11 @@ export interface SortObject {
 
 export interface PageableObject {
   offset?: number;
-  unpaged?: boolean;
-  paged?: boolean;
   pageNumber?: number;
+  paged?: boolean;
   pageSize?: number;
   sort?: SortObject;
+  unpaged?: boolean;
 }
 
 export interface PageEventResponse {

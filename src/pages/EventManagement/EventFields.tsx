@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
 import type {
@@ -347,6 +348,16 @@ export default function EventFields({
       </div>
 
       <div className={styles.dialogActions}>
+        {mode === "edit" && selectedEvent?.slug && (
+          <Link
+            to={`/events/${selectedEvent.slug}`}
+            className={styles.secondaryButton}
+            onClick={onClose}
+          >
+            Go to page
+          </Link>
+        )}
+
         <button
           type="button"
           className={styles.cancelButton}

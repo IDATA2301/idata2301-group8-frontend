@@ -15,7 +15,7 @@ export default {
   // },
 
   events: {
-    input: "https://64.226.83.250/event/v3/api-docs",
+    input: "http://localhost:8080/v3/api-docs",
     output: {
       tsconfig: "./tsconfig.app.json",
       target: "./src/api/events.ts",

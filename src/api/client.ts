@@ -4,14 +4,20 @@ export const customFetch = async <T>(
   options: RequestInit = {},
 ): Promise<T> => {
   const jwt = localStorage.getItem("jwt");
+  const headers = new Headers(options.headers);
+  const isFormData = options.body instanceof FormData;
+
+  if (jwt) {
+    headers.set("Authorization", `Bearer ${jwt}`);
+  }
+
+  if (!isFormData && options.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
 
   const res = await fetch(baseUrl + url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-      ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
-    },
+    headers,
     signal: AbortSignal.timeout(5000),
   });
 
@@ -30,6 +36,7 @@ export const customFetch = async <T>(
   } catch (e) {
     json = null;
   }
+
   return {
     status: res.status,
     data: json,

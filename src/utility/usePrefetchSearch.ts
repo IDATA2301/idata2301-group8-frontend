@@ -8,15 +8,12 @@ export function usePrefetchSearch() {
   const queryClient = useQueryClient();
   const currentTime = useMemo(() => new Date().toISOString(), []);
 
-  const prefetch = (params: GetEventsParams = { filter: {} }) => {
+  const prefetch = (params: GetEventsParams = {}) => {
     const queryParams: GetEventsParams = {
       page: 0,
       size: EVENTS_PER_PAGE,
-      ...params,
-      filter: {
-        startDate: currentTime,
-        ...params.filter
-      }
+      startDate: currentTime,
+      ...params
     };
 
     const queryOptions = getGetEventsQueryOptions(queryParams);

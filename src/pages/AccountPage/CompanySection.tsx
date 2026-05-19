@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./CompanySection.module.css";
 import { useUpdateCompany, type CompanyDto } from "@api/iam";
 import toast from "@components/Toast";
@@ -8,12 +8,16 @@ interface Props {
 }
 
 export default function CompanySection({ company }: Props) {
-  const { mutate, isPending } = useUpdateCompany()
+  const { mutate, isPending } = useUpdateCompany();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  // const [website, setWebsite] = useState(websiteUrl);
   const [name, setName] = useState(company.name || "");
   const [payoutAccount, setPayoutAccount] = useState(company.payoutAccount || "");
+
+  useEffect(() => {
+    setName(company.name || "");
+    setPayoutAccount(company.payoutAccount || "");
+  }, [company.name, company.payoutAccount]);
 
   function handleSave() {
     if (name.trim() === "" || payoutAccount.trim() === "") {
@@ -22,12 +26,14 @@ export default function CompanySection({ company }: Props) {
     }
 
     if (name === company.name && payoutAccount === company.payoutAccount) {
+      setIsEditing(false);
       return;
     }
 
     if (company.id === undefined) {
       return;
     }
+
     mutate({
       id: company.id,
       data: {
@@ -35,9 +41,12 @@ export default function CompanySection({ company }: Props) {
         payoutAccount
       }
     }, {
-      onSuccess: () => toast.success("Company updated successfully"),
+      onSuccess: () => {
+        toast.success("Company updated successfully");
+        setIsEditing(false);
+      },
       onError: () => toast.error("Failed to update company")
-    })
+    });
   }
 
   return (
@@ -63,18 +72,6 @@ export default function CompanySection({ company }: Props) {
             />
           </div>
 
-          {/* <div className={styles.formGroup}> */}
-          {/*   <label>Website URL</label> */}
-          {/**/}
-          {/*   <input */}
-          {/*     className={`${styles.accountInput} ${!isEditing ? styles.disabledInput : "" */}
-          {/*       }`} */}
-          {/*     value={website} */}
-          {/*     disabled={pending || !isEditing} */}
-          {/*     onChange={(e) => setWebsite(e.target.value)} */}
-          {/*   /> */}
-          {/* </div> */}
-
           <div className={styles.formGroup}>
             <label>Payout Account</label>
 
@@ -92,9 +89,10 @@ export default function CompanySection({ company }: Props) {
             onClick={() => {
               if (isEditing) {
                 handleSave();
+                return;
               }
 
-              setIsEditing(!isEditing);
+              setIsEditing(true);
             }}
           >
             {isPending ? "Saving..." : isEditing ? "Save Changes" : "Edit"}

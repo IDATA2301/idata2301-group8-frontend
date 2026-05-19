@@ -1,5 +1,6 @@
 import checkIcon from "@assets/icons/check.svg";
 import xIcon from "@assets/icons/x.svg";
+import toast from "@components/Toast";
 import {
   ApprovalRequestReviewRequestStatus,
   useReviewApprovalRequest
@@ -16,11 +17,7 @@ export default function UserRequestManagement({
   approvalRequests,
   refetchApprovalRequests
 }: UserRequestManagementProps) {
-  const reviewApprovalRequest = useReviewApprovalRequest({
-    mutation: {
-      onSuccess: refetchApprovalRequests
-    }
-  });
+  const reviewApprovalRequest = useReviewApprovalRequest();
 
   const roleChangeRequests = approvalRequests.filter(isRoleChangeRequest);
 
@@ -35,6 +32,20 @@ export default function UserRequestManagement({
     reviewApprovalRequest.mutate({
       id,
       data: { status }
+    }, {
+      onSuccess: () => {
+        refetchApprovalRequests();
+
+        if (status === ApprovalRequestReviewRequestStatus.approved) {
+          toast.success("Role request approved");
+          return;
+        }
+
+        toast.success("Role request rejected");
+      },
+      onError: () => {
+        toast.error("Failed to review role request");
+      }
     });
   }
 

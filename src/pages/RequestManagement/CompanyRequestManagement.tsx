@@ -1,5 +1,6 @@
 import checkIcon from "@assets/icons/check.svg";
 import xIcon from "@assets/icons/x.svg";
+import toast from "@components/Toast";
 import {
   ApprovalRequestReviewRequestStatus,
   useReviewApprovalRequest
@@ -22,11 +23,7 @@ export default function CompanyRequestManagement({
   approvalRequests,
   refetchApprovalRequests
 }: CompanyRequestManagementProps) {
-  const reviewApprovalRequest = useReviewApprovalRequest({
-    mutation: {
-      onSuccess: refetchApprovalRequests
-    }
-  });
+  const reviewApprovalRequest = useReviewApprovalRequest();
 
   const companyCreationRequests = approvalRequests.filter(isCompanyCreationRequest);
 
@@ -41,6 +38,20 @@ export default function CompanyRequestManagement({
     reviewApprovalRequest.mutate({
       id,
       data: { status }
+    }, {
+      onSuccess: () => {
+        refetchApprovalRequests();
+
+        if (status === ApprovalRequestReviewRequestStatus.approved) {
+          toast.success("Company request approved");
+          return;
+        }
+
+        toast.success("Company request rejected");
+      },
+      onError: () => {
+        toast.error("Failed to review company request");
+      }
     });
   }
 

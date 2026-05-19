@@ -2,53 +2,70 @@ import { jwtDecode } from "jwt-decode";
 
 type JwtClaims = {
   exp: number;
-}
+};
 
-function getJwt(): string | null {
-  return localStorage.getItem("jwt");
-}
+const getStoredJwt = () => localStorage.getItem("jwt");
 
-function isJwtExpired(jwt: string): boolean {
-  const decoded = jwtDecode<JwtClaims>(jwt);
-  const now = Math.floor(Date.now() / 1000);
-  return decoded.exp < now;
-}
-
-async function refreshJwt(): Promise<string | null> {
+const isExpired = (jwt: string) => {
   try {
-    const res = await fetch(import.meta.env.VITE_IAM_API_URL + "/refresh", {
-      method: "POST",
-      credentials: "include",
-    });
-    if (!res.ok) {
-      console.error("Failed to refresh JWT:", res.status, await res.text());
-      return null;
-    }
-    const data = await res.json();
-    localStorage.setItem("jwt", data.jwt);
-    return data.jwt;
-  } catch (e) {
-    console.error("Failed to refresh JWT:", e);
-    return null;
+    const decoded = jwtDecode<JwtClaims>(jwt);
+    return decoded.exp < Date.now() / 1000;
+  } catch {
+    return true;
   }
-}
+};
+
+let refreshInFlight: Promise<string | null> | null = null;
+
+const refreshJwt = async (): Promise<string | null> => {
+  if (!refreshInFlight) {
+    refreshInFlight = (async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_IAM_API_URL}/refresh`, {
+          method: "POST",
+          credentials: "include",
+          signal: AbortSignal.timeout(5000),
+        });
+
+        if (!res.ok) {
+          return null;
+        }
+
+        const data = await res.json();
+        const jwt = data?.jwt;
+        if (typeof jwt !== "string" || jwt.length === 0) {
+          return null;
+        }
+
+        localStorage.setItem("jwt", jwt);
+        return jwt;
+      } catch {
+        return null;
+      }
+    })().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+
+  return refreshInFlight;
+};
 
 export const customFetch = async <T>(
   baseUrl: string,
   url: string,
   options: RequestInit = {},
 ): Promise<T> => {
-  const isRefreshRequest = url === "/refresh";
+  const isRefreshEndpoint = url === "/refresh";
 
-  let jwt = getJwt();
-  const isLoggedIn = !!jwt;
+  let jwt = getStoredJwt();
 
-  if (!isRefreshRequest && isLoggedIn && isJwtExpired(jwt!)) {
+  if (jwt && isExpired(jwt) && !isRefreshEndpoint) {
     jwt = await refreshJwt();
     if (!jwt) {
+      localStorage.removeItem("jwt");
       throw {
         status: 401,
-        data: "Unauthorized: JWT expired and refresh failed",
+        data: "Session expired. Please log in again.",
       } as T;
     }
   }
@@ -59,7 +76,7 @@ export const customFetch = async <T>(
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
-      ...(!isRefreshRequest && isLoggedIn ? { Authorization: `Bearer ${jwt}` } : {}),
+      ...(!isRefreshEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
     },
     signal: AbortSignal.timeout(5000),
   });

@@ -2,6 +2,7 @@ import {
   useGetTicketListings,
   type TicketListingResponse
 } from "@api/events";
+import { useGetCompanies } from "@api/iam";
 import ChooseTickets from "./ChooseTickets";
 
 interface Props {
@@ -19,8 +20,8 @@ type TicketListingWithCompany = TicketListingResponse & {
 export default function EventTicketListings({ eventId, eventName }: Props) {
   const {
     data: listingsResponse,
-    isLoading,
-    isError
+    isLoading: listingsLoading,
+    isError: listingsError
   } = useGetTicketListings(
     { eventId },
     {
@@ -30,10 +31,31 @@ export default function EventTicketListings({ eventId, eventName }: Props) {
     }
   );
 
+  const {
+    data: companiesResponse,
+    isLoading: companiesLoading,
+    isError: companiesError
+  } = useGetCompanies();
+
   const listings =
     listingsResponse?.status === 200
       ? listingsResponse.data
       : [];
+
+  const companies =
+    companiesResponse?.status === 200
+      ? companiesResponse.data
+      : [];
+
+  const getCompanyName = (listing: TicketListingWithCompany) => {
+    const directCompanyName = listing.companyName ?? listing.company?.name;
+
+    if (directCompanyName) {
+      return directCompanyName;
+    }
+
+    return companies.find((company) => company.id === listing.companyId)?.name;
+  };
 
   const tickets = listings
     .filter((listing: TicketListingResponse) => listing.ticketListingId != null)
@@ -43,17 +65,14 @@ export default function EventTicketListings({ eventId, eventName }: Props) {
       price: listing.price ?? 0,
       startDate: listing.startDate,
       endDate: listing.endDate,
-      companyName:
-        listing.companyName ??
-        listing.company?.name ??
-        `Company ${listing.companyId ?? "-"}`
+      companyName: getCompanyName(listing)
     }));
 
-  if (isLoading) {
+  if (listingsLoading || companiesLoading) {
     return <p>Loading tickets...</p>;
   }
 
-  if (isError) {
+  if (listingsError || companiesError) {
     return <p>Could not load tickets.</p>;
   }
 

@@ -49,10 +49,67 @@
   justify-content: center;
 }
 
+.ticketsCard {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.ticketsCard h2 {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.ticketsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ticketItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticketInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ticketEvent {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.ticketType {
+  font-size: 0.8rem;
+  color: rgba(227, 227, 227, 0.8);
+}
+
+.ticketDate {
+  font-size: 0.75rem;
+  color: rgba(227, 227, 227, 0.6);
+}
+
+.ticketDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+}
+
 .customerCard {
   width: 100%;
   max-width: 380px;
   align-self: flex-start;
+  margin-top: 1.5rem;
 }
 
 .customerCard h2 {

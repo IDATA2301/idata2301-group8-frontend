@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { jwtDecode } from "jwt-decode";
-import { useRefresh } from '@api/iam';
+import { useLogout, useRefresh } from '@api/iam';
 import toast from '@components/Toast';
 
 export type GlobalRole = "ADMIN" | "USER";
@@ -71,11 +71,12 @@ export const useAuthContext = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({ isLoggedIn: false });
-  const { mutateAsync } = useRefresh();
+  const { mutateAsync: logoutFetch } = useLogout()
+  const { mutateAsync: refreshFetch } = useRefresh();
 
   const refreshToken: () => Promise<boolean> = async () => {
     try {
-      const response = await mutateAsync();
+      const response = await refreshFetch();
       if (response.status === 200 && response.data.jwt) {
         login(response.data.jwt);
         return true;
@@ -119,6 +120,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    logoutFetch().catch(() => {
+      // Ignore errors on logout
+    });
     localStorage.removeItem("jwt");
     setAuthState({ isLoggedIn: false });
   }

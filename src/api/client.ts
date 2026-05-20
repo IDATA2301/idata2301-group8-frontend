@@ -55,12 +55,15 @@ export const customFetch = async <T>(
   url: string,
   options: RequestInit = {},
 ): Promise<T> => {
-  const isRefreshEndpoint = url === "/refresh";
+  const isCredentialsEndpoint = url === "/refresh" || url === "/login" || url === "/logout";
+  if (isCredentialsEndpoint) {
+    console.log("Making request to credentials endpoint:", url);
+  }
   const isFormData = options.body instanceof FormData;
 
   let jwt = getStoredJwt();
 
-  if (jwt && isExpired(jwt) && !isRefreshEndpoint) {
+  if (jwt && isExpired(jwt) && !isCredentialsEndpoint) {
     jwt = await refreshJwt();
     if (!jwt) {
       localStorage.removeItem("jwt");
@@ -77,7 +80,7 @@ export const customFetch = async <T>(
   // Don't set Content-Type for FormData - browser sets it with correct boundary
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string> || {}),
-    ...(!isRefreshEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+    ...(!isCredentialsEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
   };
 
   if (!isFormData) {
@@ -86,7 +89,7 @@ export const customFetch = async <T>(
 
   const res = await fetch(baseUrl + url, {
     ...options,
-    ...(isRefreshEndpoint ? { credentials: "include" } : {}),
+    ...(isCredentialsEndpoint ? { credentials: "include" } : {}),
     headers,
     signal: AbortSignal.timeout(timeout),
   });

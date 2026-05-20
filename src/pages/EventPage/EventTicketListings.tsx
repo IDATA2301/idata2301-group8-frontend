@@ -6,6 +6,7 @@ import ChooseTickets from "./ChooseTickets";
 import toast from "@components/Toast";
 import { useNavigate } from "react-router-dom";
 import { useCreateOrder } from "@api/orders";
+import { useGetCompanies } from "@api/iam";
 
 interface Props {
   eventId?: number;
@@ -14,6 +15,7 @@ interface Props {
 export default function EventTicketListings({ eventId }: Props) {
   const navigate = useNavigate();
   const { mutateAsync: createOrder } = useCreateOrder()
+  const { data: companiesResponse, isSuccess } = useGetCompanies();
 
   const {
     data: listingsResponse,
@@ -35,16 +37,15 @@ export default function EventTicketListings({ eventId }: Props) {
 
   const tickets = listings
     .filter((listing: TicketListingResponse) => listing.ticketListingId != null)
-    .map((listing: TicketListingWithCompany) => ({
+    .map((listing: TicketListingResponse) => ({
       id: listing.ticketListingId!,
       name: listing.ticketType ?? "Ticket",
       price: listing.price ?? 0,
       startDate: listing.startDate,
       endDate: listing.endDate,
-      companyName:
-        listing.companyName ??
-        listing.company?.name ??
-        `Company ${listing.companyId ?? "-"}`
+      companyName: isSuccess
+        ? companiesResponse.data.find(company => company.id === listing.companyId)?.name
+        : `Company ${listing.companyId ?? "-"}`
     }));
 
   if (isLoading) {

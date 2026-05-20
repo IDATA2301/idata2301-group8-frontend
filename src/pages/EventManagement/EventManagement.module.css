@@ -112,6 +112,33 @@
   margin: 0;
 }
 
+.sectionActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.searchInput {
+  height: 32px;
+  width: 180px;
+  border: 1px solid rgba(227, 227, 227, 0.5);
+  border-radius: 12px;
+  background-color: var(--deep-space-blue-dark);
+  color: white;
+  padding: 0 0.75rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: rgba(227, 227, 227, 0.5);
+}
+
+.searchInput:focus {
+  border-color: var(--steel-blue);
+}
+
 .createButton {
   display: flex;
   align-items: center;
@@ -287,6 +314,15 @@
   .sectionHeader h2 {
     font-size: 1rem;
     line-height: 1.25;
+  }
+
+  .sectionActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .searchInput {
+    width: 100%;
   }
 
   .createButton {

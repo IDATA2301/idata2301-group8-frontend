@@ -112,6 +112,25 @@
   max-height: 400px;
   padding: 8px 0 8px 8px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.categoryListOpen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.categoryListOpen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.categoryListOpen::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.categoryListOpen::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.35);
 }
 
 .categoryLink {

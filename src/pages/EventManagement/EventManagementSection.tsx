@@ -7,6 +7,9 @@ type EventManagementSectionProps = {
   entries: (string | number)[][];
   onCreate: () => void;
   onEntryClick?: (index: number) => void;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
 };
 
 export default function EventManagementSection({
@@ -15,7 +18,10 @@ export default function EventManagementSection({
   headers,
   entries,
   onCreate,
-  onEntryClick
+  onEntryClick,
+  searchValue,
+  onSearchChange,
+  searchPlaceholder = "Search..."
 }: EventManagementSectionProps) {
   const gridTemplateColumns = `repeat(${headers.length}, minmax(0, 1fr))`;
 
@@ -23,10 +29,21 @@ export default function EventManagementSection({
     <section className={styles.managementSection}>
       <div className={styles.sectionHeader}>
         <h2>{title}</h2>
-        <button type="button" className={styles.createButton} onClick={onCreate}>
-          {buttonText}
-          <span>+</span>
-        </button>
+        <div className={styles.sectionActions}>
+          {onSearchChange && (
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder={searchPlaceholder}
+              value={searchValue ?? ""}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+          )}
+          <button type="button" className={styles.createButton} onClick={onCreate}>
+            {buttonText}
+            <span>+</span>
+          </button>
+        </div>
       </div>
 
       <div className={styles.managementBox}>

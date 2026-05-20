@@ -35,10 +35,16 @@ export default function EventTicketListings({ eventId }: Props) {
 
   const tickets = listings
     .filter((listing: TicketListingResponse) => listing.ticketListingId != null)
-    .map((listing: TicketListingResponse) => ({
+    .map((listing: TicketListingWithCompany) => ({
       id: listing.ticketListingId!,
       name: listing.ticketType ?? "Ticket",
-      price: listing.price ?? 0
+      price: listing.price ?? 0,
+      startDate: listing.startDate,
+      endDate: listing.endDate,
+      companyName:
+        listing.companyName ??
+        listing.company?.name ??
+        `Company ${listing.companyId ?? "-"}`
     }));
 
   if (isLoading) {

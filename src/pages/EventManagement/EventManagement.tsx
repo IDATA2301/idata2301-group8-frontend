@@ -44,6 +44,9 @@ export default function EventManagement() {
   const venueDialogRef = useRef<HTMLDialogElement>(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState<SelectedCompanyId>("all");
   const [popup, setPopup] = useState<PopupState>(null);
+  const [eventSearch, setEventSearch] = useState("");
+  const [ticketSearch, setTicketSearch] = useState("");
+  const [venueSearch, setVenueSearch] = useState("");
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
   const companiesQuery = useGetCompanies();
   const eventsQuery = useGetEvents({ size: 100 });
@@ -119,7 +122,46 @@ export default function EventManagement() {
     : companyOptions.find((company) => company.id === selectedCompanyId)?.name
     ?? "selected company";
 
-  const eventRows = visibleEvents.map((event) => [
+  const filteredEvents = useMemo(() => {
+    if (!eventSearch.trim()) return visibleEvents;
+    const search = eventSearch.toLowerCase();
+    return visibleEvents.filter((event) =>
+      (event.eventName?.toLowerCase().includes(search)) ||
+      (event.status?.toLowerCase().includes(search)) ||
+      (event.city?.toLowerCase().includes(search)) ||
+      (event.country?.toLowerCase().includes(search)) ||
+      (String(event.eventId).includes(search))
+    );
+  }, [visibleEvents, eventSearch]);
+
+  const filteredTicketListings = useMemo(() => {
+    if (!ticketSearch.trim()) return visibleTicketListings;
+    const search = ticketSearch.toLowerCase();
+    return visibleTicketListings.filter((listing) => {
+      const eventName = listing.eventId !== undefined
+        ? eventNameById.get(listing.eventId)?.toLowerCase()
+        : undefined;
+      return (
+        (eventName?.includes(search)) ||
+        (listing.ticketType?.toLowerCase().includes(search)) ||
+        (String(listing.ticketListingId).includes(search)) ||
+        (String(listing.price).includes(search))
+      );
+    });
+  }, [visibleTicketListings, ticketSearch, eventNameById]);
+
+  const filteredVenues = useMemo(() => {
+    if (!venueSearch.trim()) return venues;
+    const search = venueSearch.toLowerCase();
+    return venues.filter((venue) =>
+      (venue.name?.toLowerCase().includes(search)) ||
+      (venue.city?.toLowerCase().includes(search)) ||
+      (venue.country?.toLowerCase().includes(search)) ||
+      (String(venue.id).includes(search))
+    );
+  }, [venues, venueSearch]);
+
+  const eventRows = filteredEvents.map((event) => [
     event.eventId ?? "-",
     event.eventName ?? "-",
     event.status ?? "-",
@@ -127,7 +169,7 @@ export default function EventManagement() {
     formatDate(event.createdAt)
   ]);
 
-  const ticketListingRows = visibleTicketListings.map((listing) => {
+  const ticketListingRows = filteredTicketListings.map((listing) => {
     const eventName = listing.eventId !== undefined
       ? eventNameById.get(listing.eventId)
       : undefined;
@@ -141,7 +183,7 @@ export default function EventManagement() {
     ];
   });
 
-  const venueRows = venues.map((venue) => [
+  const venueRows = filteredVenues.map((venue) => [
     venue.id ?? "-",
     venue.name ?? "-",
     venue.city ?? "-",
@@ -236,8 +278,11 @@ export default function EventManagement() {
             onEntryClick={(index) => openEventDialog({
               type: "event",
               mode: "edit",
-              eventId: visibleEvents[index]?.eventId
+              eventId: filteredEvents[index]?.eventId
             })}
+            searchValue={eventSearch}
+            onSearchChange={setEventSearch}
+            searchPlaceholder="Search events..."
           />
 
           <EventManagementSection
@@ -249,8 +294,11 @@ export default function EventManagement() {
             onEntryClick={(index) => openTicketListingDialog({
               type: "ticketListing",
               mode: "edit",
-              ticketListingId: visibleTicketListings[index]?.ticketListingId
+              ticketListingId: filteredTicketListings[index]?.ticketListingId
             })}
+            searchValue={ticketSearch}
+            onSearchChange={setTicketSearch}
+            searchPlaceholder="Search tickets..."
           />
 
           <EventManagementSection
@@ -262,8 +310,11 @@ export default function EventManagement() {
             onEntryClick={(index) => openVenueDialog({
               type: "venue",
               mode: "edit",
-              venueId: venues[index]?.id
+              venueId: filteredVenues[index]?.id
             })}
+            searchValue={venueSearch}
+            onSearchChange={setVenueSearch}
+            searchPlaceholder="Search venues..."
           />
         </div>
       </div>

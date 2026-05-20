@@ -56,6 +56,7 @@ export const customFetch = async <T>(
   options: RequestInit = {},
 ): Promise<T> => {
   const isRefreshEndpoint = url === "/refresh";
+  const isFormData = options.body instanceof FormData;
 
   let jwt = getStoredJwt();
 
@@ -70,15 +71,24 @@ export const customFetch = async <T>(
     }
   }
 
+  // Use longer timeout for file uploads (FormData), shorter for regular requests
+  const timeout = isFormData ? 60000 : 5000;
+
+  // Don't set Content-Type for FormData - browser sets it with correct boundary
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string> || {}),
+    ...(!isRefreshEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+  };
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(baseUrl + url, {
     ...options,
     ...(isRefreshEndpoint ? { credentials: "include" } : {}),
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-      ...(!isRefreshEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
-    },
-    signal: AbortSignal.timeout(5000),
+    headers,
+    signal: AbortSignal.timeout(timeout),
   });
 
   if (!res.ok) {

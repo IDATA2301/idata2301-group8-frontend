@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import xIcon from "@assets/icons/x.svg";
 import {
   useAssignGlobalRole,
@@ -13,6 +14,7 @@ import styles from "./UserManagement.module.css";
 export default function UserManagement() {
   const { user: loggedInUser } = useAuthContext();
   const { confirm } = useConfirm();
+  const [searchQuery, setSearchQuery] = useState("");
   const usersQuery = useGetUsers();
   const globalRolesQuery = useGetGlobalRoles();
 
@@ -39,7 +41,21 @@ export default function UserManagement() {
   const loggedInUserId = loggedInUser?.id;
   const isSaving = deleteUser.isPending || assignGlobalRole.isPending || removeGlobalRole.isPending;
 
-  const sortedUsers = [...users].sort((a, b) => {
+  const roleNameById = useMemo(() => {
+    return new Map(globalRoles.map((role) => [role.id, role.name?.toLowerCase() ?? ""]));
+  }, [globalRoles]);
+
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery.trim()) return users;
+    const search = searchQuery.toLowerCase();
+    return users.filter((user) =>
+      (user.email?.toLowerCase().includes(search)) ||
+      (user.id?.toLowerCase().includes(search)) ||
+      (user.globalRoles?.some((role) => roleNameById.get(role.roleId)?.includes(search)))
+    );
+  }, [users, searchQuery, roleNameById]);
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
     if (a.id === loggedInUserId) {
       return -1;
     }
@@ -127,7 +143,16 @@ export default function UserManagement() {
   return (
     <main className={styles.userManagementPage}>
       <section className={styles.pageContent}>
-        <h1>User management</h1>
+        <div className={styles.pageHeader}>
+          <h1>User management</h1>
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
         <div className={styles.managementBox}>
           <div className={styles.tableHeader}>
             <span>user_id</span>

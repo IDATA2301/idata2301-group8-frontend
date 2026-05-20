@@ -60,7 +60,7 @@
   display: inline-block;
   padding: 6px 14px;
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--molten-lava);
   color: #E3E3E3;
   font-size: 0.9rem;
   font-weight: 500;
@@ -68,14 +68,19 @@
 
 .tag-link {
   text-decoration: none;
-  background-color: rgba(95, 168, 255, 0.2);
-  border: 1px solid rgba(95, 168, 255, 0.4);
+  background-color: var(--molten-lava);
+  border: 1px solid var(--molten-lava);
   transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    filter 0.2s,
+    transform 0.2s;
 }
 
 .tag-link:hover {
-  background-color: rgba(95, 168, 255, 0.35);
-  border-color: rgba(95, 168, 255, 0.7);
+  background-color: var(--molten-lava);
+  border-color: var(--molten-lava);
+  filter: brightness(1.15);
+  transform: scale(1.05);
 }
 
 .center-box {

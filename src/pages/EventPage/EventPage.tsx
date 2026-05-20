@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useGetEventBySlug, useGetAllVenues } from "@api/events";
+import { useGetEventBySlug, useGetAllVenues, useGetAllCategories } from "@api/events";
 import ScrollToTop from "@utility/ScrollToTop.tsx";
 import openInNew from "@assets/icons/open-in-new.svg";
 import fallbackEventImage from "@assets/fallback-image.png";
@@ -22,6 +22,7 @@ function EventPage() {
   });
 
   const { data: venuesResponse } = useGetAllVenues();
+  const { data: categoriesResponse } = useGetAllCategories();
 
   const event =
     eventResponse?.status !== 200
@@ -32,6 +33,16 @@ function EventPage() {
     if (!event?.venueId || venuesResponse?.status !== 200) return undefined;
     return venuesResponse.data.find((v) => v.id === event.venueId);
   }, [event?.venueId, venuesResponse]);
+
+  const categories = useMemo(() => {
+    if (!event?.categoryIds || categoriesResponse?.status !== 200) return [];
+    const categoryMap = new Map(
+      categoriesResponse.data.map((c) => [c.id, c.name])
+    );
+    return event.categoryIds
+      .map((id) => ({ id, name: categoryMap.get(id) }))
+      .filter((c): c is { id: number; name: string } => Boolean(c.name));
+  }, [event?.categoryIds, categoriesResponse]);
 
   const locationTags = [venue?.city, venue?.country].filter(Boolean);
   const locationText = locationTags.join(", ") || "Unknown location";
@@ -84,15 +95,28 @@ function EventPage() {
         <p className="event-page-decription">
           {event.description ?? "No description available."}
         </p>
-        {locationTags.length > 0 && (
-          <div className="event-tags">
-            {locationTags.map((tag) => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="event-tags">
+          {venue?.city && (
+            <Link
+              to={`/search?location=${encodeURIComponent(venue.city)}`}
+              className="tag tag-link"
+            >
+              {venue.city}
+            </Link>
+          )}
+          {venue?.country && (
+            <span className="tag">{venue.country}</span>
+          )}
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              to={`/search?category=${encodeURIComponent(category.name)}`}
+              className="tag tag-link"
+            >
+              {category.name}
+            </Link>
+          ))}
+        </div>
       </div>
       <div className="center-box">
         <EventTicketListings

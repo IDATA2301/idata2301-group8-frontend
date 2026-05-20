@@ -8,13 +8,15 @@ interface Props {
   eventDate: string;
   startTime?: string;
   ticketCount: number;
+  onClick?: () => void;
 }
 
 export default function MyEventCard({
   eventName,
   eventDate,
   startTime,
-  ticketCount
+  ticketCount,
+  onClick
 }: Props) {
   function formatDate(date: string) {
     return new Date(date).toLocaleDateString("en-GB", {
@@ -25,7 +27,7 @@ export default function MyEventCard({
   }
 
   return (
-    <div className={styles.eventRow}>
+    <div className={`${styles.eventRow} ${onClick ? styles.clickable : ""}`} onClick={onClick}>
       <div className={styles.eventContent}>
         <h3 className={styles.eventTitle}>
           {eventName}
@@ -41,26 +43,6 @@ export default function MyEventCard({
             </>
           )}
         </p>
-      </div>
-      <div className={styles.eventActions}>
-        <button className={styles.iconButton}>
-          <img
-            src={FavoriteIcon}
-            alt="Favorite"
-          />
-        </button>
-        <button className={styles.iconButton}>
-          <img
-            src={ShareIcon}
-            alt="Share"
-          />
-        </button>
-        <button className={styles.iconButton}>
-          <img
-            src={DownloadIcon}
-            alt="Download"
-          />
-        </button>
       </div>
     </div>
   );

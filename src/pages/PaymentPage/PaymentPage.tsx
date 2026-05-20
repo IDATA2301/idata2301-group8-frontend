@@ -112,7 +112,12 @@ export default function PaymentPage() {
         toast.success("Payment successful!");
       }
 
-      navigate("/checkout-complete", { state: payResponse.data });
+      navigate("/checkout-complete", {
+        state: {
+          payment: payResponse.data,
+          order: ticketReservation
+        }
+      });
     } catch (err) {
       setError(extractErrorMessage(err, "Payment failed"));
     } finally {

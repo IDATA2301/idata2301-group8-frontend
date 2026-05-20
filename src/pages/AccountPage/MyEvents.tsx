@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { getGetEventByIdQueryOptions, getGetTicketListingsQueryOptions } from "@api/events";
 import { useGetMyOrders, type OrderResponse } from "@api/orders";
@@ -6,6 +7,7 @@ import styles from "./MyEvents.module.css";
 import MyEventsCard from "./MyEventsCard";
 
 export default function MyEvents() {
+  const navigate = useNavigate();
   const {
     data: ordersResponse,
     isLoading: ordersLoading,
@@ -15,9 +17,8 @@ export default function MyEvents() {
   const orders: OrderResponse[] =
     ordersResponse?.status === 200 ? ordersResponse.data : [];
 
-  const paidOrders = orders.filter(
-    (order) => order.paymentStatus === "PAID" || order.paymentStatus === "COMPLETED"
-  );
+  // Show all orders - the backend already returns only the user's orders
+  const paidOrders = orders;
 
   const ticketListingIds = useMemo(() => {
     const ids = new Set<number>();
@@ -88,6 +89,7 @@ export default function MyEvents() {
     return map;
   }, [eventQueries, uniqueEventIds]);
 
+
   const today = new Date();
 
   const parsedEvents = useMemo(() => {
@@ -97,6 +99,7 @@ export default function MyEvents() {
       eventName: string;
       eventDate: string;
       ticketCount: number;
+      order: OrderResponse;
     }> = [];
 
     paidOrders.forEach((order) => {
@@ -120,7 +123,8 @@ export default function MyEvents() {
             eventId,
             eventName: eventData.eventName || "Unknown Event",
             eventDate: eventData.startDate || order.createdAt || "",
-            ticketCount
+            ticketCount,
+            order
           });
         }
       });
@@ -129,18 +133,31 @@ export default function MyEvents() {
     return events;
   }, [paidOrders, ticketListingToEventMap, eventMap]);
 
-  const ongoingEvents = parsedEvents.filter(
+  function handleOrderClick(order: OrderResponse) {
+    navigate("/checkout-complete", {
+      state: {
+        payment: {
+          orderId: order.orderId,
+          amount: order.totalAmount,
+          currency: order.currency
+        },
+        order
+      }
+    });
+  }
+
+  const futureEvents = parsedEvents.filter(
     (event) => event.eventDate && new Date(event.eventDate) >= today
   );
 
-  const expiredEvents = parsedEvents.filter(
+  const previousEvents = parsedEvents.filter(
     (event) => event.eventDate && new Date(event.eventDate) < today
   );
 
   return (
     <div className={styles.eventsContainer}>
       <div className={styles.eventsSection}>
-        <h2>Ongoing Events</h2>
+        <h2>Upcoming Events</h2>
         <div className={styles.eventsScrollBox}>
           {isLoading && (
             <div className={styles.placeholderBox}>
@@ -152,23 +169,24 @@ export default function MyEvents() {
               Failed to load events
             </div>
           )}
-          {!isLoading && !isError && ongoingEvents.length === 0 && (
+          {!isLoading && !isError && futureEvents.length === 0 && (
             <div className={styles.placeholderBox}>
-              No ongoing events
+              No upcoming events
             </div>
           )}
-          {ongoingEvents.map((event) => (
+          {futureEvents.map((event) => (
             <MyEventsCard
               key={`${event.orderId}-${event.eventId}`}
               eventName={event.eventName}
               eventDate={event.eventDate}
               ticketCount={event.ticketCount}
+              onClick={() => handleOrderClick(event.order)}
             />
           ))}
         </div>
       </div>
       <div className={styles.eventsSection}>
-        <h2>Expired Events</h2>
+        <h2>Previous Events</h2>
         <div className={styles.eventsScrollBox}>
           {isLoading && (
             <div className={styles.placeholderBox}>
@@ -180,17 +198,18 @@ export default function MyEvents() {
               Failed to load events
             </div>
           )}
-          {!isLoading && !isError && expiredEvents.length === 0 && (
+          {!isLoading && !isError && previousEvents.length === 0 && (
             <div className={styles.placeholderBox}>
-              No expired events
+              No previous events
             </div>
           )}
-          {expiredEvents.map((event) => (
+          {previousEvents.map((event) => (
             <MyEventsCard
               key={`${event.orderId}-${event.eventId}`}
               eventName={event.eventName}
               eventDate={event.eventDate}
               ticketCount={event.ticketCount}
+              onClick={() => handleOrderClick(event.order)}
             />
           ))}
         </div>

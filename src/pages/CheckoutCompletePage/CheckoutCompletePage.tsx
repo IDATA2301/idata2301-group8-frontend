@@ -1,12 +1,35 @@
+import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import styles from "./CheckoutCompletePage.module.css";
-import { type PaymentResponse } from "@api/orders";
+import { type PaymentResponse, type OrderResponse } from "@api/orders";
+import { useGetTicketListings, useGetEvents } from "@api/events";
+
+type CheckoutState = {
+  payment: PaymentResponse;
+  order: OrderResponse;
+} | null;
 
 export default function CheckoutCompletePage() {
   const location = useLocation();
-  const payment = location.state as PaymentResponse | null;
+  const state = location.state as CheckoutState;
+  const payment = state?.payment;
+  const order = state?.order;
 
-  console.log("CheckoutCompletePage received payment data:", payment);
+  const ticketListingsQuery = useGetTicketListings(undefined);
+  const eventsQuery = useGetEvents({ size: 100 });
+
+  const ticketListings = ticketListingsQuery.data?.status === 200 ? ticketListingsQuery.data.data : [];
+  const events = eventsQuery.data?.status === 200 && eventsQuery.data.data.content
+    ? eventsQuery.data.data.content
+    : [];
+
+  const ticketListingMap = useMemo(() => {
+    return new Map(ticketListings.map((t) => [t.ticketListingId, t]));
+  }, [ticketListings]);
+
+  const eventMap = useMemo(() => {
+    return new Map(events.map((e) => [e.eventId, e]));
+  }, [events]);
 
   if (!payment?.orderId) {
     return (
@@ -35,57 +58,61 @@ export default function CheckoutCompletePage() {
         <div className={styles.confirmationText}>
           <h1>Thank you for your order!</h1>
           <p>
-            Your order id <strong>{payment.orderId}</strong>
+            Order ID: <strong>{payment.orderId}</strong>
           </p>
-          {/* <p> */}
-          {/*   A confirmation email has been sent to <strong>{order.email}</strong> */}
-          {/* </p> */}
-          {/* {order.eventName && ( */}
-          {/*   <p> */}
-          {/*     Event: <strong>{order.eventName}</strong> */}
-          {/*   </p> */}
-          {/* )} */}
-          {/* {order.ticketCount !== undefined && order.ticketCount > 0 && ( */}
-          {/*   <p> */}
-          {/*     Tickets: <strong>{order.ticketCount}</strong> */}
-          {/*   </p> */}
-          {/* )} */}
-          {/* <h2>Your tickets:</h2> */}
-          {/* <p style={{ color: "#b71c1c", fontWeight: "bold" }}> */}
-          {/*   Note: This information will not be available if you refresh or revisit this page. */}
-          {/* </p> */}
-          {/* <p> */}
-          {/*   Want to see all your purchased events?{" "} */}
-          {/*   <Link to="/account" className={styles.accountLink}> */}
-          {/*     Go to your account page */}
-          {/*   </Link>. */}
-          {/* </p> */}
         </div>
-        {/* <div className={styles.qrCard} aria-label="Ticket QR code"> */}
-        {/*   <QRCodeSVG */}
-        {/*     value={qrValue} */}
-        {/*     size={154} */}
-        {/*     bgColor="#ffffff" */}
-        {/*     fgColor="#050505" */}
-        {/*     level="M" */}
-        {/*     marginSize={0} */}
-        {/*   /> */}
-        {/* </div> */}
+
+        {order?.items && order.items.length > 0 && (
+          <div className={styles.ticketsCard}>
+            <h2>Your tickets</h2>
+            <div className={styles.ticketsList}>
+              {order.items.map((item) => {
+                const ticketListing = item.ticketListingId
+                  ? ticketListingMap.get(item.ticketListingId)
+                  : undefined;
+                const event = ticketListing?.eventId
+                  ? eventMap.get(ticketListing.eventId)
+                  : undefined;
+
+                return (
+                  <div key={item.orderItemId} className={styles.ticketItem}>
+                    <div className={styles.ticketInfo}>
+                      <span className={styles.ticketEvent}>
+                        {event?.eventName ?? "Event"}
+                      </span>
+                      <span className={styles.ticketType}>
+                        {ticketListing?.ticketType ?? `Ticket #${item.ticketListingId}`}
+                      </span>
+                      {event?.startDate && (
+                        <span className={styles.ticketDate}>
+                          {formatDate(event.startDate)}
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.ticketDetails}>
+                      <span>{item.quantity}x</span>
+                      <span>{formatPrice(item.unitPrice ?? 0)} {ticketListing?.currency ?? "NOK"}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div className={styles.customerCard}>
-          <h2>Customer information</h2>
+          <h2>Payment summary</h2>
           <div className={styles.infoGrid}>
-            {/* <span>Contact information</span> */}
-            {/* <span>{order.email}</span> */}
-            {/* <span>Payment method</span> */}
-            {/* <span className={styles.paymentMethod}> */}
-            {/*   <img src={creditCardIcon} alt="" aria-hidden="true" /> */}
-            {/*   {formatPaymentMethod(order.paymentMethod)} */}
-            {/*   {order.cardLastFour ? ` ending in ${order.cardLastFour}` : ""} */}
-            {/* </span> */}
+            {order?.items && (
+              <>
+                <span>Tickets</span>
+                <span>{order.items.reduce((sum, item) => sum + (item.quantity ?? 0), 0)}</span>
+              </>
+            )}
             {payment.amount !== undefined && (
               <>
                 <span>Total paid</span>
-                <span>{formatPrice(payment.amount)} NOK</span>
+                <span>{formatPrice(payment.amount)} {payment.currency ?? "NOK"}</span>
               </>
             )}
           </div>
@@ -107,4 +134,13 @@ function formatPrice(price: number) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(price);
+}
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("nb-NO", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import x from "@assets/icons/x.svg";
-import { useGetAllCategories, useGetAllVenues } from "@api/events";
+import { useGetAllCategories, useGetAllVenues, useGetEvents } from "@api/events";
 
 export type Filters = {
   categories: string[];
@@ -24,24 +24,57 @@ const Filters = ({ filters, setFilters }: Props) => {
   const { data: categoriesResponse } = useGetAllCategories();
   const { data: venuesResponse } = useGetAllVenues();
 
+  // Fetch all future events to determine which categories/locations have events
+  const currentTime = useMemo(() => new Date().toISOString(), []);
+  const { data: eventsResponse } = useGetEvents({
+    startDate: currentTime,
+    size: 1000 // Large enough to get all future events
+  });
+
+  // Extract category IDs and venue IDs from future events
+  const { activeCategoryIds, activeVenueIds } = useMemo(() => {
+    if (eventsResponse?.status !== 200) {
+      return { activeCategoryIds: new Set<number>(), activeVenueIds: new Set<number>() };
+    }
+
+    const events = eventsResponse.data.content ?? [];
+    const categoryIds = new Set<number>();
+    const venueIds = new Set<number>();
+
+    for (const event of events) {
+      if (event.categoryIds) {
+        for (const id of event.categoryIds) {
+          categoryIds.add(id);
+        }
+      }
+      if (event.venueId) {
+        venueIds.add(event.venueId);
+      }
+    }
+
+    return { activeCategoryIds: categoryIds, activeVenueIds: venueIds };
+  }, [eventsResponse]);
+
   const categories = useMemo(() => {
     if (categoriesResponse?.status !== 200) return [];
 
     return categoriesResponse.data
+      .filter((c) => c.id !== undefined && activeCategoryIds.has(c.id))
       .map((c) => c.name)
       .filter((name): name is string => Boolean(name))
       .sort((a, b) => a.localeCompare(b));
-  }, [categoriesResponse]);
+  }, [categoriesResponse, activeCategoryIds]);
 
   const locations = useMemo(() => {
     if (venuesResponse?.status !== 200) return [];
 
     const cities = venuesResponse.data
+      .filter((v) => v.id !== undefined && activeVenueIds.has(v.id))
       .map((v) => v.city)
       .filter((city): city is string => Boolean(city));
 
     return [...new Set(cities)].sort((a, b) => a.localeCompare(b));
-  }, [venuesResponse]);
+  }, [venuesResponse, activeVenueIds]);
 
   const toggleArrayValue = (
     key: "categories" | "locations",

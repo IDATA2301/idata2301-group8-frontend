@@ -23,7 +23,7 @@ type Params = {
   sort: string;
 };
 
-const EVENTS_PER_PAGE = 15;
+const EVENTS_PER_PAGE = 25;
 
 const toIsoDate = (date: string, endOfDay = false) => {
   if (!date) {
@@ -226,9 +226,18 @@ const EventList = ({ query, filters, sort }: Params) => {
     );
   }
 
-  const pageData = response.data;
+  const pageData = response.data as typeof response.data & {
+    total?: number;
+    totalElements?: number;
+    pageable?: {
+      pageSize?: number;
+    };
+  };
+
   const events = pageData.content ?? [];
-  const totalPages = pageData.totalPages ?? 0;
+  const pageSize = pageData.pageable?.pageSize ?? EVENTS_PER_PAGE;
+  const totalEvents = pageData.total ?? pageData.totalElements ?? 0;
+  const totalPages = Math.ceil(totalEvents / pageSize);
 
   if (events.length === 0) {
     return (

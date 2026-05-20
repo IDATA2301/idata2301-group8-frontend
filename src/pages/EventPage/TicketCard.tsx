@@ -7,6 +7,9 @@ export type Ticket = {
   id: number;
   name: string;
   price: number;
+  startDate?: string;
+  endDate?: string;
+  companyName?: string;
 };
 
 type Props = {
@@ -14,9 +17,33 @@ type Props = {
   onChange: (num: number) => void;
 };
 
+function formatTicketDate(date?: string) {
+  if (!date) {
+    return undefined;
+  }
+
+  return new Date(date).toLocaleDateString("nb-NO", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function formatTicketDateRange(startDate?: string, endDate?: string) {
+  const formattedStartDate = formatTicketDate(startDate);
+  const formattedEndDate = formatTicketDate(endDate);
+
+  if (formattedStartDate && formattedEndDate) {
+    return `${formattedStartDate} - ${formattedEndDate}`;
+  }
+
+  return formattedStartDate ?? formattedEndDate;
+}
+
 function TicketCard({ onChange, ticket }: Props) {
   const maxCount = 99;
   const [count, setCount] = useState(0);
+  const ticketDateRange = formatTicketDateRange(ticket.startDate, ticket.endDate);
 
   const increment = () => {
     setCount((currentCount) => {
@@ -39,11 +66,20 @@ function TicketCard({ onChange, ticket }: Props) {
       <div className="ticket-card-left">
         <p className="ticket-card-name">
           {ticket.name}
+          {ticket.companyName && ` - ${ticket.companyName}`}
         </p>
+
+        {ticketDateRange && (
+          <p className="ticket-card-date">
+            {ticketDateRange}
+          </p>
+        )}
+
         <p className="ticket-card-price">
           {ticket.price} NOK
         </p>
       </div>
+
       <div className="ticket-card-right">
         {count > 0 && (
           <>
@@ -60,11 +96,13 @@ function TicketCard({ onChange, ticket }: Props) {
                 aria-hidden="true"
               />
             </button>
+
             <p className="ticket-card-count" aria-live="polite">
               {count}
             </p>
           </>
         )}
+
         <Button
           onClick={increment}
           variant="buttonWithIcon"

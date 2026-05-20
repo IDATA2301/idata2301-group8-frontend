@@ -1,7 +1,4 @@
 import styles from "./MyEventsCard.module.css";
-import FavoriteIcon from "@assets/icons/favorite.svg";
-import ShareIcon from "@assets/icons/share.svg";
-import DownloadIcon from "@assets/icons/download.svg";
 
 interface Props {
   eventName: string;

@@ -130,7 +130,18 @@ export default function CompanyRequestManagement({
 function isCompanyCreationRequest(
   request: ApprovalRequest
 ): request is CompanyCreationRequest {
-  return request.type?.toLowerCase().includes("company") === true;
+  const type = request.type?.toLowerCase().replaceAll("-", "_");
+
+  if (!type) {
+    return false;
+  }
+
+  return (
+    type === "create_company" ||
+    type === "company_creation" ||
+    type === "company_create_request" ||
+    type === "create_company_request"
+  );
 }
 
 function formatDate(date?: string) {

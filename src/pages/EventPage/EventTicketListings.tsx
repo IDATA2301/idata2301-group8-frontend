@@ -3,13 +3,18 @@ import {
   type TicketListingResponse
 } from "@api/events";
 import ChooseTickets from "./ChooseTickets";
+import toast from "@components/Toast";
+import { useNavigate } from "react-router-dom";
+import { useCreateOrder } from "@api/orders";
 
 interface Props {
   eventId?: number;
-  eventName: string;
 }
 
-export default function EventTicketListings({ eventId, eventName }: Props) {
+export default function EventTicketListings({ eventId }: Props) {
+  const navigate = useNavigate();
+  const { mutateAsync: createOrder } = useCreateOrder()
+
   const {
     data: listingsResponse,
     isLoading,
@@ -48,11 +53,34 @@ export default function EventTicketListings({ eventId, eventName }: Props) {
     return <p>No tickets available.</p>;
   }
 
+
+  async function handleContinue(ticketCounts: Map<number, number>) {
+    const items = [...ticketCounts.entries()]
+      .filter(([, count]) => count > 0)
+      .map(([ticketListingId, quantity]) => ({
+        ticketListingId,
+        quantity
+      }));
+
+    try {
+      const response = await createOrder({ data: { items } })
+      if (response.status >= 300 || response.status < 200) {
+        toast.error("Could not reserve tickets. Please try again.");
+      } else {
+        toast.success("Tickets reserved! You can now proceed to checkout.");
+        localStorage.setItem("checkoutData", JSON.stringify(response.data));
+        navigate(`/payment/`);
+      }
+    } catch (error) {
+      toast.error("Could not reserve tickets. Please try again.");
+      return;
+    }
+  }
+
   return (
     <ChooseTickets
-      eventId={eventId}
-      eventName={eventName}
       tickets={tickets}
+      handleContinue={handleContinue}
     />
   );
 }

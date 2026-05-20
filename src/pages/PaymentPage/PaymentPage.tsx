@@ -1,28 +1,16 @@
 import { useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import appleLogo from "@assets/icons/apple_logo.svg";
 import creditCardIcon from "@assets/icons/credit_card.svg";
 import googlePayIcon from "@assets/icons/google_pay.svg";
 import vippsIcon from "@assets/icons/vipps.svg";
-import { useCreateOrder, usePayOrder } from "@api/orders";
+import { usePayOrder, type OrderResponse } from "@api/orders";
 import { useAuthContext } from "@utility/AuthContext";
 import StateBanner from "@components/StateBanner/StateBanner";
 import styles from "./PaymentPage.module.css";
+import toast from "@components/Toast";
 
 type PaymentMethod = "card" | "gpay" | "applepay" | "vipps";
-
-type OrderItem = {
-  ticketListingId: number;
-  quantity: number;
-};
-
-type PaymentOrderState = {
-  eventId?: number;
-  eventName: string;
-  ticketCount: number;
-  totalPrice: number;
-  items: OrderItem[];
-};
 
 function extractErrorMessage(err: unknown, context: string): string {
   if (err instanceof Error) {
@@ -42,14 +30,11 @@ function extractErrorMessage(err: unknown, context: string): string {
 
 export default function PaymentPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { isLoggedIn, user } = useAuthContext();
-  const stateOrder = location.state as PaymentOrderState | null;
-  const order = stateOrder;
   const isSubmittingRef = useRef(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [form, setForm] = useState({
-    email: user.email || "",
+    email: user?.email || "",
     cardNumber: "",
     nameOnCard: "",
     expiryDate: "",
@@ -57,7 +42,6 @@ export default function PaymentPage() {
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const createOrderMutation = useCreateOrder();
   const payOrderMutation = usePayOrder();
   const formattedCardNumber = form.cardNumber.replace(/\s/g, "");
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
@@ -72,11 +56,11 @@ export default function PaymentPage() {
     hasValidExpiryDate &&
     hasValidCvv;
   const canPurchase =
-    Boolean(order) &&
     isLoggedIn &&
     isValidEmail &&
     (!requiresCardDetails || hasValidCardDetails) &&
     !isProcessing;
+
 
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -107,7 +91,7 @@ export default function PaymentPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (isSubmittingRef.current || !canPurchase || !order || !isLoggedIn) {
+    if (isSubmittingRef.current || !canPurchase || !isLoggedIn) {
       return;
     }
 
@@ -116,47 +100,19 @@ export default function PaymentPage() {
     setError(null);
 
     try {
-      const orderItems = order.items.map((item) => ({
-        ticketListingId: item.ticketListingId,
-        quantity: item.quantity
-      }));
-
-      const createResponse = await createOrderMutation.mutateAsync({
-        data: { items: orderItems }
-      });
-
-      if (createResponse.status !== 200) {
-        throw new Error(`Create order failed: ${createResponse.data || "Unknown error"}`);
-      }
-
-      const orderId = createResponse.data.orderId;
-      if (!orderId) {
-        throw new Error("Create order failed: No order ID returned");
-      }
-
       const payResponse = await payOrderMutation.mutateAsync({
-        id: orderId,
+        id: ticketReservation.orderId!,
         data: { forceFailure: false }
       });
 
       if (payResponse.status !== 200) {
-        throw new Error(`Payment failed: ${payResponse.data || "Unknown error"}`);
+        toast.error("Payment failed. Please try again.");
+        return;
+      } else {
+        toast.success("Payment successful!");
       }
 
-      navigate("/checkout-complete", {
-        state: {
-          orderId,
-          orderNumber: createResponse.data.orderNumber,
-          email: form.email,
-          paymentMethod,
-          cardLastFour: paymentMethod === "card" ? formattedCardNumber.slice(-4) : undefined,
-          eventId: order.eventId,
-          eventName: order.eventName,
-          ticketCount: order.ticketCount,
-          totalPrice: order.totalPrice,
-          paymentStatus: payResponse.data.status
-        }
-      });
+      navigate("/checkout-complete", { state: payResponse.data });
     } catch (err) {
       setError(extractErrorMessage(err, "Payment failed"));
     } finally {
@@ -174,7 +130,9 @@ export default function PaymentPage() {
     );
   }
 
-  if (!order) {
+
+  const data = localStorage.getItem("checkoutData");
+  if (!data) {
     return (
       <StateBanner
         title="No order found"
@@ -183,15 +141,42 @@ export default function PaymentPage() {
     );
   }
 
+  const ticketReservation: OrderResponse = JSON.parse(data);
+  if (ticketReservation.expiresAt && new Date(ticketReservation.expiresAt) < new Date()) {
+    return (
+      <StateBanner
+        title="Reservation expired"
+        description="Your ticket reservation has expired. Please go back to the event and select your tickets again."
+      />
+    );
+  }
+
+  if (ticketReservation.orderId === undefined || ticketReservation.items === undefined) {
+    return (
+      <StateBanner
+        title="Invalid reservation"
+        description="There was an issue with your ticket reservation. Please go back to the event and select your tickets again."
+      />
+    );
+  }
+
+  const ticketCount = ticketReservation.items.reduce((sum, item) => sum + (item?.quantity || 0), 0);
+
   return (
     <main className={styles.paymentPage}>
       <section className={styles.paymentContent}>
         <div className={styles.orderCard}>
           <h2>Order</h2>
-          <h3>{order.eventName}</h3>
+          <h3>{ticketReservation.orderNumber}</h3>
+          {ticketReservation.items.map((item) => (
+            <div key={item.ticketListingId} className={styles.orderItem}>
+              <span>Ticket listing #{item.ticketListingId}</span>
+              <span>Quantity: {item.quantity}</span>
+            </div>
+          ))}
           <p>
-            {order.ticketCount} {order.ticketCount === 1 ? "ticket" : "tickets"} ·{" "}
-            {formatPrice(order.totalPrice)} NOK
+            {ticketCount} {ticketCount === 1 ? "ticket" : "tickets"} ·{" "}
+            {formatPrice(ticketReservation.totalAmount || 0)} NOK
           </p>
         </div>
         {error && (

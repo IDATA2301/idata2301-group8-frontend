@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
 import type { CompanyDto } from "@api/iam";
@@ -64,6 +65,8 @@ export default function TicketListingFields({
   const selectedCompanyName =
     companyOptions.find((company) => company.id === selectedListingCompanyId)?.name
     ?? `Company ${selectedListingCompanyId ?? "-"}`;
+
+  const selectedEvent = events.find((event) => event.eventId === Number(form.eventId));
 
   const hasValidCompany = selectedListingCompanyId !== undefined;
   const hasValidEvent = form.eventId.trim().length > 0 && !Number.isNaN(Number(form.eventId));
@@ -298,6 +301,16 @@ export default function TicketListingFields({
       </div>
 
       <div className={styles.dialogActions}>
+        {mode === "edit" && selectedEvent?.slug && (
+          <Link
+            to={`/events/${selectedEvent.slug}`}
+            className={styles.secondaryButton}
+            onClick={onClose}
+          >
+            Go to page
+          </Link>
+        )}
+
         <button
           type="button"
           className={styles.cancelButton}

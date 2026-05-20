@@ -160,6 +160,16 @@ export default function SideBar({
             Request management
           </Link>
         )}
+
+        {isAdmin && (
+          <Link
+            to="/payout-management"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            Payout management
+          </Link>
+        )}
       </aside>
     </>
   );

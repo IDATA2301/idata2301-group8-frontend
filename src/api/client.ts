@@ -70,6 +70,9 @@ export const customFetch = async <T>(
     }
   }
 
+  // Use longer timeout for file uploads (FormData), shorter for regular requests
+  const timeout = isFormData ? 60000 : 5000;
+
   const res = await fetch(baseUrl + url, {
     ...options,
     ...(isRefreshEndpoint ? { credentials: "include" } : {}),
@@ -78,7 +81,7 @@ export const customFetch = async <T>(
       ...(options.headers || {}),
       ...(!isRefreshEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
     },
-    signal: AbortSignal.timeout(5000),
+    signal: AbortSignal.timeout(timeout),
   });
 
   if (!res.ok) {

@@ -41,6 +41,11 @@
   transform: translate(-50%, -50%);
 }
 
+.accountIcon {
+  width: 32px;
+  height: 32px;
+}
+
 .register {
   background: transparent;
   justify-self: end;

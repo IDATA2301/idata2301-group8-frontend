@@ -103,6 +103,10 @@ const EventList = ({ query, filters, sort }: Params) => {
   // Only make the filtered request if all categories are valid
   const validCategories = filters.categories.filter((cat) => activeCategoryNames.has(cat));
 
+  const sortParam = sortOption
+    ? `${sortOption.sortBy},${sortOption.sortDirection}`
+    : undefined;
+
   const { data: response, isLoading } = useGetEvents({
     query: query.trim() || undefined,
     city: filters.locations.length > 0 ? filters.locations : undefined,
@@ -113,7 +117,7 @@ const EventList = ({ query, filters, sort }: Params) => {
     maxPrice: filters.priceMax,
     page: currentPage - 1,
     size: EVENTS_PER_PAGE,
-    sort: sortOption?.value
+    sort: sortParam
   }, {
     query: {
       // Don't fetch if we have invalid categories and no valid ones

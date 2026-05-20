@@ -45,17 +45,20 @@
   -webkit-box-orient: vertical;
 }
 
-.event-tags {
+.event-card .event-tags {
   display: flex;
+  flex-wrap: nowrap;
   gap: 6px;
   margin-bottom: 8px;
+  overflow: hidden;
 }
 
-.tag {
+.event-card .tag {
   background: #780000;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .event-date {

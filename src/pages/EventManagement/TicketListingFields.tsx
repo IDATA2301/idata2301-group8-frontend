@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
+import { useConfirm } from "@utility/ConfirmContext";
 import type { CompanyDto } from "@api/iam";
 import type {
   CreateTicketListingRequest,
@@ -43,6 +44,7 @@ export default function TicketListingFields({
     initialCompanyId
   );
 
+  const { confirm } = useConfirm();
   const createTicketListing = useCreateTicketListing();
   const updateTicketListing = useUpdateTicketListing();
   const deleteTicketListing = useDeleteTicketListing();
@@ -140,8 +142,23 @@ export default function TicketListingFields({
     );
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!selectedTicketListing?.ticketListingId || isSubmitting) {
+      return;
+    }
+
+    const ticketName = selectedTicketListing.ticketType
+      ? `"${selectedTicketListing.ticketType}"`
+      : "this ticket listing";
+
+    const shouldDelete = await confirm({
+      title: "Delete ticket listing?",
+      message: `Are you sure you want to delete ${ticketName}? This action cannot be undone.`,
+      confirmText: "Delete",
+      isDanger: true
+    });
+
+    if (!shouldDelete) {
       return;
     }
 

@@ -40,6 +40,16 @@
   font-size: 0.78rem;
 }
 
+.errorMessage {
+  padding: 1rem;
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.5);
+  border-radius: 12px;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .paymentForm {
   display: flex;
   flex-direction: column;

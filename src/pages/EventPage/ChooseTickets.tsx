@@ -1,17 +1,13 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import TicketCard, { type Ticket } from "./TicketCard.tsx";
 import arrowRight from "@assets/icons/arrow-right.svg";
 
 type Props = {
-  eventId?: number;
-  eventName: string;
   tickets: Ticket[];
+  handleContinue: (ticketCounts: Map<number, number>) => void;
 };
 
-function ChooseTickets({ eventId, eventName, tickets }: Props) {
-  const navigate = useNavigate();
-
+function ChooseTickets({ tickets, handleContinue }: Props) {
   const ticketPriceMap = useMemo(() => {
     return new Map(tickets.map((ticket) => [ticket.id, ticket.price]));
   }, [tickets]);
@@ -43,19 +39,6 @@ function ChooseTickets({ eventId, eventName, tickets }: Props) {
     });
   };
 
-  function handleContinue() {
-    if (totalTicketCount === 0) {
-      return;
-    }
-    navigate("/payment", {
-      state: {
-        eventId,
-        eventName,
-        ticketCount: totalTicketCount,
-        totalPrice: totalTicketPrice
-      }
-    });
-  }
 
   return (
     <div className="choose-tickets-box">
@@ -83,7 +66,7 @@ function ChooseTickets({ eventId, eventName, tickets }: Props) {
         <button
           className="ticket-card-action-button"
           disabled={totalTicketCount === 0}
-          onClick={handleContinue}
+          onClick={() => handleContinue(ticketCounts)}
         >
           Continue
           <img

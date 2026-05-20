@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
+import { useConfirm } from "@utility/ConfirmContext";
 import type {
   CategoryResponse,
   EventResponse,
@@ -33,6 +34,7 @@ export default function EventFields({
   onClose,
   onSuccess
 }: EventFieldsProps) {
+  const { confirm } = useConfirm();
   const createEvent = useCreateEvent();
   const updateEvent = useUpdateEvent();
   const deleteEvent = useDeleteEvent();
@@ -163,8 +165,19 @@ export default function EventFields({
     );
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!selectedEvent?.eventId || isSubmitting) {
+      return;
+    }
+
+    const shouldDelete = await confirm({
+      title: "Delete event?",
+      message: `Are you sure you want to delete "${selectedEvent.eventName ?? "this event"}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      isDanger: true
+    });
+
+    if (!shouldDelete) {
       return;
     }
 

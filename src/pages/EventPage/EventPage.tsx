@@ -121,7 +121,6 @@ function EventPage() {
       <div className="center-box">
         <EventTicketListings
           eventId={event.eventId}
-          eventName={event.eventName ?? "Untitled event"}
         />
         <hr className="page-divider-line" />
         <div className="event-page-location-box">

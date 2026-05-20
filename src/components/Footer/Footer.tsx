@@ -22,11 +22,11 @@ export default function Footer() {
           <div className="footer-columns">
             <div className="footer-col">
               <h4>Categories</h4>
-              <Link to="/search?category=Festivals">Festivals</Link>
-              <Link to="/search?category=Concerts">Concerts</Link>
-              <Link to="/search?category=Sports">Sports</Link>
-              <Link to="/search?category=Museums">Museums</Link>
-              <Link to="/search?category=Theaters">Theaters</Link>
+              <Link to="/search?category=Festival">Festival</Link>
+              <Link to="/search?category=Concert">Concert</Link>
+              <Link to="/search?category=Sport">Sport</Link>
+              <Link to="/search?category=Museum">Museum</Link>
+              <Link to="/search?category=Theater">Theater</Link>
             </div>
             <div className="footer-col">
               <h4>Company</h4>

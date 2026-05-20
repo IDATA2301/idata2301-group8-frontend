@@ -1,19 +1,54 @@
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "@utility/AuthContext";
+import { useGetAllCategories, useGetEvents } from "@api/events";
 import styles from "./SideBar.module.css";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onOpenLogin: () => void;
 };
 
 export default function SideBar({
   isOpen,
-  onClose
+  onClose,
+  onOpenLogin
 }: Props) {
   const auth = useAuthContext();
   const isAdmin = auth.isLoggedIn && auth.isAdmin;
   const isProvider = auth.isLoggedIn && auth.isProvider;
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+
+  const { data: categoriesResponse } = useGetAllCategories();
+
+  const currentTime = useMemo(() => new Date().toISOString(), []);
+  const { data: eventsResponse } = useGetEvents({
+    startDate: currentTime,
+    size: 1000
+  });
+
+  const categories = useMemo(() => {
+    if (categoriesResponse?.status !== 200 || eventsResponse?.status !== 200) {
+      return [];
+    }
+
+    const events = eventsResponse.data.content ?? [];
+    const activeCategoryIds = new Set<number>();
+
+    for (const event of events) {
+      if (event.categoryIds) {
+        for (const id of event.categoryIds) {
+          activeCategoryIds.add(id);
+        }
+      }
+    }
+
+    return categoriesResponse.data
+      .filter((c) => c.id !== undefined && activeCategoryIds.has(c.id))
+      .filter((c) => c.name)
+      .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+  }, [categoriesResponse, eventsResponse]);
 
   return (
     <>
@@ -42,58 +77,58 @@ export default function SideBar({
           Navigation
         </h2>
 
-        <Link
-          to="/account"
-          className={styles.menuLink}
-          onClick={onClose}
-        >
-          My Account
-        </Link>
+        {auth.isLoggedIn ? (
+          <Link
+            to="/account"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            My Account
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className={styles.menuLink}
+            onClick={() => {
+              onClose();
+              onOpenLogin();
+            }}
+          >
+            Log in
+          </button>
+        )}
 
         <div className={styles.categorySection}>
-          <h4 className={styles.categoryTitle}>
-            Categories
-          </h4>
-
-          <Link
-            to="/search?category=Festivals"
-            className={styles.categoryLink}
-            onClick={onClose}
+          <button
+            type="button"
+            className={styles.categoryToggle}
+            onClick={() => setCategoriesOpen((prev) => !prev)}
+            aria-expanded={categoriesOpen}
           >
-            Festivals
-          </Link>
+            <span>Categories</span>
+            <span className={`${styles.chevron} ${categoriesOpen ? styles.chevronOpen : ""}`}>
+              ›
+            </span>
+          </button>
 
-          <Link
-            to="/search?category=Concerts"
-            className={styles.categoryLink}
-            onClick={onClose}
+          <div
+            className={`${styles.categoryList} ${categoriesOpen ? styles.categoryListOpen : ""}`}
           >
-            Concerts
-          </Link>
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                to={`/search?category=${encodeURIComponent(category.name ?? "")}`}
+                className={styles.categoryLink}
+                onClick={onClose}
+              >
+                {category.name}
+              </Link>
+            ))}
 
-          <Link
-            to="/search?category=Sports"
-            className={styles.categoryLink}
-            onClick={onClose}
-          >
-            Sports
-          </Link>
-
-          <Link
-            to="/search?category=Museums"
-            className={styles.categoryLink}
-            onClick={onClose}
-          >
-            Museums
-          </Link>
-
-          <Link
-            to="/search?category=Theaters"
-            className={styles.categoryLink}
-            onClick={onClose}
-          >
-            Theaters
-          </Link>
+            {categories.length === 0 && (
+              <span className={styles.noCategories}>No categories available</span>
+            )}
+          </div>
         </div>
 
         {(isAdmin || isProvider) && (
@@ -123,6 +158,16 @@ export default function SideBar({
             onClick={onClose}
           >
             Request management
+          </Link>
+        )}
+
+        {isAdmin && (
+          <Link
+            to="/payout-management"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            Payout management
           </Link>
         )}
       </aside>

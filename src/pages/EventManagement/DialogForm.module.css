@@ -324,6 +324,28 @@
   }
 }
 
+.mapPreview {
+  width: 100%;
+  height: 220px;
+  border: 1px solid #FFFFFF14;
+  border-radius: 12px;
+}
+
+.mapPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 220px;
+  border: 1px dashed #FFFFFF24;
+  border-radius: 12px;
+  background: #FFFFFF08;
+  color: #FFFFFF80;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem;
+}
+
 @media (max-width: 750px) {
   .dialog {
     width: calc(100vw - 28px);

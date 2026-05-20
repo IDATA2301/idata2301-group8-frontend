@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import appleLogo from "@assets/icons/apple_logo.svg";
 import creditCardIcon from "@assets/icons/credit_card.svg";
@@ -45,11 +45,11 @@ export default function PaymentPage() {
   const location = useLocation();
   const { isLoggedIn, user } = useAuthContext();
   const stateOrder = location.state as PaymentOrderState | null;
-
   const order = stateOrder;
+  const isSubmittingRef = useRef(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [form, setForm] = useState({
-    email: "",
+    email: user.email || "",
     cardNumber: "",
     nameOnCard: "",
     expiryDate: "",
@@ -57,24 +57,25 @@ export default function PaymentPage() {
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const createOrderMutation = useCreateOrder();
   const payOrderMutation = usePayOrder();
-
   const formattedCardNumber = form.cardNumber.replace(/\s/g, "");
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
   const isValidCardNumber = /^\d{16}$/.test(formattedCardNumber);
   const hasValidName = form.nameOnCard.trim().length > 0;
   const hasValidExpiryDate = /^\d{2}\s?\/\s?\d{2}$/.test(form.expiryDate);
   const hasValidCvv = /^\d{3,4}$/.test(form.cvv);
+  const requiresCardDetails = paymentMethod === "card";
+  const hasValidCardDetails =
+    isValidCardNumber &&
+    hasValidName &&
+    hasValidExpiryDate &&
+    hasValidCvv;
   const canPurchase =
     Boolean(order) &&
     isLoggedIn &&
     isValidEmail &&
-    isValidCardNumber &&
-    hasValidName &&
-    hasValidExpiryDate &&
-    hasValidCvv &&
+    (!requiresCardDetails || hasValidCardDetails) &&
     !isProcessing;
 
   function updateField(field: keyof typeof form, value: string) {
@@ -106,10 +107,11 @@ export default function PaymentPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!canPurchase || !order || !isLoggedIn) {
+    if (isSubmittingRef.current || !canPurchase || !order || !isLoggedIn) {
       return;
     }
 
+    isSubmittingRef.current = true;
     setIsProcessing(true);
     setError(null);
 
@@ -119,14 +121,9 @@ export default function PaymentPage() {
         quantity: item.quantity
       }));
 
-      let createResponse;
-      try {
-        createResponse = await createOrderMutation.mutateAsync({
-          data: { items: orderItems }
-        });
-      } catch (createErr) {
-        throw new Error(extractErrorMessage(createErr, "Create order failed"));
-      }
+      const createResponse = await createOrderMutation.mutateAsync({
+        data: { items: orderItems }
+      });
 
       if (createResponse.status !== 200) {
         throw new Error(`Create order failed: ${createResponse.data || "Unknown error"}`);
@@ -137,15 +134,10 @@ export default function PaymentPage() {
         throw new Error("Create order failed: No order ID returned");
       }
 
-      let payResponse;
-      try {
-        payResponse = await payOrderMutation.mutateAsync({
-          id: orderId,
-          data: { forceFailure: false }
-        });
-      } catch (payErr) {
-        throw new Error(extractErrorMessage(payErr, "Payment failed"));
-      }
+      const payResponse = await payOrderMutation.mutateAsync({
+        id: orderId,
+        data: { forceFailure: false }
+      });
 
       if (payResponse.status !== 200) {
         throw new Error(`Payment failed: ${payResponse.data || "Unknown error"}`);
@@ -157,7 +149,7 @@ export default function PaymentPage() {
           orderNumber: createResponse.data.orderNumber,
           email: form.email,
           paymentMethod,
-          cardLastFour: formattedCardNumber.slice(-4),
+          cardLastFour: paymentMethod === "card" ? formattedCardNumber.slice(-4) : undefined,
           eventId: order.eventId,
           eventName: order.eventName,
           ticketCount: order.ticketCount,
@@ -166,12 +158,9 @@ export default function PaymentPage() {
         }
       });
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unexpected error occurred");
-      }
+      setError(extractErrorMessage(err, "Payment failed"));
     } finally {
+      isSubmittingRef.current = false;
       setIsProcessing(false);
     }
   }
@@ -252,44 +241,48 @@ export default function PaymentPage() {
               onChange={(e) => updateField("email", e.target.value)}
             />
           </label>
-          <label>
-            Card number
-            <input
-              inputMode="numeric"
-              value={form.cardNumber}
-              placeholder="1111 2222 3333 4444"
-              onChange={(e) => updateField("cardNumber", formatCardNumber(e.target.value))}
-            />
-          </label>
-          <label>
-            Name on card
-            <input
-              value={form.nameOnCard}
-              placeholder="First name Last name"
-              onChange={(e) => updateField("nameOnCard", e.target.value)}
-            />
-          </label>
-          <div className={styles.twoColumns}>
-            <label>
-              Expiry date
-              <input
-                inputMode="numeric"
-                value={form.expiryDate}
-                placeholder="MM / YY"
-                onChange={(e) => updateField("expiryDate", formatExpiryDate(e.target.value))}
-              />
-            </label>
-            <label>
-              CVV
-              <input
-                inputMode="numeric"
-                value={form.cvv}
-                placeholder="123"
-                maxLength={4}
-                onChange={(e) => updateField("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))}
-              />
-            </label>
-          </div>
+          {paymentMethod === "card" && (
+            <>
+              <label>
+                Card number
+                <input
+                  inputMode="numeric"
+                  value={form.cardNumber}
+                  placeholder="1111 2222 3333 4444"
+                  onChange={(e) => updateField("cardNumber", formatCardNumber(e.target.value))}
+                />
+              </label>
+              <label>
+                Name on card
+                <input
+                  value={form.nameOnCard}
+                  placeholder="First name Last name"
+                  onChange={(e) => updateField("nameOnCard", e.target.value)}
+                />
+              </label>
+              <div className={styles.twoColumns}>
+                <label>
+                  Expiry date
+                  <input
+                    inputMode="numeric"
+                    value={form.expiryDate}
+                    placeholder="MM / YY"
+                    onChange={(e) => updateField("expiryDate", formatExpiryDate(e.target.value))}
+                  />
+                </label>
+                <label>
+                  CVV
+                  <input
+                    inputMode="numeric"
+                    value={form.cvv}
+                    placeholder="123"
+                    maxLength={4}
+                    onChange={(e) => updateField("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  />
+                </label>
+              </div>
+            </>
+          )}
           <button type="submit" className={styles.purchaseButton} disabled={!canPurchase}>
             {isProcessing ? "Processing..." : "Purchase"}
           </button>

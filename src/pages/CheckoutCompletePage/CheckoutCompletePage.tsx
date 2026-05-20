@@ -20,7 +20,7 @@ export default function CheckoutCompletePage() {
   const location = useLocation();
   const state = location.state as CheckoutState | null;
 
-  if (!state?.orderNumber || !state.email || !state.cardLastFour) {
+  if (!state?.orderNumber || !state.email) {
     return (
       <main className={styles.checkoutPage}>
         <section className={styles.checkoutContent}>
@@ -41,7 +41,8 @@ export default function CheckoutCompletePage() {
     cardLastFour: state.cardLastFour,
     eventName: state.eventName,
     ticketCount: state.ticketCount,
-    totalPrice: state.totalPrice
+    totalPrice: state.totalPrice,
+    paymentStatus: state.paymentStatus
   };
 
   const qrValue = JSON.stringify({
@@ -68,7 +69,7 @@ export default function CheckoutCompletePage() {
               Event: <strong>{order.eventName}</strong>
             </p>
           )}
-          {order.ticketCount && order.ticketCount > 0 && (
+          {order.ticketCount !== undefined && order.ticketCount > 0 && (
             <p>
               Tickets: <strong>{order.ticketCount}</strong>
             </p>
@@ -82,7 +83,7 @@ export default function CheckoutCompletePage() {
             bgColor="#ffffff"
             fgColor="#050505"
             level="M"
-            includeMargin={false}
+            marginSize={0}
           />
         </div>
         <div className={styles.customerCard}>
@@ -93,7 +94,8 @@ export default function CheckoutCompletePage() {
             <span>Payment method</span>
             <span className={styles.paymentMethod}>
               <img src={creditCardIcon} alt="" aria-hidden="true" />
-              {formatPaymentMethod(order.paymentMethod)} ending in {order.cardLastFour}
+              {formatPaymentMethod(order.paymentMethod)}
+              {order.cardLastFour ? ` ending in ${order.cardLastFour}` : ""}
             </span>
             {order.totalPrice !== undefined && (
               <>

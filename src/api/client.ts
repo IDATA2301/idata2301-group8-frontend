@@ -1,18 +1,73 @@
+import { jwtDecode } from "jwt-decode";
+
+type JwtClaims = {
+  exp: number;
+};
+
+const getStoredJwt = () => localStorage.getItem("jwt");
+
+const isExpired = (jwt: string) => {
+  try {
+    const decoded = jwtDecode<JwtClaims>(jwt);
+    return decoded.exp < Date.now() / 1000;
+  } catch {
+    return true;
+  }
+};
+
+let refreshInFlight: Promise<string | null> | null = null;
+
+const refreshJwt = async (): Promise<string | null> => {
+  if (!refreshInFlight) {
+    refreshInFlight = (async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_IAM_API_URL}/refresh`, {
+          method: "POST",
+          credentials: "include",
+          signal: AbortSignal.timeout(5000),
+        });
+
+        if (!res.ok) {
+          return null;
+        }
+
+        const data = await res.json();
+        const jwt = data?.jwt;
+        if (typeof jwt !== "string" || jwt.length === 0) {
+          return null;
+        }
+
+        localStorage.setItem("jwt", jwt);
+        return jwt;
+      } catch {
+        return null;
+      }
+    })().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+
+  return refreshInFlight;
+};
+
 export const customFetch = async <T>(
   baseUrl: string,
   url: string,
   options: RequestInit = {},
 ): Promise<T> => {
-  const jwt = localStorage.getItem("jwt");
-  const headers = new Headers(options.headers);
-  const isFormData = options.body instanceof FormData;
+  const isRefreshEndpoint = url === "/refresh";
 
-  if (jwt) {
-    headers.set("Authorization", `Bearer ${jwt}`);
-  }
+  let jwt = getStoredJwt();
 
-  if (!isFormData && options.body && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  if (jwt && isExpired(jwt) && !isRefreshEndpoint) {
+    jwt = await refreshJwt();
+    if (!jwt) {
+      localStorage.removeItem("jwt");
+      throw {
+        status: 401,
+        data: "Session expired. Please log in again.",
+      } as T;
+    }
   }
 
   // Use longer timeout for file uploads (FormData), shorter for regular requests
@@ -20,7 +75,12 @@ export const customFetch = async <T>(
 
   const res = await fetch(baseUrl + url, {
     ...options,
-    headers,
+    ...(isRefreshEndpoint ? { credentials: "include" } : {}),
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+      ...(!isRefreshEndpoint && jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+    },
     signal: AbortSignal.timeout(timeout),
   });
 

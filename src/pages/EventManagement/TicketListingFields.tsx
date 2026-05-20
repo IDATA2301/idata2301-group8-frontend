@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import styles from "./DialogForm.module.css";
+import toast from "@components/Toast";
 import type { CompanyDto } from "@api/iam";
 import type {
   CreateTicketListingRequest,
@@ -64,6 +66,8 @@ export default function TicketListingFields({
     companyOptions.find((company) => company.id === selectedListingCompanyId)?.name
     ?? `Company ${selectedListingCompanyId ?? "-"}`;
 
+  const selectedEvent = events.find((event) => event.eventId === Number(form.eventId));
+
   const hasValidCompany = selectedListingCompanyId !== undefined;
   const hasValidEvent = form.eventId.trim().length > 0 && !Number.isNaN(Number(form.eventId));
   const hasValidTicketType = form.ticketType.trim().length > 0;
@@ -109,14 +113,30 @@ export default function TicketListingFields({
           id: selectedTicketListing.ticketListingId,
           data: buildRequest()
         },
-        { onSuccess: handleSuccess }
+        {
+          onSuccess: () => {
+            toast.success("Ticket listing updated successfully");
+            handleSuccess();
+          },
+          onError: () => {
+            toast.error("Failed to update ticket listing");
+          }
+        }
       );
       return;
     }
 
     createTicketListing.mutate(
       { data: buildRequest() },
-      { onSuccess: handleSuccess }
+      {
+        onSuccess: () => {
+          toast.success("Ticket listing created successfully");
+          handleSuccess();
+        },
+        onError: () => {
+          toast.error("Failed to create ticket listing");
+        }
+      }
     );
   }
 
@@ -127,7 +147,15 @@ export default function TicketListingFields({
 
     deleteTicketListing.mutate(
       { id: selectedTicketListing.ticketListingId },
-      { onSuccess: handleSuccess }
+      {
+        onSuccess: () => {
+          toast.success("Ticket listing deleted successfully");
+          handleSuccess();
+        },
+        onError: () => {
+          toast.error("Failed to delete ticket listing");
+        }
+      }
     );
   }
 
@@ -273,6 +301,16 @@ export default function TicketListingFields({
       </div>
 
       <div className={styles.dialogActions}>
+        {mode === "edit" && selectedEvent?.slug && (
+          <Link
+            to={`/events/${selectedEvent.slug}`}
+            className={styles.secondaryButton}
+            onClick={onClose}
+          >
+            Go to page
+          </Link>
+        )}
+
         <button
           type="button"
           className={styles.cancelButton}

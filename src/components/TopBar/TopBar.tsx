@@ -81,6 +81,7 @@ export default function TopBar({
       <SideBar
         isOpen={menuOpen}
         onClose={toggleMenu}
+        onOpenLogin={openDialog}
       />
 
     </>

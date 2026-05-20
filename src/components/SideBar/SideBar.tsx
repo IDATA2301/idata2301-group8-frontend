@@ -7,11 +7,13 @@ import styles from "./SideBar.module.css";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onOpenLogin: () => void;
 };
 
 export default function SideBar({
   isOpen,
-  onClose
+  onClose,
+  onOpenLogin
 }: Props) {
   const auth = useAuthContext();
   const isAdmin = auth.isLoggedIn && auth.isAdmin;
@@ -75,13 +77,26 @@ export default function SideBar({
           Navigation
         </h2>
 
-        <Link
-          to="/account"
-          className={styles.menuLink}
-          onClick={onClose}
-        >
-          My Account
-        </Link>
+        {auth.isLoggedIn ? (
+          <Link
+            to="/account"
+            className={styles.menuLink}
+            onClick={onClose}
+          >
+            My Account
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className={styles.menuLink}
+            onClick={() => {
+              onClose();
+              onOpenLogin();
+            }}
+          >
+            Log in
+          </button>
+        )}
 
         <div className={styles.categorySection}>
           <button

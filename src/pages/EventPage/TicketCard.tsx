@@ -45,21 +45,17 @@ function TicketCard({ onChange, ticket }: Props) {
   const [count, setCount] = useState(0);
   const ticketDateRange = formatTicketDateRange(ticket.startDate, ticket.endDate);
 
-  const increment = () => {
-    setCount((currentCount) => {
-      const nextCount = Math.min(currentCount + 1, maxCount);
-      onChange(nextCount);
-      return nextCount;
-    });
-  };
+  function increment() {
+    const nextCount = Math.min(count + 1, maxCount);
+    setCount(nextCount);
+    onChange(nextCount);
+  }
 
-  const decrement = () => {
-    setCount((currentCount) => {
-      const nextCount = Math.max(currentCount - 1, 0);
-      onChange(nextCount);
-      return nextCount;
-    });
-  };
+  function decrement() {
+    const nextCount = Math.max(count - 1, 0);
+    setCount(nextCount);
+    onChange(nextCount);
+  }
 
   return (
     <div className="ticket-card-box">

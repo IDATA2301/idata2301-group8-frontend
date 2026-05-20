@@ -1,66 +1,133 @@
-import { useQueries } from "@tanstack/react-query";
-import { getGetEventByIdQueryOptions } from "@api/events";
-// import { useGetMyOrders, type OrderResponse } from "@api/orders";
+import { useMemo } from "react";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import { getGetEventByIdQueryOptions, getGetTicketListingsQueryOptions } from "@api/events";
+import { useGetMyOrders, type OrderResponse } from "@api/orders";
 import styles from "./MyEvents.module.css";
 import MyEventsCard from "./MyEventsCard";
 
-type OrderResponse = {
-  orderId?: number;
-  eventId?: number;
-  eventDate?: string;
-  ticketCount?: number;
-};
-
 export default function MyEvents() {
-  // TODO: Uncomment when order-service is ready and generated with Orval.
-  // const {
-  //   data: ordersResponse,
-  //   isLoading: ordersLoading,
-  //   isError: ordersError
-  // } = useGetMyOrders();
+  const {
+    data: ordersResponse,
+    isLoading: ordersLoading,
+    isError: ordersError
+  } = useGetMyOrders();
 
-  // TODO: Replace this with ordersResponse?.status === 200 ? ordersResponse.data : []
-  // when order-service is ready.
-  const orders: OrderResponse[] = [];
+  const orders: OrderResponse[] =
+    ordersResponse?.status === 200 ? ordersResponse.data : [];
 
-  const validOrders = orders.filter(
-    (order): order is OrderResponse & { eventId: number } => order.eventId != null
+  const paidOrders = orders.filter(
+    (order) => order.paymentStatus === "PAID" || order.paymentStatus === "COMPLETED"
   );
 
-  const eventQueries = useQueries({
-    queries: validOrders.map((order) => getGetEventByIdQueryOptions(order.eventId))
+  const ticketListingIds = useMemo(() => {
+    const ids = new Set<number>();
+    paidOrders.forEach((order) => {
+      order.items?.forEach((item) => {
+        if (item.ticketListingId != null) {
+          ids.add(item.ticketListingId);
+        }
+      });
+    });
+    return [...ids];
+  }, [paidOrders]);
+
+  const { data: ticketListingsResponse, isLoading: listingsLoading } = useQuery({
+    ...getGetTicketListingsQueryOptions({}),
+    enabled: ticketListingIds.length > 0
   });
 
-  const isLoading =
-    // ordersLoading ||
-    eventQueries.some((query) => query.isLoading);
+  const ticketListingToEventMap = useMemo(() => {
+    const map = new Map<number, number>();
+    if (ticketListingsResponse?.status === 200) {
+      ticketListingsResponse.data.forEach((listing) => {
+        if (listing.ticketListingId != null && listing.eventId != null) {
+          map.set(listing.ticketListingId, listing.eventId);
+        }
+      });
+    }
+    return map;
+  }, [ticketListingsResponse]);
 
-  const isError =
-    // ordersError ||
-    eventQueries.some((query) => query.isError);
+  const uniqueEventIds = useMemo(() => {
+    const ids = new Set<number>();
+    paidOrders.forEach((order) => {
+      order.items?.forEach((item) => {
+        if (item.ticketListingId != null) {
+          const eventId = ticketListingToEventMap.get(item.ticketListingId);
+          if (eventId != null) {
+            ids.add(eventId);
+          }
+        }
+      });
+    });
+    return [...ids];
+  }, [paidOrders, ticketListingToEventMap]);
+
+  const eventQueries = useQueries({
+    queries: uniqueEventIds.map((eventId) => getGetEventByIdQueryOptions(eventId))
+  });
+
+  const eventsLoading = eventQueries.some((query) => query.isLoading);
+  const eventsError = eventQueries.some((query) => query.isError);
+
+  const isLoading = ordersLoading || listingsLoading || eventsLoading;
+  const isError = ordersError || eventsError;
+
+  const eventMap = useMemo(() => {
+    const map = new Map<number, { eventName?: string; startDate?: string; imageUrl?: string }>();
+    eventQueries.forEach((query, index) => {
+      const event = query.data?.data;
+      if (typeof event === "object" && event !== null && "eventId" in event) {
+        map.set(uniqueEventIds[index], {
+          eventName: event.eventName,
+          startDate: event.startDate,
+          imageUrl: event.imageUrl
+        });
+      }
+    });
+    return map;
+  }, [eventQueries, uniqueEventIds]);
 
   const today = new Date();
 
-  const parsedEvents = eventQueries
-    .map((query, index) => {
-      const event = query.data?.data;
-      const order = validOrders[index];
+  const parsedEvents = useMemo(() => {
+    const events: Array<{
+      orderId: string;
+      eventId: number;
+      eventName: string;
+      eventDate: string;
+      ticketCount: number;
+    }> = [];
 
-      if (
-        typeof event !== "object" ||
-        event === null ||
-        !("eventId" in event)
-      ) {
-        return null;
-      }
+    paidOrders.forEach((order) => {
+      const orderEventCounts = new Map<number, number>();
 
-      return {
-        ...event,
-        eventDate: order.eventDate ?? event.startDate ?? "",
-        ticketCount: order.ticketCount ?? 0
-      };
-    })
-    .filter((event): event is NonNullable<typeof event> => event !== null);
+      order.items?.forEach((item) => {
+        if (item.ticketListingId != null) {
+          const eventId = ticketListingToEventMap.get(item.ticketListingId);
+          if (eventId != null) {
+            const currentCount = orderEventCounts.get(eventId) || 0;
+            orderEventCounts.set(eventId, currentCount + (item.quantity || 1));
+          }
+        }
+      });
+
+      orderEventCounts.forEach((ticketCount, eventId) => {
+        const eventData = eventMap.get(eventId);
+        if (eventData) {
+          events.push({
+            orderId: order.orderId || "",
+            eventId,
+            eventName: eventData.eventName || "Unknown Event",
+            eventDate: eventData.startDate || order.createdAt || "",
+            ticketCount
+          });
+        }
+      });
+    });
+
+    return events;
+  }, [paidOrders, ticketListingToEventMap, eventMap]);
 
   const ongoingEvents = parsedEvents.filter(
     (event) => event.eventDate && new Date(event.eventDate) >= today
@@ -92,8 +159,8 @@ export default function MyEvents() {
           )}
           {ongoingEvents.map((event) => (
             <MyEventsCard
-              key={event.eventId}
-              eventName={event.eventName ?? ""}
+              key={`${event.orderId}-${event.eventId}`}
+              eventName={event.eventName}
               eventDate={event.eventDate}
               ticketCount={event.ticketCount}
             />
@@ -120,8 +187,8 @@ export default function MyEvents() {
           )}
           {expiredEvents.map((event) => (
             <MyEventsCard
-              key={event.eventId}
-              eventName={event.eventName ?? ""}
+              key={`${event.orderId}-${event.eventId}`}
+              eventName={event.eventName}
               eventDate={event.eventDate}
               ticketCount={event.ticketCount}
             />

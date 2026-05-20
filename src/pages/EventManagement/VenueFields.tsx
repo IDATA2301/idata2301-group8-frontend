@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
 import { useCreate, useUpdate, type VenueResponse } from "@api/events";
@@ -30,6 +30,27 @@ export default function VenueFields({
     form.city.trim().length > 0 &&
     form.country.trim().length > 0 &&
     !isSubmitting;
+
+  const mapQuery = useMemo(() => {
+    const name = form.name.trim();
+    const city = form.city.trim();
+    const country = form.country.trim();
+
+    if (name && city) {
+      return `${name}, ${city}`;
+    }
+    if (city && country) {
+      return `${city}, ${country}`;
+    }
+    if (city) {
+      return city;
+    }
+    return "";
+  }, [form.name, form.city, form.country]);
+
+  const iframeUrl = mapQuery
+    ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`
+    : "";
 
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -131,6 +152,7 @@ export default function VenueFields({
               value={form.name}
               required
               disabled={isSubmitting}
+              placeholder="e.g. Oslo Spektrum"
               onChange={(e) => updateField("name", e.target.value)}
             />
           </label>
@@ -141,6 +163,7 @@ export default function VenueFields({
               value={form.city}
               required
               disabled={isSubmitting}
+              placeholder="e.g. Oslo"
               onChange={(e) => updateField("city", e.target.value)}
             />
           </label>
@@ -151,9 +174,30 @@ export default function VenueFields({
               value={form.country}
               required
               disabled={isSubmitting}
+              placeholder="e.g. Norway"
               onChange={(e) => updateField("country", e.target.value)}
             />
           </label>
+        </section>
+
+        <section className={styles.formSection}>
+          <h3>Location preview</h3>
+          <p className={styles.helperText}>
+            Verify the venue appears correctly on the map
+          </p>
+          {iframeUrl ? (
+            <iframe
+              className={styles.mapPreview}
+              src={iframeUrl}
+              allowFullScreen={false}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          ) : (
+            <div className={styles.mapPlaceholder}>
+              Enter venue name and city to see preview
+            </div>
+          )}
         </section>
       </div>
 

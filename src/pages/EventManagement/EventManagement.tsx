@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import EventManagementSection from "./EventManagementSection";
+import EventManagementSection, { type SortOption } from "./EventManagementSection";
 import EventDialog from "./EventDialog";
 import TicketListingDialog from "./TicketListingDialog";
 import VenueDialog from "./VenueDialog";
@@ -37,6 +37,11 @@ function formatLocation(city?: string, country?: string) {
   return [city, country].filter(Boolean).join(", ") || "-";
 }
 
+function isExpired(startDate?: string): boolean {
+  if (!startDate) return false;
+  return new Date(startDate) < new Date();
+}
+
 export default function EventManagement() {
   const { user, isAdmin } = useAuthContext();
   const eventDialogRef = useRef<HTMLDialogElement>(null);
@@ -47,6 +52,8 @@ export default function EventManagement() {
   const [eventSearch, setEventSearch] = useState("");
   const [ticketSearch, setTicketSearch] = useState("");
   const [venueSearch, setVenueSearch] = useState("");
+  const [eventSort, setEventSort] = useState<SortOption>("default");
+  const [ticketSort, setTicketSort] = useState<SortOption>("default");
   const companyIdParam = selectedCompanyId === "all" ? undefined : selectedCompanyId;
   const companiesQuery = useGetCompanies();
   const eventsQuery = useGetEvents({ size: 100 });
@@ -123,32 +130,70 @@ export default function EventManagement() {
     ?? "selected company";
 
   const filteredEvents = useMemo(() => {
-    if (!eventSearch.trim()) return visibleEvents;
-    const search = eventSearch.toLowerCase();
-    return visibleEvents.filter((event) =>
-      (event.eventName?.toLowerCase().includes(search)) ||
-      (event.status?.toLowerCase().includes(search)) ||
-      (event.city?.toLowerCase().includes(search)) ||
-      (event.country?.toLowerCase().includes(search)) ||
-      (String(event.eventId).includes(search))
+    let result = visibleEvents;
+
+    if (eventSearch.trim()) {
+      const search = eventSearch.toLowerCase();
+      result = result.filter((event) =>
+        (event.eventName?.toLowerCase().includes(search)) ||
+        (event.status?.toLowerCase().includes(search)) ||
+        (event.city?.toLowerCase().includes(search)) ||
+        (event.country?.toLowerCase().includes(search)) ||
+        (String(event.eventId).includes(search))
+      );
+    }
+
+    if (eventSort !== "default") {
+      result = [...result].sort((a, b) => {
+        const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+        const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+        return eventSort === "soonest" ? dateA - dateB : dateB - dateA;
+      });
+    }
+
+    return result;
+  }, [visibleEvents, eventSearch, eventSort]);
+
+  const eventStartDateById = useMemo(() => {
+    return new Map(
+      allEvents
+        .filter((event) => event.eventId !== undefined)
+        .map((event) => [event.eventId, event.startDate])
     );
-  }, [visibleEvents, eventSearch]);
+  }, [allEvents]);
 
   const filteredTicketListings = useMemo(() => {
-    if (!ticketSearch.trim()) return visibleTicketListings;
-    const search = ticketSearch.toLowerCase();
-    return visibleTicketListings.filter((listing) => {
-      const eventName = listing.eventId !== undefined
-        ? eventNameById.get(listing.eventId)?.toLowerCase()
-        : undefined;
-      return (
-        (eventName?.includes(search)) ||
-        (listing.ticketType?.toLowerCase().includes(search)) ||
-        (String(listing.ticketListingId).includes(search)) ||
-        (String(listing.price).includes(search))
-      );
-    });
-  }, [visibleTicketListings, ticketSearch, eventNameById]);
+    let result = visibleTicketListings;
+
+    if (ticketSearch.trim()) {
+      const search = ticketSearch.toLowerCase();
+      result = result.filter((listing) => {
+        const eventName = listing.eventId !== undefined
+          ? eventNameById.get(listing.eventId)?.toLowerCase()
+          : undefined;
+        return (
+          (eventName?.includes(search)) ||
+          (listing.ticketType?.toLowerCase().includes(search)) ||
+          (String(listing.ticketListingId).includes(search)) ||
+          (String(listing.price).includes(search))
+        );
+      });
+    }
+
+    if (ticketSort !== "default") {
+      result = [...result].sort((a, b) => {
+        const dateA = a.eventId !== undefined && eventStartDateById.get(a.eventId)
+          ? new Date(eventStartDateById.get(a.eventId)!).getTime()
+          : 0;
+        const dateB = b.eventId !== undefined && eventStartDateById.get(b.eventId)
+          ? new Date(eventStartDateById.get(b.eventId)!).getTime()
+          : 0;
+        return ticketSort === "soonest" ? dateA - dateB : dateB - dateA;
+      });
+    }
+
+    return result;
+  }, [visibleTicketListings, ticketSearch, eventNameById, ticketSort, eventStartDateById]);
 
   const filteredVenues = useMemo(() => {
     if (!venueSearch.trim()) return venues;
@@ -161,17 +206,28 @@ export default function EventManagement() {
     );
   }, [venues, venueSearch]);
 
-  const eventRows = filteredEvents.map((event) => [
-    event.eventId ?? "-",
-    event.eventName ?? "-",
-    event.status ?? "-",
-    formatLocation(event.city, event.country),
-    formatDate(event.createdAt)
-  ]);
+  const eventRows = filteredEvents.map((event) => {
+    const expired = isExpired(event.startDate);
+    return [
+      event.eventId ?? "-",
+      event.eventName ?? "-",
+      expired ? "expired" : "upcoming",
+      formatLocation(event.city, event.country),
+      formatDate(event.createdAt),
+      expired ? (
+        <span className={styles.expiredIndicator} title="Event has ended" />
+      ) : (
+        <span className={styles.notExpiredIndicator} />
+      )
+    ];
+  });
 
   const ticketListingRows = filteredTicketListings.map((listing) => {
     const eventName = listing.eventId !== undefined
       ? eventNameById.get(listing.eventId)
+      : undefined;
+    const eventStartDate = listing.eventId !== undefined
+      ? eventStartDateById.get(listing.eventId)
       : undefined;
 
     return [
@@ -179,7 +235,12 @@ export default function EventManagement() {
       eventName ?? `Event ${listing.eventId ?? "-"}`,
       listing.ticketType ?? "-",
       formatPrice(listing.price, listing.currency),
-      listing.ticketsAvailable ?? "-"
+      listing.ticketsAvailable ?? "-",
+      isExpired(eventStartDate) ? (
+        <span className={styles.expiredIndicator} title="Event has ended" />
+      ) : (
+        <span className={styles.notExpiredIndicator} />
+      )
     ];
   });
 
@@ -272,7 +333,7 @@ export default function EventManagement() {
           <EventManagementSection
             title={`Events with listings from ${selectedCompanyName}`}
             buttonText="Create event"
-            headers={["event_id", "event_name", "status", "location", "created_at"]}
+            headers={["event_id", "event_name", "status", "location", "created_at", "expired"]}
             entries={eventRows}
             onCreate={() => openEventDialog({ type: "event", mode: "create" })}
             onEntryClick={(index) => openEventDialog({
@@ -283,12 +344,15 @@ export default function EventManagement() {
             searchValue={eventSearch}
             onSearchChange={setEventSearch}
             searchPlaceholder="Search events..."
+            sortValue={eventSort}
+            onSortChange={setEventSort}
+            showSort
           />
 
           <EventManagementSection
             title={`Ticket listings for ${selectedCompanyName}`}
             buttonText="Create ticket listing"
-            headers={["listing_id", "event_name", "ticket_type", "price", "available"]}
+            headers={["listing_id", "event_name", "ticket_type", "price", "available", "expired"]}
             entries={ticketListingRows}
             onCreate={() => openTicketListingDialog({ type: "ticketListing", mode: "create" })}
             onEntryClick={(index) => openTicketListingDialog({
@@ -299,6 +363,9 @@ export default function EventManagement() {
             searchValue={ticketSearch}
             onSearchChange={setTicketSearch}
             searchPlaceholder="Search tickets..."
+            sortValue={ticketSort}
+            onSortChange={setTicketSort}
+            showSort
           />
 
           <EventManagementSection

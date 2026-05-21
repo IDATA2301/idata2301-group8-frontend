@@ -15,13 +15,13 @@ export default function Favorites() {
   const favoritesQuery = useGetFavorites();
   const removeFavoriteMutation = useRemoveFavorite();
 
-  const favorites = Array.isArray(favoritesQuery.data?.data)
+  const favorites = favoritesQuery.data?.status === 200 && Array.isArray(favoritesQuery.data.data)
     ? favoritesQuery.data.data
     : [];
 
   const favoriteIds = favorites
     .map((favorite) => favorite.eventId)
-    .filter(Boolean);
+    .filter((id): id is number => id != null);
 
   const eventQueries = useQueries({
     queries: favoriteIds.map((id) => getGetEventByIdQueryOptions(id!))

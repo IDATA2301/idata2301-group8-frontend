@@ -30,9 +30,10 @@ const toIsoDate = (date: string, endOfDay = false) => {
     return undefined;
   }
 
+  // Use explicit UTC time to avoid timezone conversion issues
   return endOfDay
-    ? new Date(`${date}T23:59:59`).toISOString()
-    : new Date(`${date}T00:00:00`).toISOString();
+    ? `${date}T23:59:59.999Z`
+    : `${date}T00:00:00.000Z`;
 };
 
 const EventList = ({ query, filters, sort }: Params) => {
@@ -111,8 +112,8 @@ const EventList = ({ query, filters, sort }: Params) => {
     query: query.trim() || undefined,
     city: filters.locations.length > 0 ? filters.locations : undefined,
     category: validCategories.length > 0 ? validCategories : undefined,
-    startDate: toIsoDate(filters.startDate) || currentTime,
-    endDate: toIsoDate(filters.endDate, true),
+    startDate: toIsoDate(filters.startDateAfter) || currentTime,
+    endDate: toIsoDate(filters.startDateBefore, true),
     minPrice: filters.priceMin,
     maxPrice: filters.priceMax,
     page: currentPage - 1,

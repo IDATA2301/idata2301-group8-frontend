@@ -5,6 +5,7 @@ import {
 import { useCreateOrder } from "@api/orders";
 import { useGetCompanies } from "@api/iam";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "@utility/AuthContext";
 import ChooseTickets from "./ChooseTickets";
 import toast from "@components/Toast";
 
@@ -21,6 +22,7 @@ type TicketListingWithCompany = TicketListingResponse & {
 
 export default function EventTicketListings({ eventId }: Props) {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuthContext();
   const { mutateAsync: createOrder } = useCreateOrder();
 
   const {
@@ -112,6 +114,7 @@ export default function EventTicketListings({ eventId }: Props) {
     <ChooseTickets
       tickets={tickets}
       handleContinue={handleContinue}
+      isLoggedIn={isLoggedIn}
     />
   );
 }

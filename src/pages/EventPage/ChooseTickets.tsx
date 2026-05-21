@@ -5,9 +5,10 @@ import arrowRight from "@assets/icons/arrow-right.svg";
 type Props = {
   tickets: Ticket[];
   handleContinue: (ticketCounts: Map<number, number>) => void;
+  isLoggedIn: boolean;
 };
 
-function ChooseTickets({ tickets, handleContinue }: Props) {
+function ChooseTickets({ tickets, handleContinue, isLoggedIn }: Props) {
   const ticketPriceMap = useMemo(() => {
     return new Map(tickets.map((ticket) => [ticket.id, ticket.price]));
   }, [tickets]);
@@ -63,18 +64,24 @@ function ChooseTickets({ tickets, handleContinue }: Props) {
             {totalTicketCount} tickets · {totalTicketPrice.toFixed(2)} NOK
           </p>
         </div>
-        <button
-          className="ticket-card-action-button"
-          disabled={totalTicketCount === 0}
-          onClick={() => handleContinue(ticketCounts)}
-        >
-          Continue
-          <img
-            className="ticket-card-icon"
-            src={arrowRight}
-            alt="continue icon"
-          />
-        </button>
+        {isLoggedIn ? (
+          <button
+            className="ticket-card-action-button"
+            disabled={totalTicketCount === 0}
+            onClick={() => handleContinue(ticketCounts)}
+          >
+            Continue
+            <img
+              className="ticket-card-icon"
+              src={arrowRight}
+              alt="continue icon"
+            />
+          </button>
+        ) : (
+          <p className="ticket-card-login-message">
+            Please log in or create an account to purchase tickets
+          </p>
+        )}
       </div>
     </div>
   );

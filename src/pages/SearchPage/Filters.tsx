@@ -6,8 +6,8 @@ const MAX_VISIBLE_ITEMS = 10;
 
 export type Filters = {
   categories: string[];
-  startDate: string;
-  endDate: string;
+  startDateAfter: string;
+  startDateBefore: string;
   priceMin: number | undefined;
   priceMax: number | undefined;
   locations: string[];
@@ -141,25 +141,25 @@ const Filters = ({ filters, setFilters }: Props) => {
           <div className="date-input-wrapper">
             <button
               type="button"
-              className={`date-clear-button ${filters.startDate ? "date-clear-button-visible" : ""}`}
+              className={`date-clear-button ${filters.startDateAfter ? "date-clear-button-visible" : ""}`}
               onClick={() =>
                 setFilters((prev) => ({
                   ...prev,
-                  startDate: ""
+                  startDateAfter: ""
                 }))
               }
-              aria-label="Clear start date"
-              tabIndex={filters.startDate ? 0 : -1}
+              aria-label="Clear start date after"
+              tabIndex={filters.startDateAfter ? 0 : -1}
             >
               <img src={x} alt="" />
             </button>
             <input
               type="date"
-              value={filters.startDate}
+              value={filters.startDateAfter}
               onChange={(e) =>
                 setFilters((prev) => ({
                   ...prev,
-                  startDate: e.target.value
+                  startDateAfter: e.target.value
                 }))
               }
             />
@@ -167,29 +167,29 @@ const Filters = ({ filters, setFilters }: Props) => {
         </div>
 
         <div className="date-row">
-          <label>Event end before</label>
+          <label>Event start before</label>
           <div className="date-input-wrapper">
             <button
               type="button"
-              className={`date-clear-button ${filters.endDate ? "date-clear-button-visible" : ""}`}
+              className={`date-clear-button ${filters.startDateBefore ? "date-clear-button-visible" : ""}`}
               onClick={() =>
                 setFilters((prev) => ({
                   ...prev,
-                  endDate: ""
+                  startDateBefore: ""
                 }))
               }
-              aria-label="Clear end date"
-              tabIndex={filters.endDate ? 0 : -1}
+              aria-label="Clear start date before"
+              tabIndex={filters.startDateBefore ? 0 : -1}
             >
               <img src={x} alt="" />
             </button>
             <input
               type="date"
-              value={filters.endDate}
+              value={filters.startDateBefore}
               onChange={(e) =>
                 setFilters((prev) => ({
                   ...prev,
-                  endDate: e.target.value
+                  startDateBefore: e.target.value
                 }))
               }
             />

@@ -38,8 +38,8 @@ function SearchPage() {
 
   const filters: FiltersType = {
     categories: searchParams.getAll("category"),
-    startDate: searchParams.get("startDate") || "",
-    endDate: searchParams.get("endDate") || "",
+    startDateAfter: searchParams.get("startDateAfter") || "",
+    startDateBefore: searchParams.get("startDateBefore") || "",
     priceMin: getOptionalNumberParam(searchParams, "minPrice"),
     priceMax: getOptionalNumberParam(searchParams, "maxPrice"),
     locations: searchParams.getAll("location")
@@ -97,16 +97,16 @@ function SearchPage() {
         newParams.append("location", location);
       });
 
-      if (nextFilters.startDate) {
-        newParams.set("startDate", nextFilters.startDate);
+      if (nextFilters.startDateAfter) {
+        newParams.set("startDateAfter", nextFilters.startDateAfter);
       } else {
-        newParams.delete("startDate");
+        newParams.delete("startDateAfter");
       }
 
-      if (nextFilters.endDate) {
-        newParams.set("endDate", nextFilters.endDate);
+      if (nextFilters.startDateBefore) {
+        newParams.set("startDateBefore", nextFilters.startDateBefore);
       } else {
-        newParams.delete("endDate");
+        newParams.delete("startDateBefore");
       }
 
       if (nextFilters.priceMin != null) {

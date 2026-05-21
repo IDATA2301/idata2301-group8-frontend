@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import styles from "./DialogForm.module.css";
 import toast from "@components/Toast";
-import { useCreate, useUpdate, type VenueResponse } from "@api/events";
+import { useCreate, useUpdate, useDelete, type VenueResponse } from "@api/events";
 
 type VenueFieldsProps = {
   mode: "create" | "edit";
@@ -18,13 +18,14 @@ export default function VenueFields({
 }: VenueFieldsProps) {
   const createVenue = useCreate();
   const updateVenue = useUpdate();
+  const deleteVenue = useDelete();
   const [form, setForm] = useState({
     name: selectedVenue?.name ?? "",
     city: selectedVenue?.city ?? "",
     country: selectedVenue?.country ?? ""
   });
 
-  const isSubmitting = createVenue.isPending || updateVenue.isPending;
+  const isSubmitting = createVenue.isPending || updateVenue.isPending || deleteVenue.isPending;
   const canSubmit =
     form.name.trim().length > 0 &&
     form.city.trim().length > 0 &&
@@ -140,6 +141,37 @@ export default function VenueFields({
     );
   }
 
+  function handleDelete() {
+    if (!selectedVenue?.id) {
+      toast.error("No venue selected");
+      return;
+    }
+
+    if (!confirm("Are you sure you want to delete this venue?")) {
+      return;
+    }
+
+    deleteVenue.mutate(
+      { id: selectedVenue.id },
+      {
+        onSuccess: (response) => {
+          if (response.status >= 200 && response.status < 300) {
+            toast.success("Venue deleted successfully");
+            onSuccess();
+            onClose();
+            return;
+          }
+
+          toast.error(getErrorMessage(response.data));
+        },
+        onError: (error) => {
+          console.error("Failed to delete venue:", error);
+          toast.error(typeof error === "string" ? error : "Failed to delete venue");
+        }
+      }
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <div className={styles.dialogGrid}>
@@ -202,6 +234,17 @@ export default function VenueFields({
       </div>
 
       <div className={styles.dialogActions}>
+        {mode === "edit" && (
+          <button
+            type="button"
+            className={styles.deleteButton}
+            disabled={isSubmitting}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        )}
+
         <button
           type="button"
           className={styles.cancelButton}

@@ -9,6 +9,7 @@ import {
 import type { EventResponse } from "@api/events";
 import toast from "@components/Toast";
 import EventCard from "@pages/EventCard/EventCard";
+import { useAuthContext } from "@utility/AuthContext";
 
 type Props = {
   events: EventResponse[];
@@ -16,11 +17,23 @@ type Props = {
 
 export default function EventCards({ events }: Props) {
   const queryClient = useQueryClient();
-  const favoritesQuery = useGetFavorites();
+  const { user } = useAuthContext();
+  const isLoggedIn = Boolean(user);
+
+  const favoritesQuery = useGetFavorites({
+    query: {
+      enabled: isLoggedIn
+    }
+  });
+
   const addFavoriteMutation = useAddFavorite();
   const removeFavoriteMutation = useRemoveFavorite();
 
   const favoriteIds = useMemo(() => {
+    if (!isLoggedIn) {
+      return new Set<number>();
+    }
+
     const favorites = Array.isArray(favoritesQuery.data?.data)
       ? favoritesQuery.data.data
       : [];
@@ -30,9 +43,14 @@ export default function EventCards({ events }: Props) {
         .map((favorite) => favorite.eventId)
         .filter((id): id is number => typeof id === "number")
     );
-  }, [favoritesQuery.data]);
+  }, [favoritesQuery.data, isLoggedIn]);
 
   async function handleToggleFavorite(nextIsFavorite: boolean, event: EventResponse) {
+    if (!isLoggedIn) {
+      toast.error("You must be logged in to favorite events");
+      throw new Error("User must be logged in to favorite events");
+    }
+
     if (!event.eventId) {
       toast.error("Missing event id");
       throw new Error("Missing event id");
